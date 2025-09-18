@@ -7,7 +7,7 @@ const stats = [
     { title: 'Projects', value: '3', icon: FolderKanban, href: '/admin/projects' },
     { title: 'Volunteers', value: '5', icon: Users, href: '/admin/volunteers' },
     { title: 'Total Donations', value: '$975', icon: DollarSign, href: '/admin/donations' },
-    { title: 'New Signups', value: '2', icon: HandHeart, href: '/admin/volunteers' },
+    { title: 'People Helped', value: '13,670', icon: Users, href: '/#impact' },
 ]
 
 export default function AdminDashboardPage() {
