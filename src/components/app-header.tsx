@@ -6,7 +6,7 @@ import Link from "next/link";
 import { HandHeart, Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DonationDialog } from "./donation-dialog";
 
 const navLinks = [
@@ -66,6 +66,7 @@ export default function AppHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-card">
+              <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
               <div className="flex h-full flex-col p-6">
                 <div className="mb-8 flex items-center justify-between">
                    <Link href="/" className="flex items-center gap-2" prefetch={false}>
