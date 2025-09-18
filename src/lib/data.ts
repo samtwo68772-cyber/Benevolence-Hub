@@ -1,6 +1,7 @@
 
 
 
+
 export type Project = {
     id: string;
     title: string;
@@ -66,14 +67,15 @@ export type Volunteer = {
     email: string;
     signupDate: string;
     skills: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
 }
 
 export const volunteers: Volunteer[] = [
-    { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish' },
-    { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', signupDate: '2023-11-05', skills: 'Construction, project management' },
-    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2023-11-15', skills: 'Teaching, childcare' },
-    { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', signupDate: '2023-12-01', skills: 'Logistics and coordination' },
-    { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', signupDate: '2024-01-10', skills: 'IT Support, communications' },
+    { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish', status: 'Pending' },
+    { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', signupDate: '2023-11-05', skills: 'Construction, project management', status: 'Approved' },
+    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2023-11-15', skills: 'Teaching, childcare', status: 'Pending' },
+    { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', signupDate: '2023-12-01', skills: 'Logistics and coordination', status: 'Rejected' },
+    { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', signupDate: '2024-01-10', skills: 'IT Support, communications', status: 'Approved' },
 ];
 
 export const donations = [

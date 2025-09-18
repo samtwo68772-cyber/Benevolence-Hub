@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal } from 'lucide-react';
+import { CheckCircle, MoreHorizontal, XCircle, Clock } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +35,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import type { Volunteer } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 
 function ViewVolunteerDialog({ children, volunteer }: { children: React.ReactNode; volunteer: Volunteer }) {
     return (
@@ -53,6 +54,17 @@ function ViewVolunteerDialog({ children, volunteer }: { children: React.ReactNod
                      <div className="grid grid-cols-4 items-center gap-4">
                         <Label className="text-right font-semibold">Signup Date</Label>
                         <span className="col-span-3">{volunteer.signupDate}</span>
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right font-semibold">Status</Label>
+                        <span className="col-span-3">
+                             <Badge variant={
+                                volunteer.status === 'Approved' ? 'default' :
+                                volunteer.status === 'Rejected' ? 'destructive' : 'outline'
+                            }>
+                                {volunteer.status}
+                            </Badge>
+                        </span>
                     </div>
                      <div className="grid grid-cols-4 items-start gap-4">
                         <Label className="text-right font-semibold mt-1">Skills/Message</Label>
@@ -104,6 +116,14 @@ export default function AdminVolunteersPage() {
         }
     };
 
+    const handleStatusChange = (volunteerId: string, status: 'Approved' | 'Rejected') => {
+        const volunteerToUpdate = volunteers.find(v => v.id === volunteerId);
+        if(volunteerToUpdate) {
+            setVolunteers(prev => prev.map(v => v.id === volunteerId ? {...v, status} : v));
+            toast({ title: `Application ${status}`, description: `The submission from "${volunteerToUpdate.name}" has been ${status.toLowerCase()}.` });
+        }
+    };
+
 
   return (
     <div>
@@ -117,7 +137,7 @@ export default function AdminVolunteersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Signup Date</TableHead>
-                <TableHead>Skills</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
             </TableRow>
             </TableHeader>
@@ -127,7 +147,17 @@ export default function AdminVolunteersPage() {
                 <TableCell className="font-medium">{volunteer.name}</TableCell>
                 <TableCell>{volunteer.email}</TableCell>
                 <TableCell>{volunteer.signupDate}</TableCell>
-                <TableCell className="max-w-[300px] truncate">{volunteer.skills}</TableCell>
+                <TableCell>
+                    <Badge variant={
+                        volunteer.status === 'Approved' ? 'default' :
+                        volunteer.status === 'Rejected' ? 'destructive' : 'outline'
+                    } className="capitalize">
+                         {volunteer.status === 'Approved' && <CheckCircle className="mr-1 h-3 w-3" />}
+                         {volunteer.status === 'Rejected' && <XCircle className="mr-1 h-3 w-3" />}
+                         {volunteer.status === 'Pending' && <Clock className="mr-1 h-3 w-3" />}
+                        {volunteer.status}
+                    </Badge>
+                </TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -142,7 +172,18 @@ export default function AdminVolunteersPage() {
                                     View Details
                                 </DropdownMenuItem>
                             </ViewVolunteerDialog>
-                            <DropdownMenuSeparator />
+                             <DropdownMenuSeparator />
+                             {volunteer.status === 'Pending' && (
+                                <>
+                                    <DropdownMenuItem onClick={() => handleStatusChange(volunteer.id, 'Approved')}>
+                                        Approve
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleStatusChange(volunteer.id, 'Rejected')} className="text-destructive">
+                                        Reject
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                </>
+                            )}
                             <DeleteVolunteerDialog onConfirm={() => handleDeleteVolunteer(volunteer.id)}>
                                 <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
                                     Delete

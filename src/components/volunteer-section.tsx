@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -17,11 +18,14 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { HeartHandshake } from "lucide-react"
+import { volunteers } from "@/lib/data"
+import { format } from "date-fns"
+
 
 const volunteerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
-  message: z.string().optional(),
+  message: z.string().min(10, "Please tell us a bit more about your skills and why you'd like to volunteer."),
 })
 
 export default function VolunteerSection() {
@@ -37,9 +41,21 @@ export default function VolunteerSection() {
     })
 
     function onSubmit(values: z.infer<typeof volunteerSchema>) {
+        // In a real app, this would send data to a server.
+        // For this demo, we'll just add it to the mock data array.
+        const newVolunteer = {
+            id: `VOL-${Date.now()}`,
+            name: values.name,
+            email: values.email,
+            signupDate: format(new Date(), 'yyyy-MM-dd'),
+            skills: values.message,
+            status: 'Pending' as const
+        };
+        volunteers.unshift(newVolunteer); // Add to the beginning of the array
+
         toast({
             title: "Registration Received!",
-            description: `Thank you for your interest, ${values.name}. We'll be in touch soon!`,
+            description: `Thank you for your interest, ${values.name}. We've received your application and will be in touch soon!`,
         })
         form.reset()
     }
@@ -93,16 +109,16 @@ export default function VolunteerSection() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Skills or Message (Optional)</FormLabel>
+                      <FormLabel>Skills & Why You'd Like to Help</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Tell us how you'd like to help..." className="resize-none" {...field} />
+                        <Textarea placeholder="E.g., I'm a registered nurse and would love to help with medical aid projects..." className="resize-none" rows={4} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <Button type="submit" size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                    Sign Up to Volunteer
+                    Submit Application
                 </Button>
               </form>
             </Form>
