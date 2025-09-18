@@ -30,10 +30,17 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 
 const donationSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
   amount: z.string().min(1, "Please select or enter an amount."),
   customAmount: z.string().optional(),
   isRecurring: z.boolean().default(false),
-}).refine(data => data.amount !== 'custom' || (data.customAmount && !isNaN(parseFloat(data.customAmount))), {
+}).refine(data => {
+    if (data.amount === 'custom') {
+        return data.customAmount && !isNaN(parseFloat(data.customAmount)) && parseFloat(data.customAmount) > 0;
+    }
+    return true;
+}, {
   message: "Please enter a valid custom amount.",
   path: ["customAmount"],
 });
@@ -46,6 +53,8 @@ export function DonationDialog() {
   const form = useForm<z.infer<typeof donationSchema>>({
     resolver: zodResolver(donationSchema),
     defaultValues: {
+      name: "",
+      email: "",
       amount: "50",
       customAmount: "",
       isRecurring: false,
@@ -56,7 +65,7 @@ export function DonationDialog() {
     const finalAmount = values.amount === 'custom' ? values.customAmount : values.amount;
     toast({
       title: "Thank you for your generosity!",
-      description: `Your ${values.isRecurring ? 'recurring' : 'one-time'} donation of $${finalAmount} has been processed.`,
+      description: `Thank you, ${values.name}. Your ${values.isRecurring ? 'recurring' : 'one-time'} donation of $${finalAmount} has been processed. A confirmation has been sent to ${values.email}.`,
     })
     form.reset();
   }
@@ -80,7 +89,33 @@ export function DonationDialog() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Jane Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="jane.doe@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="amount"
@@ -89,19 +124,25 @@ export function DonationDialog() {
                   <FormLabel className="text-base">Select an amount (USD)</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        if (value !== 'custom') {
+                            form.setValue('customAmount', '');
+                        }
+                      }}
                       defaultValue={field.value}
                       className="grid grid-cols-2 gap-4"
                     >
                       {presetAmounts.map((amount) => (
                         <FormItem key={amount}>
                           <FormControl>
-                            <RadioGroupItem value={amount} className="sr-only" />
+                            <RadioGroupItem value={amount} id={`amount-${amount}`} className="sr-only" />
                           </FormControl>
                           <FormLabel
+                            htmlFor={`amount-${amount}`}
                             className={cn(
                               "flex h-16 cursor-pointer items-center justify-center rounded-md border-2 border-muted bg-popover text-lg font-semibold hover:bg-accent/10 hover:text-accent-foreground",
-                              "data-[state=checked]:border-primary data-[state=checked]:bg-primary/10"
+                              field.value === amount && "border-primary bg-primary/10"
                             )}
                           >
                             ${amount}
@@ -110,14 +151,28 @@ export function DonationDialog() {
                       ))}
                     </RadioGroup>
                   </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="customAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="relative">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                      type="number" 
+                      placeholder="Or enter a custom amount" 
+                      {...field} 
+                      className="pl-10" 
+                      onFocus={() => form.setValue('amount', 'custom')}
+                    />
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input type="number" placeholder="Or enter a custom amount" {...form.register("customAmount")} className="pl-10" />
-            </div>
             
             <FormField
               control={form.control}
