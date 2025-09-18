@@ -40,11 +40,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex min-h-screen">
         <Sidebar collapsible="icon">
           <SidebarHeader>
-            <div className="flex items-center gap-2 p-2">
-                <HandHeart className="w-7 h-7 text-primary" />
-                <span className="font-headline text-lg group-data-[collapsible=icon]:hidden">
-                    Benevolence Admin
-                </span>
+            <div className="flex items-center justify-between p-2">
+                <div className="flex items-center gap-2">
+                    <HandHeart className="w-7 h-7 text-primary" />
+                    <span className="font-headline text-lg group-data-[collapsible=icon]:hidden">
+                        Benevolence Admin
+                    </span>
+                </div>
+                <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
             </div>
           </SidebarHeader>
           <SidebarContent>
