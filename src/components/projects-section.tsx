@@ -60,7 +60,7 @@ export default function ProjectsSection() {
                 </CardContent>
                 <CardFooter>
                   <Button asChild variant="link" className="px-0 text-accent group/link">
-                    <Link href="#">
+                    <Link href={`/project/${project.id}`}>
                       Learn More
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover/link:translate-x-1" />
                     </Link>
