@@ -1,5 +1,6 @@
 
 
+
 export type Project = {
     id: string;
     title: string;
@@ -59,7 +60,15 @@ export const projects: Project[] = [
   },
 ];
 
-export const volunteers = [
+export type Volunteer = {
+    id: string;
+    name: string;
+    email: string;
+    signupDate: string;
+    skills: string;
+}
+
+export const volunteers: Volunteer[] = [
     { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish' },
     { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', signupDate: '2023-11-05', skills: 'Construction, project management' },
     { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2023-11-15', skills: 'Teaching, childcare' },
