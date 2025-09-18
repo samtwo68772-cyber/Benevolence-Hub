@@ -2,6 +2,7 @@
 
 
 
+
 export type Project = {
     id: string;
     title: string;
@@ -65,17 +66,20 @@ export type Volunteer = {
     id: string;
     name: string;
     email: string;
+    phone?: string;
     signupDate: string;
     skills: string;
+    interests: string[];
+    availability: string[];
     status: 'Pending' | 'Approved' | 'Rejected';
 }
 
 export const volunteers: Volunteer[] = [
-    { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish', status: 'Pending' },
-    { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', signupDate: '2023-11-05', skills: 'Construction, project management', status: 'Approved' },
-    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2023-11-15', skills: 'Teaching, childcare', status: 'Pending' },
-    { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', signupDate: '2023-12-01', skills: 'Logistics and coordination', status: 'Rejected' },
-    { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', signupDate: '2024-01-10', skills: 'IT Support, communications', status: 'Approved' },
+    { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', phone: '123-456-7890', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish', interests: ['Medical', 'Disaster Relief'], availability: ['Weekends'], status: 'Pending' },
+    { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', phone: '234-567-8901', signupDate: '2023-11-05', skills: 'Construction, project management', interests: ['Community Development'], availability: ['Weekdays'], status: 'Approved' },
+    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2023-11-15', skills: 'Teaching, childcare', interests: ['Education'], availability: ['Weekdays', 'Evenings'], status: 'Pending' },
+    { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', phone: '456-789-0123', signupDate: '2023-12-01', skills: 'Logistics and coordination', interests: ['Disaster Relief'], availability: ['Weekends'], status: 'Rejected' },
+    { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', signupDate: '2024-01-10', skills: 'IT Support, communications', interests: ['General Support'], availability: ['Evenings'], status: 'Approved' },
 ];
 
 export const donations = [

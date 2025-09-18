@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, MoreHorizontal, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, MoreHorizontal, XCircle, Clock, Phone, Mail, Calendar, Sparkles, UserCheck } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,34 +41,53 @@ function ViewVolunteerDialog({ children, volunteer }: { children: React.ReactNod
     return (
         <Dialog>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>{volunteer.name}</DialogTitle>
                     <DialogDescription>Volunteer Application Details</DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right font-semibold">Email</Label>
-                        <span className="col-span-3">{volunteer.email}</span>
+                <div className="grid gap-6 py-4">
+                    <div className="flex items-center gap-4">
+                        <Badge variant={
+                            volunteer.status === 'Approved' ? 'default' :
+                            volunteer.status === 'Rejected' ? 'destructive' : 'outline'
+                        } className="text-sm">
+                            {volunteer.status}
+                        </Badge>
                     </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right font-semibold">Signup Date</Label>
-                        <span className="col-span-3">{volunteer.signupDate}</span>
+                     <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3">
+                           <Mail className="w-5 h-5 text-muted-foreground"/>
+                           <span>{volunteer.email}</span>
+                        </div>
+                        {volunteer.phone && (
+                            <div className="flex items-center gap-3">
+                                <Phone className="w-5 h-5 text-muted-foreground"/>
+                                <span>{volunteer.phone}</span>
+                            </div>
+                        )}
+                        <div className="flex items-center gap-3">
+                           <Calendar className="w-5 h-5 text-muted-foreground"/>
+                           <span>Signed up: {volunteer.signupDate}</span>
+                        </div>
                     </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right font-semibold">Status</Label>
-                        <span className="col-span-3">
-                             <Badge variant={
-                                volunteer.status === 'Approved' ? 'default' :
-                                volunteer.status === 'Rejected' ? 'destructive' : 'outline'
-                            }>
-                                {volunteer.status}
-                            </Badge>
-                        </span>
+
+                    <div className="space-y-2">
+                        <h4 className="font-semibold flex items-center gap-2"><Sparkles className="w-5 h-5 text-muted-foreground" /> Areas of Interest</h4>
+                         <div className="flex flex-wrap gap-2">
+                            {volunteer.interests.map(interest => <Badge key={interest} variant="secondary">{interest}</Badge>)}
+                        </div>
                     </div>
-                     <div className="grid grid-cols-4 items-start gap-4">
-                        <Label className="text-right font-semibold mt-1">Skills/Message</Label>
-                        <p className="col-span-3 text-sm text-muted-foreground bg-muted p-3 rounded-md">{volunteer.skills}</p>
+                     <div className="space-y-2">
+                        <h4 className="font-semibold flex items-center gap-2"><UserCheck className="w-5 h-5 text-muted-foreground" /> Availability</h4>
+                         <div className="flex flex-wrap gap-2">
+                            {volunteer.availability.map(avail => <Badge key={avail} variant="secondary" className="capitalize">{avail}</Badge>)}
+                        </div>
+                    </div>
+                    
+                     <div className="space-y-2">
+                        <Label className="font-semibold">Skills & Message</Label>
+                        <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md border">{volunteer.skills}</p>
                     </div>
                 </div>
                 <DialogFooter>
