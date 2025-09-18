@@ -54,7 +54,6 @@ export default function AppHeader() {
           ))}
         </nav>
         <div className="hidden items-center gap-4 lg:flex">
-           <Link href="/ai-image-tool" className="text-base font-medium text-foreground/80 transition-colors hover:text-primary" prefetch={false}>AI Tool</Link>
           <DonationDialog />
         </div>
         <div className="lg:hidden">
@@ -91,7 +90,6 @@ export default function AppHeader() {
                       {link.label}
                     </Link>
                   ))}
-                  <Link href="/ai-image-tool" className="text-xl font-medium text-foreground/80 transition-colors hover:text-primary" onClick={() => setIsMenuOpen(false)} prefetch={false}>AI Tool</Link>
                 </nav>
                 <div className="mt-8">
                   <DonationDialog />
