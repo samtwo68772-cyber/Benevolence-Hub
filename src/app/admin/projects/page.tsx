@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Calendar as CalendarIcon, PlusCircle, Users } from 'lucide-react';
+import { MoreHorizontal, Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,7 +50,7 @@ type ProjectFormData = Omit<Project, 'id' | 'imageId'> & { image?: File | null }
 function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectData: Project) => void }) {
     const [formData, setFormData] = React.useState<ProjectFormData>(
         project ? 
-        {...project, details: project.details.join('\\n') } : 
+        {...project, details: project.details.join('\n') } : 
         { title: '', description: '', startDate: format(new Date(), 'yyyy-MM-dd'), status: 'Planning', details: [], peopleHelped: 0 }
     );
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(project ? new Date(project.startDate) : new Date());
@@ -61,7 +61,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
             id: project ? project.id : `proj-${Date.now()}`,
             imageId: project ? project.imageId : 'project-new',
             startDate: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-            details: Array.isArray(formData.details) ? formData.details : formData.details.split('\\n').filter(d => d.trim() !== ''),
+            details: Array.isArray(formData.details) ? formData.details : (formData.details as string).split('\n').filter(d => d.trim() !== ''),
             peopleHelped: Number(formData.peopleHelped) || 0
         };
         onSave(newProjectData);
@@ -140,7 +140,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 <Label htmlFor="details" className="text-right mt-2">
                 Key Achievements
                 </Label>
-                <Textarea id="details" value={Array.isArray(formData.details) ? formData.details.join('\\n') : formData.details} onChange={e => setFormData({...formData, details: e.target.value.split('\\n')})} placeholder="Enter each achievement on a new line." className="col-span-3" rows={4} />
+                <Textarea id="details" value={Array.isArray(formData.details) ? formData.details.join('\n') : formData.details} onChange={e => setFormData({...formData, details: e.target.value})} placeholder="Enter each achievement on a new line." className="col-span-3" rows={4} />
             </div>
              <DialogFooter>
                 <DialogClose asChild>
@@ -242,7 +242,7 @@ export default function AdminProjectsPage() {
                     {project.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{project.startDate}</TableCell>
+                <TableCell>{format(new Date(project.startDate), "PPP")}</TableCell>
                 <TableCell>{project.peopleHelped.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
