@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export default function HeroSection() {
             </Button>
           </Link>
           <Link href="#mission">
-            <Button size="lg" variant="outline" className="border-white/50 text-white hover:bg-white/10 text-base w-48 transition-transform duration-300 ease-in-out hover:scale-105">
+            <Button size="lg" variant="secondary" className="bg-transparent text-white hover:bg-white/10 border-white/50 border text-base w-48 transition-transform duration-300 ease-in-out hover:scale-105">
               Learn More
             </Button>
           </Link>
