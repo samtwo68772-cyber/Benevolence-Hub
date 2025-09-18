@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { HandHeart, Menu, X } from "lucide-react";
+import { HandHeart, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -71,12 +71,6 @@ export default function AppHeader() {
                    <Link href="/" className="flex items-center gap-2" prefetch={false}>
                       <HandHeart className="h-7 w-7 text-primary" />
                     </Link>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <X className="h-6 w-6" />
-                      <span className="sr-only">Close menu</span>
-                    </Button>
-                  </SheetTrigger>
                 </div>
                 <nav className="flex flex-1 flex-col items-start gap-6">
                   {navLinks.map((link) => (
