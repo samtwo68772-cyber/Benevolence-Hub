@@ -1,6 +1,8 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
+import { Alegreya, Belleza } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Benevolence Hub - Compassion in Action',
@@ -10,18 +12,28 @@ export const metadata: Metadata = {
   },
 };
 
+const alegreya = Alegreya({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-body',
+});
+
+const belleza = Belleza({
+  subsets: ['latin'],
+  weight: '400',
+  display: 'swap',
+  variable: '--font-headline',
+});
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;700&family=Belleza&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`${alegreya.variable} ${belleza.variable} scroll-smooth`}>
+      <head/>
       <body className="font-body bg-background text-foreground antialiased">
         {children}
         <Toaster />
