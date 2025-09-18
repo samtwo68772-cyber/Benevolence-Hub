@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <Sidebar collapsible="icon">
+        <Sidebar>
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
@@ -47,7 +47,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         Benevolence Admin
                     </span>
                 </div>
-                <SidebarTrigger className="group-data-[collapsible=icon]:hidden" />
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -56,7 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href)}
+                    isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href) && pathname !== '/admin'}
                     tooltip={{ children: item.label }}
                   >
                     <Link href={item.href}>
