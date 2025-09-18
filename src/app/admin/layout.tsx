@@ -27,6 +27,14 @@ const navItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  const getPageTitle = () => {
+    if (pathname === '/admin') {
+      return 'Dashboard';
+    }
+    const currentNavItem = navItems.find((item) => item.href !== '/admin' && pathname.startsWith(item.href));
+    return currentNavItem?.label || 'Dashboard';
+  }
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
@@ -45,7 +53,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.href}
+                    isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href)}
                     tooltip={{ children: item.label }}
                   >
                     <Link href={item.href}>
@@ -79,7 +87,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SidebarInset>
           <header className="flex h-14 items-center gap-4 border-b bg-card px-6">
             <SidebarTrigger className="md:hidden" />
-            <h1 className="flex-1 text-xl font-semibold">{navItems.find(i => i.href === pathname)?.label || 'Dashboard'}</h1>
+            <h1 className="flex-1 text-xl font-semibold">{getPageTitle()}</h1>
           </header>
           <main className="flex-1 p-6">{children}</main>
         </SidebarInset>
