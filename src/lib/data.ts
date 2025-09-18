@@ -1,5 +1,16 @@
 
-export const projects = [
+
+export type Project = {
+    id: string;
+    title: string;
+    description: string;
+    imageId: string;
+    details: string[];
+    status: 'Active' | 'Completed' | 'Planning';
+    startDate: string;
+}
+
+export const projects: Project[] = [
   {
     id: "water-for-villages",
     title: "Water for Villages",
@@ -59,3 +70,5 @@ export const donations = [
     { id: 'DON-004', donorName: 'Mary Miller', email: 'mary.m@example.com', amount: 25, date: '2024-02-12', type: 'Monthly', project: 'General Fund' },
     { id: 'DON-005', donorName: 'David Garcia', email: 'david.g@example.com', amount: 500, date: '2024-02-15', type: 'One-time', project: 'Water for Villages' },
 ];
+
+  

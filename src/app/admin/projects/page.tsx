@@ -1,7 +1,8 @@
 
 'use client';
 
-import { projects } from '@/lib/data';
+import * as React from 'react';
+import { projects as initialProjects } from '@/lib/data';
 import {
   Table,
   TableBody,
@@ -12,13 +13,14 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Calendar as CalendarIcon } from 'lucide-react';
+import { MoreHorizontal, Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
   Dialog,
@@ -28,6 +30,7 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogDescription,
+  DialogClose,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -37,111 +40,180 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import type { Project } from '@/lib/data';
+import { useToast } from '@/hooks/use-toast';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
-function AddProjectDialog() {
+
+type ProjectFormData = Omit<Project, 'id' | 'imageId'> & { image?: File | null };
+
+function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectData: Project) => void }) {
+    const [formData, setFormData] = React.useState<ProjectFormData>(
+        project ? 
+        {...project, details: project.details.join('\n') } : 
+        { title: '', description: '', startDate: format(new Date(), 'yyyy-MM-dd'), status: 'Planning', details: [] }
+    );
+    const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(project ? new Date(project.startDate) : new Date());
+
+    const handleSave = () => {
+        const newProjectData: Project = {
+            ...formData,
+            id: project ? project.id : `proj-${Date.now()}`,
+            imageId: project ? project.imageId : 'project-new',
+            startDate: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+            details: Array.isArray(formData.details) ? formData.details : formData.details.split('\n').filter(d => d.trim() !== '')
+        };
+        onSave(newProjectData);
+    };
+    
+
+    return (
+        <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                Title
+                </Label>
+                <Input id="title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Project Title" className="col-span-3" />
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="startDate" className="text-right">
+                    Start Date
+                </Label>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                        variant={"outline"}
+                        className={cn(
+                            "w-[280px] justify-start text-left font-normal",
+                            !selectedDate && "text-muted-foreground"
+                        )}
+                        >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                        <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                Status
+                </Label>
+                 <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value as "Active" | "Completed" | "Planning"})}>
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Planning">Planning</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="image" className="text-right">
+                Image
+                </Label>
+                <Input id="image" type="file" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="description" className="text-right mt-2">
+                Description
+                </Label>
+                <Textarea id="description" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Project Description" className="col-span-3" rows={4} />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="details" className="text-right mt-2">
+                Key Achievements
+                </Label>
+                <Textarea id="details" value={Array.isArray(formData.details) ? formData.details.join('\n') : formData.details} onChange={e => setFormData({...formData, details: e.target.value.split('\n')})} placeholder="Enter each achievement on a new line." className="col-span-3" rows={4} />
+            </div>
+             <DialogFooter>
+                <DialogClose asChild>
+                    <Button type="button" onClick={handleSave}>Save Project</Button>
+                </DialogClose>
+            </DialogFooter>
+        </div>
+    )
+}
+
+function ProjectDialog({ children, project, onSave }: { children: React.ReactNode, project?: Project, onSave: (projectData: Project) => void }) {
     return (
         <Dialog>
-            <DialogTrigger asChild>
-                <Button>Add Project</Button>
-            </DialogTrigger>
+            <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Add New Project</DialogTitle>
+                    <DialogTitle>{project ? 'Edit Project' : 'Add New Project'}</DialogTitle>
                     <DialogDescription>
-                        Fill in the details below to add a new project.
+                        {project ? 'Update the details for this project.' : 'Fill in the details below to add a new project.'}
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-6 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="title" className="text-right">
-                        Title
-                        </Label>
-                        <Input id="title" placeholder="Project Title" className="col-span-3" />
-                    </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="startDate" className="text-right">
-                            Start Date
-                        </Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-[280px] justify-start text-left font-normal",
-                                    !Date && "text-muted-foreground"
-                                )}
-                                >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {Date ? format(new Date(), "PPP") : <span>Pick a date</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                mode="single"
-                                initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="status" className="text-right">
-                        Status
-                        </Label>
-                         <Select>
-                            <SelectTrigger className="col-span-3">
-                                <SelectValue placeholder="Select Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Active">Active</SelectItem>
-                                <SelectItem value="Completed">Completed</SelectItem>
-                                <SelectItem value="Planning">Planning</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="image" className="text-right">
-                        Image
-                        </Label>
-                         <Select>
-                            <SelectTrigger className="col-span-3">
-                                <SelectValue placeholder="Select an Image" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {PlaceHolderImages.map(image => (
-                                    <SelectItem key={image.id} value={image.id}>{image.description}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="grid grid-cols-4 items-start gap-4">
-                        <Label htmlFor="description" className="text-right mt-2">
-                        Description
-                        </Label>
-                        <Textarea id="description" placeholder="Project Description" className="col-span-3" rows={4} />
-                    </div>
-                    <div className="grid grid-cols-4 items-start gap-4">
-                        <Label htmlFor="details" className="text-right mt-2">
-                        Key Achievements
-                        </Label>
-                        <Textarea id="details" placeholder="Enter each achievement on a new line." className="col-span-3" rows={4} />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button type="submit">Save Project</Button>
-                </DialogFooter>
+                <ProjectForm project={project} onSave={onSave} />
             </DialogContent>
         </Dialog>
-    )
+    );
+}
+
+function DeleteProjectDialog({ children, onConfirm }: { children: React.ReactNode, onConfirm: () => void }) {
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the project.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Delete
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
 }
 
 
 export default function AdminProjectsPage() {
+    const { toast } = useToast();
+    const [projects, setProjects] = React.useState<Project[]>(initialProjects);
+
+    const handleAddProject = (newProject: Project) => {
+        setProjects(prev => [newProject, ...prev]);
+        toast({ title: "Project Added", description: `"${newProject.title}" has been successfully added.` });
+    };
+
+    const handleEditProject = (updatedProject: Project) => {
+        setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+        toast({ title: "Project Updated", description: `"${updatedProject.title}" has been successfully updated.` });
+    };
+
+    const handleDeleteProject = (projectId: string) => {
+        const projectToDelete = projects.find(p => p.id === projectId);
+        if (projectToDelete) {
+             setProjects(prev => prev.filter(p => p.id !== projectId));
+             toast({ title: "Project Deleted", description: `"${projectToDelete.title}" has been deleted.` });
+        }
+    };
+
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Projects</h1>
-        <AddProjectDialog />
+        <ProjectDialog onSave={handleAddProject}>
+             <Button><PlusCircle className="mr-2" />Add Project</Button>
+        </ProjectDialog>
       </div>
       <div className="rounded-lg border">
         <Table>
@@ -160,7 +232,7 @@ export default function AdminProjectsPage() {
                 <TableCell className="font-medium">{project.title}</TableCell>
                 <TableCell><div className="w-[500px] whitespace-normal">{project.description}</div></TableCell>
                 <TableCell>
-                  <Badge variant={project.status === 'Active' ? 'default' : 'secondary'}>
+                  <Badge variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
                     {project.status}
                   </Badge>
                 </TableCell>
@@ -174,8 +246,17 @@ export default function AdminProjectsPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                             <ProjectDialog project={project} onSave={handleEditProject}>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    Edit
+                                </DropdownMenuItem>
+                            </ProjectDialog>
+                            <DropdownMenuSeparator />
+                             <DeleteProjectDialog onConfirm={() => handleDeleteProject(project.id)}>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                                    Delete
+                                </DropdownMenuItem>
+                            </DeleteProjectDialog>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </TableCell>
@@ -187,3 +268,5 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
+
+  
