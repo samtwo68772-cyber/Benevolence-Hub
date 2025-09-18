@@ -1,0 +1,89 @@
+
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { HandHeart, LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home } from 'lucide-react';
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+  SidebarTrigger,
+  SidebarInset,
+} from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
+
+const navItems = [
+  { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/admin/projects', icon: FolderKanban, label: 'Projects' },
+  { href: '/admin/volunteers', icon: Users, label: 'Volunteers' },
+  { href: '/admin/donations', icon: DollarSign, label: 'Donations' },
+];
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen">
+        <Sidebar collapsible="icon">
+          <SidebarHeader>
+            <div className="flex items-center gap-2 p-2">
+                <HandHeart className="w-7 h-7 text-primary" />
+                <span className="font-headline text-lg group-data-[collapsible=icon]:hidden">
+                    Benevolence Admin
+                </span>
+            </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === item.href}
+                    tooltip={{ children: item.label }}
+                  >
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter>
+            <SidebarMenu>
+                 <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip={{children: "Back to Site"}}>
+                        <Link href="/">
+                            <Home />
+                            <span>Back to Site</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton tooltip={{children: "Logout"}}>
+                        <LogOut />
+                        <span>Logout</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
+        <SidebarInset>
+          <header className="flex h-14 items-center gap-4 border-b bg-card px-6">
+            <SidebarTrigger className="md:hidden" />
+            <h1 className="flex-1 text-xl font-semibold">{navItems.find(i => i.href === pathname)?.label || 'Dashboard'}</h1>
+          </header>
+          <main className="flex-1 p-6">{children}</main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  );
+}

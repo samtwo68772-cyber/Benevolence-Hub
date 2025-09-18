@@ -1,30 +1,11 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowRight } from "lucide-react";
-
-const projects = [
-  {
-    id: "water-for-villages",
-    title: "Water for Villages",
-    description: "Bringing clean and safe drinking water to remote communities by building wells and implementing filtration systems.",
-    imageId: "project-water",
-  },
-  {
-    id: "education-for-all",
-    title: "Education for All",
-    description: "Providing access to quality education for children in underserved regions, including school supplies and teacher training.",
-    imageId: "project-education",
-  },
-  {
-    id: "emergency-medical-aid",
-    title: "Emergency Medical Aid",
-    description: "Deploying mobile medical clinics to disaster-stricken areas, offering urgent care and essential health services.",
-    imageId: "project-medical",
-  },
-];
+import { projects } from "@/lib/data";
 
 export default function ProjectsSection() {
   return (

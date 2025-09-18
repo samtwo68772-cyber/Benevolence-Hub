@@ -7,45 +7,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
-
-const projects = [
-  {
-    id: "water-for-villages",
-    title: "Water for Villages",
-    description: "Bringing clean and safe drinking water to remote communities by building wells and implementing filtration systems. This project has already impacted thousands of lives, providing not just hydration but also improved sanitation and health. We work with local partners to ensure the sustainability of each well.",
-    imageId: "project-water",
-    details: [
-        "Constructed 50+ wells in the last 2 years.",
-        "Implemented 3 large-scale water filtration plants.",
-        "Trained 100+ community members on well maintenance.",
-        "Reduced waterborne diseases by 60% in target areas."
-    ]
-  },
-  {
-    id: "education-for-all",
-    title: "Education for All",
-    description: "Providing access to quality education for children in underserved regions, including school supplies and teacher training. Our goal is to break the cycle of poverty by empowering the next generation through learning. We build schools, provide books, and support teachers.",
-    imageId: "project-education",
-    details: [
-        "Built and renovated 15 schools.",
-        "Distributed over 100,000 school supply kits.",
-        "Sponsored 500+ teacher training programs.",
-        "Increased literacy rates by 40% in project zones."
-    ]
-  },
-  {
-    id: "emergency-medical-aid",
-    title: "Emergency Medical Aid",
-    description: "Deploying mobile medical clinics to disaster-stricken areas, offering urgent care and essential health services. Our rapid-response teams are equipped to handle a wide range of medical needs, from treating injuries to preventing the spread of disease.",
-    imageId: "project-medical",
-    details: [
-        "Responded to 12 major natural disasters.",
-        "Provided medical care to over 50,000 people.",
-        "Delivered 20 tons of medical supplies.",
-        "Conducted vaccination campaigns for 25,000 children."
-    ]
-  },
-];
+import { projects } from '@/lib/data';
 
 export default function ProjectDetailsPage({ params }: { params: { id: string } }) {
   const project = projects.find((p) => p.id === params.id);
