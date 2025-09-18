@@ -8,6 +8,7 @@ export type Project = {
     details: string[];
     status: 'Active' | 'Completed' | 'Planning';
     startDate: string;
+    peopleHelped: number;
 }
 
 export const projects: Project[] = [
@@ -23,7 +24,8 @@ export const projects: Project[] = [
         "Reduced waterborne diseases by 60% in target areas."
     ],
     status: 'Active',
-    startDate: '2022-01-15'
+    startDate: '2022-01-15',
+    peopleHelped: 7500
   },
   {
     id: "education-for-all",
@@ -37,7 +39,8 @@ export const projects: Project[] = [
         "Increased literacy rates by 40% in project zones."
     ],
     status: 'Active',
-    startDate: '2021-08-20'
+    startDate: '2021-08-20',
+    peopleHelped: 5000
   },
   {
     id: "emergency-medical-aid",
@@ -51,7 +54,8 @@ export const projects: Project[] = [
         "Conducted vaccination campaigns for 25,000 children."
     ],
     status: 'Completed',
-    startDate: '2020-05-10'
+    startDate: '2020-05-10',
+    peopleHelped: 50000
   },
 ];
 

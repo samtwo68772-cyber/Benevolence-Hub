@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Calendar as CalendarIcon, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, Calendar as CalendarIcon, PlusCircle, Users } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,7 +51,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
     const [formData, setFormData] = React.useState<ProjectFormData>(
         project ? 
         {...project, details: project.details.join('\n') } : 
-        { title: '', description: '', startDate: format(new Date(), 'yyyy-MM-dd'), status: 'Planning', details: [] }
+        { title: '', description: '', startDate: format(new Date(), 'yyyy-MM-dd'), status: 'Planning', details: [], peopleHelped: 0 }
     );
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(project ? new Date(project.startDate) : new Date());
 
@@ -61,7 +61,8 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
             id: project ? project.id : `proj-${Date.now()}`,
             imageId: project ? project.imageId : 'project-new',
             startDate: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-            details: Array.isArray(formData.details) ? formData.details : formData.details.split('\n').filter(d => d.trim() !== '')
+            details: Array.isArray(formData.details) ? formData.details : formData.details.split('\n').filter(d => d.trim() !== ''),
+            peopleHelped: Number(formData.peopleHelped) || 0
         };
         onSave(newProjectData);
     };
@@ -107,7 +108,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 Status
                 </Label>
                  <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value as "Active" | "Completed" | "Planning"})}>
-                    <SelectTrigger className="col-span-3">
+                    <SelectTrigger className="col-span-2">
                         <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -116,6 +117,12 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                         <SelectItem value="Planning">Planning</SelectItem>
                     </SelectContent>
                 </Select>
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="peopleHelped" className="text-right">
+                    People Helped
+                </Label>
+                <Input id="peopleHelped" type="number" value={formData.peopleHelped} onChange={e => setFormData({...formData, peopleHelped: Number(e.target.value)})} placeholder="0" className="col-span-2" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="image" className="text-right">
@@ -220,9 +227,9 @@ export default function AdminProjectsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead className="w-[500px]">Description</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Start Date</TableHead>
+              <TableHead>People Helped</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -230,13 +237,13 @@ export default function AdminProjectsPage() {
             {projects.map((project) => (
               <TableRow key={project.id}>
                 <TableCell className="font-medium">{project.title}</TableCell>
-                <TableCell><div className="w-[500px] whitespace-normal">{project.description}</div></TableCell>
                 <TableCell>
                   <Badge variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
                     {project.status}
                   </Badge>
                 </TableCell>
                 <TableCell>{project.startDate}</TableCell>
+                <TableCell>{project.peopleHelped.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -268,5 +275,3 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
-
-  
