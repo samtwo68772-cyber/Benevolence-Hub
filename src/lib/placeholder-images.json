@@ -1,3 +1,35 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "A volunteer giving food to a child in a sunny field.",
+      "imageUrl": "https://picsum.photos/seed/hero-bg/1920/1080",
+      "imageHint": "volunteer child"
+    },
+    {
+      "id": "project-water",
+      "description": "Clean water flowing from a new well into a person's cupped hands.",
+      "imageUrl": "https://picsum.photos/seed/proj-water/600/400",
+      "imageHint": "clean water"
+    },
+    {
+      "id": "project-education",
+      "description": "A group of smiling children in a classroom raising their hands.",
+      "imageUrl": "https://picsum.photos/seed/proj-edu/600/400",
+      "imageHint": "children classroom"
+    },
+    {
+      "id": "project-medical",
+      "description": "A doctor checking a patient's blood pressure in a temporary clinic.",
+      "imageUrl": "https://picsum.photos/seed/proj-med/600/400",
+      "imageHint": "doctor patient"
+    },
+    {
+      "id": "mission-image",
+      "description": "A diverse group of volunteers working together to build a house.",
+      "imageUrl": "https://picsum.photos/seed/mission-img/800/600",
+      "imageHint": "volunteers building"
+    }
+  ]
 }
