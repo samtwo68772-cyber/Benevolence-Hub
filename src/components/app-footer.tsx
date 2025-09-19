@@ -12,6 +12,7 @@ const footerLinks = [
   { href: "#projects", label: "Projects" },
   { href: "#impact", label: "Impact" },
   { href: "#volunteer", label: "Volunteer" },
+  { href: "/admin", label: "Admin" },
 ]
 
 export default function AppFooter() {
