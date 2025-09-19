@@ -9,7 +9,7 @@ import { HandHeart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormState, useFormStatus } from "react-dom";
-import { authenticate } from "./_actions/auth";
+import { authenticate } from "../_actions/auth";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
 
