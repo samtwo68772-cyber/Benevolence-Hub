@@ -2,7 +2,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { Alegreya, Belleza } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
@@ -13,27 +12,13 @@ export const metadata: Metadata = {
   },
 };
 
-const alegreya = Alegreya({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-body',
-});
-
-const belleza = Belleza({
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
-  variable: '--font-headline',
-});
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${alegreya.variable} ${belleza.variable} scroll-smooth`} suppressHydrationWarning>
+    <html lang="en" className={`scroll-smooth`} suppressHydrationWarning>
       <head/>
       <body className="font-body bg-background text-foreground antialiased">
         <ThemeProvider
