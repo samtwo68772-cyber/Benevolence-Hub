@@ -16,6 +16,7 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import { SheetTitle } from '@/components/ui/sheet';
 
 const navItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -39,6 +40,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <SidebarProvider>
       <div className="flex min-h-screen">
         <Sidebar>
+            <SheetTitle className="sr-only">Admin Menu</SheetTitle>
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
@@ -88,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </Sidebar>
         <SidebarInset>
           <header className="flex h-14 items-center gap-4 border-b bg-card">
-            <div className="flex items-center gap-4 px-6">
+            <div className="flex items-center gap-4 px-6 w-full">
                 <SidebarTrigger className="md:hidden" />
                 <h1 className="flex-1 text-xl font-semibold">{getPageTitle()}</h1>
             </div>
