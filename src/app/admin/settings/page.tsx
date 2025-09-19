@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { updateProfile, changePassword } from './_actions/settings';
-import { SessionPayload } from '@/lib/session';
+import { SessionPayload, getSession } from '@/lib/session';
 
 const profileFormSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -28,7 +28,7 @@ const passwordFormSchema = z.object({
     path: ["confirmPassword"],
 });
 
-export default function AdminSettingsPage({ session }: { session: SessionPayload }) {
+function AdminSettingsPage({ session }: { session: SessionPayload }) {
     const { toast } = useToast();
     
     const profileForm = useForm<z.infer<typeof profileFormSchema>>({
@@ -198,4 +198,5 @@ const SettingsPageWrapper = async () => {
 // so we rename the default export.
 const Page = SettingsPageWrapper;
 export default Page;
+
 
