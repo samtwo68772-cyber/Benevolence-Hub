@@ -1,3 +1,4 @@
+
 import { PrismaClient } from '@prisma/client';
 import { projects, volunteers, donations, admins } from '../src/lib/data';
 import bcrypt from 'bcryptjs';
@@ -76,7 +77,7 @@ async function main() {
   
   // Seed Donations
   const donationsToCreate = donations.map(d => {
-    const projectId = d.project === 'General Fund' ? null : projectMap.get(d.project);
+    const projectId = d.projectTitle === 'General Fund' ? null : projectMap.get(d.projectTitle);
     return {
         id: d.id,
         donorName: d.donorName,
@@ -84,9 +85,9 @@ async function main() {
         amount: d.amount,
         date: new Date(d.date),
         type: d.type === 'One-time' ? 'ONE_TIME' : 'MONTHLY',
-        projectId: projectId || null,
+        projectId: projectId === undefined ? null : projectId,
     }
-  }).filter(d => d.projectId !== undefined); // Filter out any projects that didn't match
+  });
 
   await prisma.donation.createMany({
     data: donationsToCreate,

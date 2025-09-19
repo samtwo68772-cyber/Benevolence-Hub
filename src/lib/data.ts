@@ -3,7 +3,15 @@ import { Prisma } from "@prisma/client";
 
 export type Project = Prisma.ProjectGetPayload<{}>;
 export type Volunteer = Prisma.VolunteerGetPayload<{}>;
-export type Donation = Prisma.DonationGetPayload<{}>;
+export type DonationSeed = {
+    id: string;
+    donorName: string;
+    email: string;
+    amount: number;
+    date: Date;
+    type: 'One-time' | 'Monthly';
+    projectTitle: string;
+};
 export type Admin = Prisma.UserGetPayload<{ where: { role: 'ADMIN' } }>;
 
 export const projects: Project[] = [
@@ -65,12 +73,12 @@ export const volunteers: Volunteer[] = [
     { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', phone: null, signupDate: new Date('2024-01-10'), skills: 'IT Support, communications', interests: ['General Support'], availability: ['Evenings'], status: 'Approved' },
 ];
 
-export const donations = [
-    { id: 'DON-001', donorName: 'John Smith', email: 'john.s@example.com', amount: 100, date: new Date('2024-02-01'), type: 'ONE_TIME', projectId: 'water-for-villages' },
-    { id: 'DON-002', donorName: 'Jane Doe', email: 'jane.d@example.com', amount: 50, date: new Date('2024-02-05'), type: 'MONTHLY', projectId: 'education-for-all' },
-    { id: 'DON-003', donorName: 'Peter Jones', email: 'peter.j@example.com', amount: 250, date: new Date('2024-02-10'), type: 'ONE_TIME', projectId: 'emergency-medical-aid' },
-    { id: 'DON-004', donorName: 'Mary Miller', email: 'mary.m@example.com', amount: 25, date: new Date('2024-02-12'), type: 'MONTHLY', projectId: null },
-    { id: 'DON-005', donorName: 'David Garcia', email: 'david.g@example.com', amount: 500, date: new Date('2024-02-15'), type: 'ONE_TIME', projectId: 'water-for-villages' },
+export const donations: DonationSeed[] = [
+    { id: 'DON-001', donorName: 'John Smith', email: 'john.s@example.com', amount: 100, date: new Date('2024-02-01'), type: 'One-time', projectTitle: 'Water for Villages' },
+    { id: 'DON-002', donorName: 'Jane Doe', email: 'jane.d@example.com', amount: 50, date: new Date('2024-02-05'), type: 'Monthly', projectTitle: 'Education for All' },
+    { id: 'DON-003', donorName: 'Peter Jones', email: 'peter.j@example.com', amount: 250, date: new Date('2024-02-10'), type: 'One-time', projectTitle: 'Emergency Medical Aid' },
+    { id: 'DON-004', donorName: 'Mary Miller', email: 'mary.m@example.com', amount: 25, date: new Date('2024-02-12'), type: 'Monthly', projectTitle: 'General Fund' },
+    { id: 'DON-005', donorName: 'David Garcia', email: 'david.g@example.com', amount: 500, date: new Date('2024-02-15'), type: 'One-time', projectTitle: 'Water for Villages' },
 ];
 
 export let admins: Admin[] = [
