@@ -12,7 +12,7 @@ export type DonationSeed = {
     type: 'One-time' | 'Monthly';
     projectTitle: string;
 };
-export type Admin = Prisma.UserGetPayload<{ where: { role: 'ADMIN' } }>;
+export type Admin = Prisma.UserGetPayload<{}> & { role: 'ADMIN' };
 
 export const projects: Project[] = [
   {

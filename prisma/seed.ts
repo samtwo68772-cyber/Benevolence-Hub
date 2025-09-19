@@ -84,7 +84,7 @@ async function main() {
         email: d.email,
         amount: d.amount,
         date: new Date(d.date),
-        type: d.type === 'One-time' ? 'ONE_TIME' : 'MONTHLY',
+        type: d.type === 'One-time' ? 'ONE_TIME' as const : 'MONTHLY' as const,
         projectId: projectId === undefined ? null : projectId,
     }
   });
