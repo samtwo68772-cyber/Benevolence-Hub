@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { HandHeart, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { DonationDialog } from "./donation-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -81,7 +81,7 @@ export default function AppHeader() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[300px] bg-card">
-                  
+                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <div className="flex h-full flex-col p-6">
                     <div className="mb-8 flex items-center justify-start">
                        <Link href="/" className="flex items-center gap-2" prefetch={false} onClick={() => setIsMenuOpen(false)}>
