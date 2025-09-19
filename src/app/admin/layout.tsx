@@ -14,6 +14,7 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { SheetTitle } from '@/components/ui/sheet';
@@ -26,6 +27,38 @@ const navItems = [
   { href: '/admin/admins', icon: UserCog, label: 'Admins' },
   { href: '/admin/settings', icon: Cog, label: 'Settings' },
 ];
+
+function AdminNav() {
+  const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
+
+  const handleLinkClick = () => {
+    setOpenMobile(false);
+  };
+
+  return (
+    <>
+      <SidebarMenu>
+        {navItems.map((item) => (
+          <SidebarMenuItem key={item.href}>
+            <SidebarMenuButton
+              asChild
+              isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href) && pathname !== '/admin'}
+              tooltip={{ children: item.label }}
+              onClick={handleLinkClick}
+            >
+              <Link href={item.href}>
+                <item.icon />
+                <span>{item.label}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </>
+  );
+}
+
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -57,22 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </SidebarHeader>
           <SidebarContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href) && pathname !== '/admin'}
-                    tooltip={{ children: item.label }}
-                  >
-                    <Link href={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <AdminNav />
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
