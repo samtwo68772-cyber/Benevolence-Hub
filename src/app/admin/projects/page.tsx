@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -50,8 +51,8 @@ type ProjectFormData = Omit<Project, 'id' | 'imageId'> & { image?: File | null }
 function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectData: Project) => void }) {
     const [formData, setFormData] = React.useState<ProjectFormData>(
         project ? 
-        {...project, details: project.details.join('\n') } : 
-        { title: '', description: '', startDate: format(new Date(), 'yyyy-MM-dd'), status: 'Planning', details: [], peopleHelped: 0 }
+        {...project, details: project.details.join('\\n') } : 
+        { title: '', description: '', startDate: format(new Date(), 'yyyy-MM-dd'), status: 'Planning', details: [], peopleHelped: 0, category: 'General Aid' }
     );
     const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(project ? new Date(project.startDate) : new Date());
 
@@ -61,7 +62,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
             id: project ? project.id : `proj-${Date.now()}`,
             imageId: project ? project.imageId : 'project-new',
             startDate: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-            details: Array.isArray(formData.details) ? formData.details : (formData.details as string).split('\n').filter(d => d.trim() !== ''),
+            details: Array.isArray(formData.details) ? formData.details : (formData.details as string).split('\\n').filter(d => d.trim() !== ''),
             peopleHelped: Number(formData.peopleHelped) || 0
         };
         onSave(newProjectData);
@@ -118,6 +119,23 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                     </SelectContent>
                 </Select>
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="category" className="text-right">
+                Category
+                </Label>
+                 <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value as Project['category']})}>
+                    <SelectTrigger className="col-span-2">
+                        <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Water">Water</SelectItem>
+                        <SelectItem value="Education">Education</SelectItem>
+                        <SelectItem value="Medical">Medical</SelectItem>
+                        <SelectItem value="Shelter">Shelter</SelectItem>
+                        <SelectItem value="General Aid">General Aid</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="peopleHelped" className="text-right">
                     People Helped
@@ -140,7 +158,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 <Label htmlFor="details" className="text-right mt-2">
                 Key Achievements
                 </Label>
-                <Textarea id="details" value={Array.isArray(formData.details) ? formData.details.join('\n') : formData.details} onChange={e => setFormData({...formData, details: e.target.value})} placeholder="Enter each achievement on a new line." className="col-span-3" rows={4} />
+                <Textarea id="details" value={Array.isArray(formData.details) ? formData.details.join('\\n') : formData.details} onChange={e => setFormData({...formData, details: e.target.value})} placeholder="Enter each achievement on a new line." className="col-span-3" rows={4} />
             </div>
              <DialogFooter>
                 <DialogClose asChild>
@@ -228,7 +246,7 @@ export default function AdminProjectsPage() {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Start Date</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>People Helped</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -242,7 +260,9 @@ export default function AdminProjectsPage() {
                     {project.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{format(new Date(project.startDate), "PPP")}</TableCell>
+                <TableCell>
+                    <Badge variant="outline">{project.category}</Badge>
+                </TableCell>
                 <TableCell>{project.peopleHelped.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>

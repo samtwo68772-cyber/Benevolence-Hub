@@ -3,6 +3,7 @@
 
 
 
+
 export type Project = {
     id: string;
     title: string;
@@ -12,6 +13,7 @@ export type Project = {
     status: 'Active' | 'Completed' | 'Planning';
     startDate: string;
     peopleHelped: number;
+    category: 'Water' | 'Education' | 'Medical' | 'General Aid' | 'Shelter';
 }
 
 export const projects: Project[] = [
@@ -28,7 +30,8 @@ export const projects: Project[] = [
     ],
     status: 'Active',
     startDate: '2022-01-15',
-    peopleHelped: 7500
+    peopleHelped: 7500,
+    category: 'Water',
   },
   {
     id: "education-for-all",
@@ -43,7 +46,8 @@ export const projects: Project[] = [
     ],
     status: 'Active',
     startDate: '2021-08-20',
-    peopleHelped: 5000
+    peopleHelped: 5000,
+    category: 'Education',
   },
   {
     id: "emergency-medical-aid",
@@ -58,7 +62,8 @@ export const projects: Project[] = [
     ],
     status: 'Completed',
     startDate: '2020-05-10',
-    peopleHelped: 50000
+    peopleHelped: 50000,
+    category: 'Medical',
   },
 ];
 
@@ -77,7 +82,7 @@ export type Volunteer = {
 export const volunteers: Volunteer[] = [
     { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', phone: '123-456-7890', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish', interests: ['Medical', 'Disaster Relief'], availability: ['Weekends'], status: 'Pending' },
     { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', phone: '234-567-8901', signupDate: '2023-11-05', skills: 'Construction, project management', interests: ['Community Development'], availability: ['Weekdays'], status: 'Approved' },
-    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2023-11-15', skills: 'Teaching, childcare', interests: ['Education'], availability: ['Weekdays', 'Evenings'], status: 'Pending' },
+    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2032-11-15', skills: 'Teaching, childcare', interests: ['Education'], availability: ['Weekdays', 'Evenings'], status: 'Pending' },
     { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', phone: '456-789-0123', signupDate: '2023-12-01', skills: 'Logistics and coordination', interests: ['Disaster Relief'], availability: ['Weekends'], status: 'Rejected' },
     { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', signupDate: '2024-01-10', skills: 'IT Support, communications', interests: ['General Support'], availability: ['Evenings'], status: 'Approved' },
 ];
