@@ -19,7 +19,7 @@ import { DonationFilter } from './_components/donation-filter';
 import { PaginationControls } from '@/components/ui/pagination';
 import { DonationType } from '@/lib/types';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 
 export default async function AdminDonationsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
     const page = Number(searchParams.page || '1');

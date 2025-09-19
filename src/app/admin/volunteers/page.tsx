@@ -5,7 +5,7 @@ import { VolunteerList } from './_components/volunteer-list';
 import { VolunteerStatus } from '@/lib/types';
 import { PaginationControls } from '@/components/ui/pagination';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7;
 
 export default async function AdminVolunteersPage({ searchParams }: { searchParams: { page?: string, status?: VolunteerStatus, interest?: string } }) {
   const page = Number(searchParams.page || '1');
