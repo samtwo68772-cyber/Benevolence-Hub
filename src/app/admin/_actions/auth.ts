@@ -2,9 +2,9 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-// import prisma from '@/lib/prisma';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { createSession } from '@/lib/session';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -29,8 +29,12 @@ export async function authenticate(
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (passwordsMatch) {
-      // In a real application, you would create a session here.
-      // For this prototype, we will just redirect.
+      await createSession({
+          userId: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+      });
       redirect('/admin');
     } else {
       return 'Invalid credentials.';

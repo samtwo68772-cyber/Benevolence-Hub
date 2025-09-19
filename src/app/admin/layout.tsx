@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { SheetTitle } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { logout } from '@/lib/session';
 
 const navItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -94,24 +95,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <AdminNav />
           </SidebarContent>
           <SidebarFooter>
-            <SidebarMenu>
-                 <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{children: "Back to Site"}}>
-                        <Link href="/">
-                            <Home />
-                            <span>Back to Site</span>
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={{children: "Logout"}}>
-                        <Link href="/admin/login">
+             <form action={logout}>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip={{children: "Back to Site"}}>
+                            <Link href="/">
+                                <Home />
+                                <span>Back to Site</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton type="submit" tooltip={{children: "Logout"}}>
                             <LogOut />
                             <span>Logout</span>
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </form>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
