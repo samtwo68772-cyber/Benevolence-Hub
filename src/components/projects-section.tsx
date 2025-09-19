@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowRight } from "lucide-react";
 import type { Project } from "@prisma/client";
 
@@ -20,18 +19,19 @@ export default function ProjectsSection({ projects: featuredProjects }: { projec
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredProjects.map((project) => {
-            const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
+            const projectImage = project.imageId;
+            const isLocalImage = projectImage.startsWith('/');
             return (
               <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <CardHeader className="p-0">
                    {projectImage ? (
                     <div className="relative h-56 w-full">
                       <Image
-                        src={projectImage.imageUrl}
-                        alt={projectImage.description}
+                        src={projectImage}
+                        alt={project.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={projectImage.imageHint}
+                        unoptimized={isLocalImage}
                       />
                     </div>
                   ): (

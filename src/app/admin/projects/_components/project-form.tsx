@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -21,11 +21,10 @@ const projectFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   details: z.string().min(10, "Details must be at least 10 characters."),
-  imageId: z.string().min(1, "Image ID is required."),
+  image: z.any().optional(),
   startDate: z.date({ required_error: "A start date is required."}),
   status: z.enum(['Active', 'Completed', 'Planning']),
   category: z.enum(['Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief']),
-  peopleHelped: z.coerce.number().int().positive(),
 });
 
 type ProjectFormProps = {
@@ -40,11 +39,10 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
       title: project?.title || '',
       description: project?.description || '',
       details: project?.details.join('\n') || '',
-      imageId: project?.imageId || '',
+      image: undefined,
       startDate: project ? new Date(project.startDate) : new Date(),
       status: project?.status || 'Planning',
       category: project?.category || 'Community Development',
-      peopleHelped: project?.peopleHelped || 0,
     },
   });
 
@@ -53,8 +51,8 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
     Object.entries(values).forEach(([key, value]) => {
       if (key === 'startDate') {
         formData.append(key, (value as Date).toISOString());
-      } else if (key === 'details') {
-          formData.append(key, value as string);
+      } else if(key === 'image' && value) {
+        formData.append(key, value[0]);
       } else if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
       }
@@ -104,27 +102,14 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
             </FormItem>
           )}
         />
-         <FormField
+        <FormField
           control={form.control}
-          name="imageId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image ID</FormLabel>
+          name="image"
+          render={({ field: { onChange, value, ...rest } }) => (
+            <FormItem className="md:col-span-2">
+              <FormLabel>Project Image</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="e.g., project-water" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="peopleHelped"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>People Helped</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} />
+                <Input type="file" accept="image/*" onChange={(e) => onChange(e.target.files)} {...rest} />
               </FormControl>
               <FormMessage />
             </FormItem>

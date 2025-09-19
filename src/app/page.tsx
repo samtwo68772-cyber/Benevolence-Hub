@@ -9,11 +9,7 @@ import VolunteerSection from '@/components/volunteer-section';
 import prisma from '@/lib/prisma';
 
 export default async function Home() {
-  // Fetch projects and volunteers from the database instead of using static data
   const projects = await prisma.project.findMany({
-    where: {
-      status: 'Active' // This is valid as 'Active' is in the ProjectStatus enum
-    },
     orderBy: {
       startDate: 'desc'
     }
@@ -28,13 +24,14 @@ export default async function Home() {
   const totalPeopleHelped = projects.reduce((sum, project) => sum + project.peopleHelped, 0);
 
   const featuredProjects = projects.slice(0, 3);
+  const heroProject = projects.length > 0 ? projects[0] : null;
 
 
   return (
     <div className="flex min-h-screen flex-col">
       <AppHeader />
       <main className="flex-1">
-        <HeroSection />
+        <HeroSection heroImage={heroProject?.imageId} />
         <MissionSection />
         <ProjectsSection projects={featuredProjects} />
         <ImpactSection 

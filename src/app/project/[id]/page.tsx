@@ -1,13 +1,13 @@
 
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
 import prisma from '@/lib/prisma';
+import { isStaticGen } from 'next/dist/build/utils';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
   const project = await prisma.project.findUnique({
@@ -18,7 +18,8 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
     notFound();
   }
   
-  const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
+  const projectImage = project.imageId;
+  const isLocalImage = projectImage.startsWith('/');
 
   return (
     <div className="flex min-h-screen flex-col bg-card">
@@ -26,12 +27,12 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
       <main className="flex-1">
         <section className="relative h-64 md:h-96 w-full text-white">
             {projectImage ? (
-                <Image
-                src={projectImage.imageUrl}
-                alt={projectImage.description}
-                fill
-                className="object-cover"
-                data-ai-hint={projectImage.imageHint}
+                 <Image
+                    src={projectImage}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                    unoptimized={isLocalImage}
                 />
             ) : (
                 <div className="bg-muted w-full h-full" />
