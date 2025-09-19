@@ -7,8 +7,9 @@ import { usePathname } from "next/navigation";
 import { HandHeart, Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DonationDialog } from "./donation-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const navLinks = [
   { href: "#mission", label: "Our Mission" },
@@ -21,6 +22,7 @@ export default function AppHeader() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
   const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
 
@@ -31,6 +33,12 @@ export default function AppHeader() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  React.useEffect(() => {
+    if (!isMobile) {
+      setIsMenuOpen(false);
+    }
+  }, [isMobile]);
 
   return (
     <header
@@ -45,21 +53,22 @@ export default function AppHeader() {
             Benevolence Hub
           </span>
         </Link>
-        <nav className="hidden items-center gap-6 lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-base font-medium text-foreground/80 transition-colors hover:text-primary"
-              prefetch={false}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="hidden items-center gap-4 lg:flex">
-          <DonationDialog />
+        <div className="hidden items-center gap-6 lg:flex">
+            <nav className="flex items-center gap-6">
+            {navLinks.map((link) => (
+                <Link
+                key={link.href}
+                href={link.href}
+                className="text-base font-medium text-foreground/80 transition-colors hover:text-primary"
+                prefetch={false}
+                >
+                {link.label}
+                </Link>
+            ))}
+            </nav>
+            <DonationDialog />
         </div>
+        
         {!isProjectPage && (
           <div className="lg:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -70,10 +79,10 @@ export default function AppHeader() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] bg-card">
-                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                
                 <div className="flex h-full flex-col p-6">
                   <div className="mb-8 flex items-center justify-start">
-                     <Link href="/" className="flex items-center gap-2" prefetch={false}>
+                     <Link href="/" className="flex items-center gap-2" prefetch={false} onClick={() => setIsMenuOpen(false)}>
                         <HandHeart className="h-7 w-7 text-primary" />
                       </Link>
                   </div>

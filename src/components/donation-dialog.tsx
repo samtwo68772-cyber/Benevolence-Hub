@@ -73,7 +73,7 @@ export function DonationDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 gap-2 group transition-transform duration-300 ease-in-out hover:scale-105">
+        <Button size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 gap-2 group transition-transform duration-300 ease-in-out hover:scale-105 lg:w-auto">
           <Heart className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" />
           Donate Now
         </Button>
@@ -131,7 +131,7 @@ export function DonationDialog() {
                         }
                       }}
                       defaultValue={field.value}
-                      className="grid grid-cols-2 gap-4"
+                      className="grid grid-cols-2 sm:grid-cols-2 gap-4"
                     >
                       {presetAmounts.map((amount) => (
                         <FormItem key={amount}>
