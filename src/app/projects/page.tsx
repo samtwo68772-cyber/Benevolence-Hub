@@ -6,13 +6,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
-import prisma from '@/lib/prisma';
 import type { Project } from '@prisma/client';
+import { projects as allProjects } from '@/lib/data';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default async function AllProjectsPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { startDate: 'desc' }
-  });
+  const projects: Project[] = allProjects;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -34,7 +33,8 @@ export default async function AllProjectsPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project) => {
-                    const projectImage = project.imageId;
+                    const placeholder = PlaceHolderImages.find(p => p.id === project.imageId);
+                    const projectImage = placeholder?.imageUrl || project.imageId;
                     const isLocalImage = projectImage.startsWith('/');
 
                     return (
