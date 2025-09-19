@@ -2,21 +2,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, FolderKanban, Users, UserCog } from 'lucide-react';
 import Link from 'next/link';
-import { admins } from '@/lib/data';
+import prisma from '@/lib/prisma';
 
-const projectCount = 3;
-const volunteerCount = 5;
-const adminCount = admins.length;
-const totalDonations = 975;
+export default async function AdminDashboardPage() {
+    const projectCount = await prisma.project.count();
+    const volunteerCount = await prisma.volunteer.count();
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
+    const totalDonations = await prisma.donation.aggregate({
+        _sum: {
+            amount: true,
+        },
+    });
 
-const stats = [
-    { title: 'Projects', value: projectCount.toString(), icon: FolderKanban, href: '/admin/projects' },
-    { title: 'Volunteers', value: volunteerCount.toString(), icon: Users, href: '/admin/volunteers' },
-    { title: 'Total Donations', value: `$${totalDonations}`, icon: DollarSign, href: '/admin/donations' },
-    { title: 'Admins', value: adminCount.toString(), icon: UserCog, href: '/admin/admins' },
-]
+    const stats = [
+        { title: 'Projects', value: projectCount.toString(), icon: FolderKanban, href: '/admin/projects' },
+        { title: 'Volunteers', value: volunteerCount.toString(), icon: Users, href: '/admin/volunteers' },
+        { title: 'Total Donations', value: `$${totalDonations._sum.amount?.toLocaleString() || '0'}`, icon: DollarSign, href: '/admin/donations' },
+        { title: 'Admins', value: adminCount.toString(), icon: UserCog, href: '/admin/admins' },
+    ]
 
-export default function AdminDashboardPage() {
   return (
     <div className="grid gap-6 p-4 sm:p-6">
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

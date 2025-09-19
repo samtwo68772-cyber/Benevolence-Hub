@@ -5,8 +5,15 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
+import prisma from '@/lib/prisma';
 
-export default function Home() {
+export default async function Home() {
+  const projects = await prisma.project.findMany();
+  const volunteers = await prisma.volunteer.findMany();
+  const totalPeopleHelped = await prisma.project.aggregate({
+    _sum: { peopleHelped: true }
+  });
+
   return (
     <div className="flex min-h-screen flex-col">
       <AppHeader />
@@ -14,7 +21,11 @@ export default function Home() {
         <HeroSection />
         <MissionSection />
         <ProjectsSection />
-        <ImpactSection />
+        <ImpactSection 
+            projects={projects} 
+            volunteers={volunteers}
+            totalPeopleHelped={totalPeopleHelped._sum.peopleHelped || 0}
+        />
         <VolunteerSection />
       </main>
       <AppFooter />

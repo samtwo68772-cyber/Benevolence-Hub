@@ -7,9 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
-import { projects } from '@/lib/data';
+import prisma from '@/lib/prisma';
 
-export default function AllProjectsPage() {
+export default async function AllProjectsPage() {
+  const projects = await prisma.project.findMany({
+    orderBy: { startDate: 'desc' }
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <AppHeader />
@@ -28,7 +32,7 @@ export default function AllProjectsPage() {
                 return (
                   <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-card">
                     <CardHeader className="p-0">
-                       {projectImage && (
+                       {projectImage ? (
                         <div className="relative h-56 w-full">
                           <Image
                             src={projectImage.imageUrl}
@@ -38,6 +42,8 @@ export default function AllProjectsPage() {
                             data-ai-hint={projectImage.imageHint}
                           />
                         </div>
+                      ) : (
+                        <div className='relative h-56 w-full bg-muted' />
                       )}
                     </CardHeader>
                     <CardContent className="pt-6 flex-1">

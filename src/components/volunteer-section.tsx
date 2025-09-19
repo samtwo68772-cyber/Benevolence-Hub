@@ -4,7 +4,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { format } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,10 +19,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { HeartHandshake, XCircle } from "lucide-react"
-import { volunteers } from "@/lib/data"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "./ui/badge"
+import { addVolunteer } from "./_actions/volunteers"
 
 
 const availabilityItems = [
@@ -64,19 +63,15 @@ export default function VolunteerSection() {
         },
     })
 
-    function onSubmit(values: VolunteerFormValues) {
-        const newVolunteer = {
-            id: `VOL-${Date.now()}`,
+    async function onSubmit(values: VolunteerFormValues) {
+        await addVolunteer({
             name: values.name,
             email: values.email,
             phone: values.phone,
-            signupDate: format(new Date(), 'yyyy-MM-dd'),
             skills: values.message,
             availability: values.availability,
             interests: values.interests,
-            status: 'Pending' as const
-        };
-        volunteers.unshift(newVolunteer);
+        });
 
         toast({
             title: "Registration Received!",

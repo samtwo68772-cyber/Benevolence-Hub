@@ -8,15 +8,34 @@ import { Label } from "@/components/ui/label";
 import { HandHeart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useFormState, useFormStatus } from "react-dom";
+import { authenticate } from "./_actions/auth";
+import { useToast } from "@/hooks/use-toast";
+import React from "react";
+
+function LoginButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" className="w-full" aria-disabled={pending}>
+            {pending ? 'Logging in...' : 'Login'}
+        </Button>
+    )
+}
 
 export default function AdminLoginPage() {
     const router = useRouter();
+    const { toast } = useToast();
+    const [errorMessage, dispatch] = useFormState(authenticate, undefined);
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        // TODO: Implement actual authentication logic
-        router.push('/admin');
-    }
+    React.useEffect(() => {
+        if (errorMessage) {
+            toast({
+                variant: 'destructive',
+                title: 'Login Failed',
+                description: errorMessage
+            })
+        }
+    }, [errorMessage, toast])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
@@ -29,18 +48,16 @@ export default function AdminLoginPage() {
           <CardDescription>Enter your credentials to access the dashboard.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-6" action={dispatch}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="admin@example.com" required />
+              <Input id="email" name="email" type="email" placeholder="admin@example.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
+              <Input id="password" name="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
+            <LoginButton />
             <div className="text-center text-sm text-muted-foreground">
                 <Link href="/" className="underline hover:text-primary">
                     Back to Main Site

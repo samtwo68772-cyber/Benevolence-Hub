@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog"
 import {
   Form,
@@ -28,6 +29,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
+import React from "react"
+import { addDonation } from "./_actions/donations"
 
 const donationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -35,6 +38,7 @@ const donationSchema = z.object({
   amount: z.string().min(1, "Please select or enter an amount."),
   customAmount: z.string().optional(),
   isRecurring: z.boolean().default(false),
+  projectId: z.string().optional(),
 }).refine(data => {
     if (data.amount === 'custom') {
         return data.customAmount && !isNaN(parseFloat(data.customAmount)) && parseFloat(data.customAmount) > 0;
@@ -45,12 +49,15 @@ const donationSchema = z.object({
   path: ["customAmount"],
 });
 
+type DonationFormValues = z.infer<typeof donationSchema>;
+
 const presetAmounts = ["25", "50", "100", "250"];
 
-export function DonationDialog() {
+export function DonationDialog({ projectId }: { projectId?: string }) {
   const { toast } = useToast()
+  const [open, setOpen] = React.useState(false);
   
-  const form = useForm<z.infer<typeof donationSchema>>({
+  const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),
     defaultValues: {
       name: "",
@@ -58,20 +65,31 @@ export function DonationDialog() {
       amount: "50",
       customAmount: "",
       isRecurring: false,
+      projectId: projectId,
     },
   })
 
-  function onSubmit(values: z.infer<typeof donationSchema>) {
+  async function onSubmit(values: DonationFormValues) {
     const finalAmount = values.amount === 'custom' ? values.customAmount : values.amount;
+    
+    await addDonation({
+        donorName: values.name,
+        email: values.email,
+        amount: parseFloat(finalAmount || '0'),
+        type: values.isRecurring ? 'MONTHLY' : 'ONE_TIME',
+        projectId: values.projectId,
+    });
+
     toast({
       title: "Thank you for your generosity!",
       description: `Thank you, ${values.name}. Your ${values.isRecurring ? 'recurring' : 'one-time'} donation of $${finalAmount} has been processed. A confirmation has been sent to ${values.email}.`,
     })
     form.reset();
+    setOpen(false);
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="lg" className="w-full bg-accent text-accent-foreground hover:bg-accent/90 gap-2 group transition-transform duration-300 ease-in-out hover:scale-105 lg:w-auto">
           <Heart className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" />

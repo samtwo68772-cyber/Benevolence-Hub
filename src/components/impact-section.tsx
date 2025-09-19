@@ -1,11 +1,12 @@
 
+
 "use client";
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { HandHeart, Users, Users2 } from "lucide-react";
-import { projects, volunteers } from "@/lib/data";
+import type { Project, Volunteer } from "@prisma/client";
 
 const barChartConfig = {
   "peopleHelped": {
@@ -59,8 +60,13 @@ const volunteerInterestsConfig = {
 } satisfies ChartConfig;
 
 
-export default function ImpactSection() {
-  const totalPeopleHelped = projects.reduce((acc, project) => acc + project.peopleHelped, 0);
+type ImpactSectionProps = {
+    projects: Project[];
+    volunteers: Volunteer[];
+    totalPeopleHelped: number;
+}
+
+export default function ImpactSection({ projects, volunteers, totalPeopleHelped }: ImpactSectionProps) {
   const totalProjects = projects.length;
   const totalVolunteers = volunteers.length;
 
@@ -196,7 +202,7 @@ export default function ImpactSection() {
                         strokeWidth={5}
                         >
                          {pieChartData.map((entry) => (
-                            <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                            <Cell key={`cell-${entry.name}`} fill={`var(--color-${entry.name})`} />
                         ))}
                         </Pie>
                     </PieChart>
@@ -235,7 +241,7 @@ export default function ImpactSection() {
                             strokeWidth={5}
                             >
                             {volunteerStatusChartData.map((entry) => (
-                                <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                                <Cell key={`cell-${entry.name}`} fill={`var(--color-${entry.name})`} />
                             ))}
                             </Pie>
                         </PieChart>

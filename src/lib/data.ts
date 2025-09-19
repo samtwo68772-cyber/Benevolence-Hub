@@ -1,22 +1,10 @@
 
+import { Prisma } from "@prisma/client";
 
-
-
-
-
-
-
-export type Project = {
-    id: string;
-    title: string;
-    description: string;
-    imageId: string;
-    details: string[];
-    status: 'Active' | 'Completed' | 'Planning';
-    startDate: string;
-    peopleHelped: number;
-    category: 'Water' | 'Education' | 'Medical' | 'General Aid' | 'Shelter';
-}
+export type Project = Prisma.ProjectGetPayload<{}>;
+export type Volunteer = Prisma.VolunteerGetPayload<{}>;
+export type Donation = Prisma.DonationGetPayload<{}>;
+export type Admin = Prisma.UserGetPayload<{ where: { role: 'ADMIN' } }>;
 
 export const projects: Project[] = [
   {
@@ -31,7 +19,7 @@ export const projects: Project[] = [
         "Reduced waterborne diseases by 60% in target areas."
     ],
     status: 'Active',
-    startDate: '2022-01-15',
+    startDate: new Date('2022-01-15'),
     peopleHelped: 7500,
     category: 'Water',
   },
@@ -47,7 +35,7 @@ export const projects: Project[] = [
         "Increased literacy rates by 40% in project zones."
     ],
     status: 'Active',
-    startDate: '2021-08-20',
+    startDate: new Date('2021-08-20'),
     peopleHelped: 5000,
     category: 'Education',
   },
@@ -63,52 +51,30 @@ export const projects: Project[] = [
         "Conducted vaccination campaigns for 25,000 children."
     ],
     status: 'Completed',
-    startDate: '2020-05-10',
+    startDate: new Date('2020-05-10'),
     peopleHelped: 50000,
     category: 'Medical',
   },
 ];
 
-export type Volunteer = {
-    id: string;
-    name: string;
-    email: string;
-    phone?: string;
-    signupDate: string;
-    skills: string;
-    interests: string[];
-    availability: string[];
-    status: 'Pending' | 'Approved' | 'Rejected';
-}
-
 export const volunteers: Volunteer[] = [
-    { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', phone: '123-456-7890', signupDate: '2023-10-22', skills: 'Medical background, speaks Spanish', interests: ['Medical', 'Disaster Relief'], availability: ['Weekends'], status: 'Pending' },
-    { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', phone: '234-567-8901', signupDate: '2023-11-05', skills: 'Construction, project management', interests: ['Community Development'], availability: ['Weekdays'], status: 'Approved' },
-    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', signupDate: '2032-11-15', skills: 'Teaching, childcare', interests: ['Education'], availability: ['Weekdays', 'Evenings'], status: 'Pending' },
-    { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', phone: '456-789-0123', signupDate: '2023-12-01', skills: 'Logistics and coordination', interests: ['Disaster Relief'], availability: ['Weekends'], status: 'Rejected' },
-    { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', signupDate: '2024-01-10', skills: 'IT Support, communications', interests: ['General Support'], availability: ['Evenings'], status: 'Approved' },
+    { id: 'VOL-001', name: 'Alice Johnson', email: 'alice.j@example.com', phone: '123-456-7890', signupDate: new Date('2023-10-22'), skills: 'Medical background, speaks Spanish', interests: ['Medical', 'Disaster Relief'], availability: ['Weekends'], status: 'Pending' },
+    { id: 'VOL-002', name: 'Bob Williams', email: 'bob.w@example.com', phone: '234-567-8901', signupDate: new Date('2023-11-05'), skills: 'Construction, project management', interests: ['Community Development'], availability: ['Weekdays'], status: 'Approved' },
+    { id: 'VOL-003', name: 'Charlie Brown', email: 'charlie.b@example.com', phone: null, signupDate: new Date('2023-11-15'), skills: 'Teaching, childcare', interests: ['Education'], availability: ['Weekdays', 'Evenings'], status: 'Pending' },
+    { id: 'VOL-004', name: 'Diana Prince', email: 'diana.p@example.com', phone: '456-789-0123', signupDate: new Date('2023-12-01'), skills: 'Logistics and coordination', interests: ['Disaster Relief'], availability: ['Weekends'], status: 'Rejected' },
+    { id: 'VOL-005', name: 'Ethan Hunt', email: 'ethan.h@example.com', phone: null, signupDate: new Date('2024-01-10'), skills: 'IT Support, communications', interests: ['General Support'], availability: ['Evenings'], status: 'Approved' },
 ];
 
 export const donations = [
-    { id: 'DON-001', donorName: 'John Smith', email: 'john.s@example.com', amount: 100, date: '2024-02-01', type: 'One-time', project: 'Water for Villages' },
-    { id: 'DON-002', donorName: 'Jane Doe', email: 'jane.d@example.com', amount: 50, date: '2024-02-05', type: 'Monthly', project: 'Education for All' },
-    { id: 'DON-003', donorName: 'Peter Jones', email: 'peter.j@example.com', amount: 250, date: '2024-02-10', type: 'One-time', project: 'Emergency Medical Aid' },
-    { id: 'DON-004', donorName: 'Mary Miller', email: 'mary.m@example.com', amount: 25, date: '2024-02-12', type: 'Monthly', project: 'General Fund' },
-    { id: 'DON-005', donorName: 'David Garcia', email: 'david.g@example.com', amount: 500, date: '2024-02-15', type: 'One-time', project: 'Water for Villages' },
+    { id: 'DON-001', donorName: 'John Smith', email: 'john.s@example.com', amount: 100, date: new Date('2024-02-01'), type: 'ONE_TIME', projectId: 'water-for-villages' },
+    { id: 'DON-002', donorName: 'Jane Doe', email: 'jane.d@example.com', amount: 50, date: new Date('2024-02-05'), type: 'MONTHLY', projectId: 'education-for-all' },
+    { id: 'DON-003', donorName: 'Peter Jones', email: 'peter.j@example.com', amount: 250, date: new Date('2024-02-10'), type: 'ONE_TIME', projectId: 'emergency-medical-aid' },
+    { id: 'DON-004', donorName: 'Mary Miller', email: 'mary.m@example.com', amount: 25, date: new Date('2024-02-12'), type: 'MONTHLY', projectId: null },
+    { id: 'DON-005', donorName: 'David Garcia', email: 'david.g@example.com', amount: 500, date: new Date('2024-02-15'), type: 'ONE_TIME', projectId: 'water-for-villages' },
 ];
-
-export type Admin = {
-    id: string;
-    name: string;
-    email: string;
-    role: 'Admin';
-    joinDate: string;
-}
 
 export let admins: Admin[] = [
-    { id: 'ADM-001', name: 'Michael Scott', email: 'michael.s@benevolence.com', role: 'Admin', joinDate: '2021-01-01' },
-    { id: 'ADM-002', name: 'Dwight Schrute', email: 'dwight.s@benevolence.com', role: 'Admin', joinDate: '2021-06-15' },
-    { id: 'ADM-003', name: 'Pam Beesly', email: 'pam.b@benevolence.com', role: 'Admin', joinDate: '2022-03-10' },
+    { id: 'ADM-001', name: 'Michael Scott', email: 'michael.s@benevolence.com', password: 'password', role: 'ADMIN', joinDate: new Date('2021-01-01') },
+    { id: 'ADM-002', name: 'Dwight Schrute', email: 'dwight.s@benevolence.com', password: 'password', role: 'ADMIN', joinDate: new Date('2021-06-15') },
+    { id: 'ADM-003', name: 'Pam Beesly', email: 'pam.b@benevolence.com', password: 'password', role: 'ADMIN', joinDate: new Date('2022-03-10') },
 ];
-
-  

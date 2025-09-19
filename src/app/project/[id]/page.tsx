@@ -7,28 +7,35 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
-import { projects } from '@/lib/data';
+import prisma from '@/lib/prisma';
 
-export default function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = projects.find((p) => p.id === params.id);
-  const projectImage = PlaceHolderImages.find(img => img.id === project?.imageId);
-
-  if (!project || !projectImage) {
+export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
+  const project = await prisma.project.findUnique({
+    where: { id: params.id },
+  });
+  
+  if (!project) {
     notFound();
   }
+  
+  const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
 
   return (
     <div className="flex min-h-screen flex-col bg-card">
       <AppHeader />
       <main className="flex-1">
         <section className="relative h-64 md:h-96 w-full text-white">
-            <Image
-              src={projectImage.imageUrl}
-              alt={projectImage.description}
-              fill
-              className="object-cover"
-              data-ai-hint={projectImage.imageHint}
-            />
+            {projectImage ? (
+                <Image
+                src={projectImage.imageUrl}
+                alt={projectImage.description}
+                fill
+                className="object-cover"
+                data-ai-hint={projectImage.imageHint}
+                />
+            ) : (
+                <div className="bg-muted w-full h-full" />
+            )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
           <div className="relative z-10 container mx-auto h-full flex flex-col justify-end px-4 sm:px-6 lg:px-8 pb-12">
             <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl drop-shadow-2xl">
@@ -54,7 +61,7 @@ export default function ProjectDetailsPage({ params }: { params: { id: string } 
                 <div className="rounded-lg bg-background p-6 shadow-lg border">
                     <h3 className="font-headline text-2xl mb-4 text-center">Support this Project</h3>
                     <p className="text-center text-muted-foreground mb-6">Your donation directly funds our efforts for {project.title}.</p>
-                    <DonationDialog />
+                    <DonationDialog projectId={project.id} />
                 </div>
                  <div className="text-center">
                     <Button asChild variant="outline">
