@@ -163,6 +163,9 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
             </div>
              <DialogFooter>
                 <DialogClose asChild>
+                    <Button type="button" variant="outline">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
                     <Button type="button" onClick={handleSave}>Save Project</Button>
                 </DialogClose>
             </DialogFooter>
@@ -343,5 +346,3 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
-
-    
