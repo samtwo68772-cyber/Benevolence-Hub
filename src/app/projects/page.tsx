@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
-import { db } from '@/lib/db';
-import { Project } from '@/lib/types';
+import prisma from '@/lib/prisma';
+import { Project } from '@prisma/client';
 import { Badge } from '@/components/ui/badge';
 
 export default async function AllProjectsPage() {
-  const projects = await db.project.findMany({
+  const projects = await prisma.project.findMany({
     orderBy: { startDate: 'desc' }
   });
 

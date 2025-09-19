@@ -15,15 +15,15 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Project } from '@/lib/types';
+import { Project, ProjectCategory, ProjectStatus } from '@prisma/client';
 
 const projectFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   details: z.string().min(10, "Details must be at least 10 characters."),
   startDate: z.date({ required_error: "A start date is required."}),
-  status: z.enum(['Active', 'Completed', 'Planning']),
-  category: z.enum(['Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief']),
+  status: z.nativeEnum(ProjectStatus),
+  category: z.nativeEnum(ProjectCategory),
 });
 
 type ProjectFormProps = {
@@ -40,7 +40,7 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
       details: project?.details.join('\\n') || '',
       startDate: project ? new Date(project.startDate) : new Date(),
       status: project?.status || 'Planning',
-      category: project?.category || 'Community Development',
+      category: project?.category || 'Community_Development',
     },
   });
 
@@ -179,8 +179,8 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
                   <SelectItem value="Water">Water</SelectItem>
                   <SelectItem value="Education">Education</SelectItem>
                   <SelectItem value="Medical">Medical</SelectItem>
-                  <SelectItem value="Community Development">Community Development</SelectItem>
-                  <SelectItem value="Disaster Relief">Disaster Relief</SelectItem>
+                  <SelectItem value="Community_Development">Community Development</SelectItem>
+                  <SelectItem value="Disaster_Relief">Disaster Relief</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

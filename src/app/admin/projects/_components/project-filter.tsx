@@ -5,9 +5,10 @@ import * as React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { ProjectCategory, ProjectStatus } from '@prisma/client';
 
-const projectStatuses = ['all', 'Active', 'Completed', 'Planning'];
-const projectCategories = ['all', 'Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief'];
+const projectStatuses: (ProjectStatus | 'all')[] = ['all', 'Active', 'Completed', 'Planning'];
+const projectCategories: (ProjectCategory | 'all')[] = ['all', 'Water', 'Education', 'Medical', 'Community_Development', 'Disaster_Relief'];
 
 export function ProjectFilter() {
     const router = useRouter();
@@ -41,7 +42,7 @@ export function ProjectFilter() {
                     </SelectTrigger>
                     <SelectContent>
                         {projectStatuses.map((status) => (
-                            <SelectItem key={status} value={status} className="capitalize">{status}</SelectItem>
+                            <SelectItem key={status} value={status} className="capitalize">{status.replace(/_/g, ' ')}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -54,7 +55,7 @@ export function ProjectFilter() {
                     </SelectTrigger>
                     <SelectContent>
                         {projectCategories.map((category) => (
-                            <SelectItem key={category} value={category} className="capitalize">{category}</SelectItem>
+                            <SelectItem key={category} value={category} className="capitalize">{category.replace(/_/g, ' ')}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
