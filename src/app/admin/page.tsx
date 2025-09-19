@@ -12,7 +12,7 @@ const stats = [
 
 export default function AdminDashboardPage() {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 p-6">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
             <Card key={stat.title} className="hover:bg-muted/50 transition-colors">

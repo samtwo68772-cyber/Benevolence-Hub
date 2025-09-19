@@ -159,7 +159,7 @@ export default function AdminVolunteersPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6 w-full">
+    <div className="flex flex-col h-full gap-6 p-6">
       <div className="flex justify-end items-center">
         {/* Title is now in the layout header */}
       </div>
