@@ -84,13 +84,13 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
-       <Card>
+       <Card className="mx-auto w-full max-w-6xl">
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <VolunteerFilter />
             </CardContent>
        </Card>
 
-       <div className="rounded-lg border flex-1 relative">
+       <div className="rounded-lg border flex-1 relative mx-auto w-full max-w-6xl">
          <ScrollArea className="absolute inset-0">
             <Table>
                 <TableHeader>

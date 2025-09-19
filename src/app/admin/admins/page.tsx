@@ -37,20 +37,23 @@ export default async function AdminAdminsPage({ searchParams }: { searchParams: 
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Admins</h1>
-        <AdminDialog onSave={addAdmin}>
-             <Button><PlusCircle className="mr-2" />Add Admin</Button>
-        </AdminDialog>
+       <div className="mx-auto w-full max-w-6xl">
+        <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-semibold">Admins</h1>
+            <AdminDialog onSave={addAdmin}>
+                <Button><PlusCircle className="mr-2" />Add Admin</Button>
+            </AdminDialog>
+        </div>
       </div>
 
-       <Card>
+
+       <Card className="mx-auto w-full max-w-6xl">
           <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Manage administrator accounts for the dashboard.</p>
           </CardContent>
        </Card>
 
-      <div className="rounded-lg border flex-1 flex flex-col">
+      <div className="rounded-lg border flex-1 flex flex-col mx-auto w-full max-w-6xl">
         <div className="relative flex-grow">
           <ScrollArea className="absolute inset-0">
             <Table>

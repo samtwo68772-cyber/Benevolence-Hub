@@ -49,19 +49,21 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
-      <div className="flex justify-end items-center">
-        <ProjectDialog onSave={addProject}>
-             <Button><PlusCircle className="mr-2" />Add Project</Button>
-        </ProjectDialog>
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="flex justify-end items-center">
+          <ProjectDialog onSave={addProject}>
+              <Button><PlusCircle className="mr-2" />Add Project</Button>
+          </ProjectDialog>
+        </div>
       </div>
 
-       <Card>
+       <Card className="mx-auto w-full max-w-6xl">
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                <ProjectFilter />
             </CardContent>
        </Card>
 
-      <div className="rounded-lg border flex-1 flex flex-col">
+      <div className="rounded-lg border flex-1 flex flex-col mx-auto w-full max-w-6xl">
         <div className="relative flex-grow">
           <ScrollArea className="absolute inset-0">
           <Table>
