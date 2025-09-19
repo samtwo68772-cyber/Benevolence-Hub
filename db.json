@@ -17,22 +17,6 @@
       "category": "Water"
     },
     {
-      "id": "education-for-all",
-      "title": "Education for All",
-      "description": "Providing access to quality education for children in underserved regions, including school supplies and teacher training. Our goal is to break the cycle of poverty by empowering the next generation through learning. We build schools, provide books, and support teachers.",
-      "imageId": "project-education",
-      "details": [
-        "Built and renovated 15 schools.",
-        "Distributed over 100,000 school supply kits.",
-        "Sponsored 500+ teacher training programs.",
-        "Increased literacy rates by 40% in project zones."
-      ],
-      "status": "Active",
-      "startDate": "2021-08-20T00:00:00.000Z",
-      "peopleHelped": 5000,
-      "category": "Education"
-    },
-    {
       "id": "emergency-medical-aid",
       "title": "Emergency Medical Aid",
       "description": "Deploying mobile medical clinics to disaster-stricken areas, offering urgent care and essential health services. Our rapid-response teams are equipped to handle a wide range of medical needs, from treating injuries to preventing the spread of disease.",
