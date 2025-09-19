@@ -69,44 +69,44 @@ export default function AppHeader() {
             <DonationDialog />
         </div>
         
-        {!isProjectPage && (
-          <div className="lg:hidden">
-            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] bg-card">
-                
-                <div className="flex h-full flex-col p-6">
-                  <div className="mb-8 flex items-center justify-start">
-                     <Link href="/" className="flex items-center gap-2" prefetch={false} onClick={() => setIsMenuOpen(false)}>
-                        <HandHeart className="h-7 w-7 text-primary" />
-                      </Link>
+        <div className="flex items-center gap-2 lg:hidden">
+          {!isProjectPage && (
+            <>
+              <DonationDialog />
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] bg-card">
+                  
+                  <div className="flex h-full flex-col p-6">
+                    <div className="mb-8 flex items-center justify-start">
+                       <Link href="/" className="flex items-center gap-2" prefetch={false} onClick={() => setIsMenuOpen(false)}>
+                          <HandHeart className="h-7 w-7 text-primary" />
+                        </Link>
+                    </div>
+                    <nav className="flex flex-1 flex-col items-start gap-6">
+                      {navLinks.map((link) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          className="text-xl font-medium text-foreground/80 transition-colors hover:text-primary"
+                          onClick={() => setIsMenuOpen(false)}
+                          prefetch={false}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </nav>
                   </div>
-                  <nav className="flex flex-1 flex-col items-start gap-6">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="text-xl font-medium text-foreground/80 transition-colors hover:text-primary"
-                        onClick={() => setIsMenuOpen(false)}
-                        prefetch={false}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
-                  <div className="mt-8">
-                    <DonationDialog />
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        )}
+                </SheetContent>
+              </Sheet>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
