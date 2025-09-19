@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { HandHeart, Menu } from "lucide-react";
+import { HandHeart, Menu, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -67,7 +67,7 @@ export default function AppHeader() {
             <SheetContent side="right" className="w-[300px] bg-card">
               <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
               <div className="flex h-full flex-col p-6">
-                <div className="mb-8 flex items-center justify-between">
+                <div className="mb-8 flex items-center justify-start">
                    <Link href="/" className="flex items-center gap-2" prefetch={false}>
                       <HandHeart className="h-7 w-7 text-primary" />
                     </Link>

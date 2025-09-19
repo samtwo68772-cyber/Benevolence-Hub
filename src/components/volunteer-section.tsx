@@ -19,10 +19,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { HeartHandshake } from "lucide-react"
+import { HeartHandshake, XCircle } from "lucide-react"
 import { volunteers } from "@/lib/data"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "./ui/badge"
 
 
 const availabilityItems = [
