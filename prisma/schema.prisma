@@ -11,19 +11,16 @@ datasource db {
 }
 
 model Project {
-  id           String    @id @default(cuid())
-  title        String
-  description  String    @db.Text
-  imageId      String
-  details      String[]
-  status       String // "Active", "Completed", "Planning"
-  startDate    DateTime
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  imageId     String
+  details     String[]
+  status      String   // Using String for simplicity, can be an Enum
+  startDate   DateTime
   peopleHelped Int
-  category     String // "Water", "Education", "Medical", "General Aid", "Shelter"
-  donations    Donation[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  category    String
+  donations   Donation[]
 }
 
 model Volunteer {
@@ -35,45 +32,25 @@ model Volunteer {
   skills       String   @db.Text
   interests    String[]
   availability String[]
-  status       String // "Pending", "Approved", "Rejected"
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status       String   // Using String for simplicity, can be an Enum
 }
 
 model Donation {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   donorName String
   email     String
   amount    Float
   date      DateTime
-  type      String // "One-time", "Monthly"
-  project   Project @relation(fields: [projectId], references: [id])
-  projectId String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  type      String   // Using String for simplicity, can be an Enum (ONE_TIME, MONTHLY)
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
 }
 
 model User {
-  id        String  @id @default(cuid())
-  name      String?
-  email     String? @unique
-  password  String
-  
-  admin     Admin?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Admin {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique
-  role      String   @default("Admin")
+  name      String
+  email     String   @unique
+  password  String
+  role      String   // e.g., 'ADMIN'
   joinDate  DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
