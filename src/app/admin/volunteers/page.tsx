@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -38,6 +39,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const interestItems = ["Education", "Medical", "Community Development", "Disaster Relief", "General Support"];
 
@@ -157,16 +159,16 @@ export default function AdminVolunteersPage() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full gap-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Volunteer Submissions</h1>
       </div>
 
        <Card>
-            <CardHeader>
+            <CardHeader className="p-4">
                 <CardTitle>Filters</CardTitle>
             </CardHeader>
-            <CardContent className="grid sm:grid-cols-2 gap-4">
+            <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>
                     <Label htmlFor="status-filter">Status</Label>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -198,73 +200,77 @@ export default function AdminVolunteersPage() {
             </CardContent>
        </Card>
 
-       <div className="rounded-lg border">
-        <Table>
-            <TableHeader>
-            <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Signup Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-            </TableHeader>
-            <TableBody>
-            {filteredVolunteers.map((volunteer) => (
-                <TableRow key={volunteer.id}>
-                <TableCell className="font-medium">{volunteer.name}</TableCell>
-                <TableCell>{volunteer.email}</TableCell>
-                <TableCell>{volunteer.signupDate}</TableCell>
-                <TableCell>
-                    <Badge variant={
-                        volunteer.status === 'Approved' ? 'default' :
-                        volunteer.status === 'Rejected' ? 'destructive' : 'outline'
-                    } className="capitalize">
-                         {volunteer.status === 'Approved' && <CheckCircle className="mr-1 h-3 w-3" />}
-                         {volunteer.status === 'Rejected' && <XCircle className="mr-1 h-3 w-3" />}
-                         {volunteer.status === 'Pending' && <Clock className="mr-1 h-3 w-3" />}
-                        {volunteer.status}
-                    </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                             <ViewVolunteerDialog volunteer={volunteer}>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                    View Details
-                                </DropdownMenuItem>
-                            </ViewVolunteerDialog>
-                             <DropdownMenuSeparator />
-                             {volunteer.status === 'Pending' && (
-                                <>
-                                    <DropdownMenuItem onClick={() => handleStatusChange(volunteer.id, 'Approved')}>
-                                        Approve
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleStatusChange(volunteer.id, 'Rejected')} className="text-destructive">
-                                        Reject
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                </>
-                            )}
-                            <DeleteVolunteerDialog onConfirm={() => handleDeleteVolunteer(volunteer.id)}>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
-                                    Delete
-                                </DropdownMenuItem>
-                            </DeleteVolunteerDialog>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </TableCell>
+       <div className="rounded-lg border flex-1 relative">
+         <ScrollArea className="absolute inset-0">
+            <Table>
+                <TableHeader>
+                <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Signup Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-            ))}
-            </TableBody>
-        </Table>
+                </TableHeader>
+                <TableBody>
+                {filteredVolunteers.map((volunteer) => (
+                    <TableRow key={volunteer.id}>
+                    <TableCell className="font-medium">{volunteer.name}</TableCell>
+                    <TableCell>{volunteer.email}</TableCell>
+                    <TableCell>{volunteer.signupDate}</TableCell>
+                    <TableCell>
+                        <Badge variant={
+                            volunteer.status === 'Approved' ? 'default' :
+                            volunteer.status === 'Rejected' ? 'destructive' : 'outline'
+                        } className="capitalize">
+                            {volunteer.status === 'Approved' && <CheckCircle className="mr-1 h-3 w-3" />}
+                            {volunteer.status === 'Rejected' && <XCircle className="mr-1 h-3 w-3" />}
+                            {volunteer.status === 'Pending' && <Clock className="mr-1 h-3 w-3" />}
+                            {volunteer.status}
+                        </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <ViewVolunteerDialog volunteer={volunteer}>
+                                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                        View Details
+                                    </DropdownMenuItem>
+                                </ViewVolunteerDialog>
+                                <DropdownMenuSeparator />
+                                {volunteer.status === 'Pending' && (
+                                    <>
+                                        <DropdownMenuItem onClick={() => handleStatusChange(volunteer.id, 'Approved')}>
+                                            Approve
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleStatusChange(volunteer.id, 'Rejected')} className="text-destructive">
+                                            Reject
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                    </>
+                                )}
+                                <DeleteVolunteerDialog onConfirm={() => handleDeleteVolunteer(volunteer.id)}>
+                                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DeleteVolunteerDialog>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+        </ScrollArea>
         </div>
     </div>
   );
 }
+
+    

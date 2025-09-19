@@ -45,6 +45,7 @@ import type { Project } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 type ProjectFormData = Omit<Project, 'id' | 'imageId'> & { image?: File | null };
@@ -242,7 +243,7 @@ export default function AdminProjectsPage() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full gap-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Projects</h1>
         <ProjectDialog onSave={handleAddProject}>
@@ -251,10 +252,10 @@ export default function AdminProjectsPage() {
       </div>
 
        <Card>
-            <CardHeader>
+            <CardHeader className="p-4">
                 <CardTitle>Filters</CardTitle>
             </CardHeader>
-            <CardContent className="grid sm:grid-cols-2 gap-4">
+            <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>
                     <Label htmlFor="status-filter">Status</Label>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -288,7 +289,8 @@ export default function AdminProjectsPage() {
             </CardContent>
        </Card>
 
-      <div className="rounded-lg border">
+      <div className="rounded-lg border flex-1 relative">
+        <ScrollArea className="absolute inset-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -339,7 +341,10 @@ export default function AdminProjectsPage() {
             ))}
           </TableBody>
         </Table>
+        </ScrollArea>
       </div>
     </div>
   );
 }
+
+    

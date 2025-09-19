@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 export default function AdminDonationsPage() {
@@ -32,16 +33,16 @@ export default function AdminDonationsPage() {
     });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full gap-6">
         <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold">Donations</h1>
         </div>
 
         <Card>
-            <CardHeader>
+            <CardHeader className="p-4">
                 <CardTitle>Filters</CardTitle>
             </CardHeader>
-            <CardContent className="grid sm:grid-cols-2 gap-4">
+            <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>
                     <Label htmlFor="type-filter">Donation Type</Label>
                     <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -72,38 +73,42 @@ export default function AdminDonationsPage() {
             </CardContent>
         </Card>
 
-         <div className="rounded-lg border">
-            <Table>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Donor Name</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Project</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {filteredDonations.map((donation) => (
-                    <TableRow key={donation.id}>
-                    <TableCell className="font-medium">{donation.donorName}</TableCell>
-                    <TableCell>${donation.amount.toFixed(2)}</TableCell>
-                    <TableCell>
-                        <Badge variant={donation.type === 'Monthly' ? 'outline' : 'default'}>{donation.type}</Badge>
-                    </TableCell>
-                    <TableCell>{donation.project}</TableCell>
-                    <TableCell>{donation.date}</TableCell>
-                    <TableCell className="text-right">
-                        <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </TableCell>
+         <div className="rounded-lg border flex-1 relative">
+            <ScrollArea className="absolute inset-0">
+                <Table>
+                    <TableHeader>
+                    <TableRow>
+                        <TableHead>Donor Name</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Project</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                    {filteredDonations.map((donation) => (
+                        <TableRow key={donation.id}>
+                        <TableCell className="font-medium">{donation.donorName}</TableCell>
+                        <TableCell>${donation.amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                            <Badge variant={donation.type === 'Monthly' ? 'outline' : 'default'}>{donation.type}</Badge>
+                        </TableCell>
+                        <TableCell>{donation.project}</TableCell>
+                        <TableCell>{donation.date}</TableCell>
+                        <TableCell className="text-right">
+                            <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+            </ScrollArea>
         </div>
     </div>
   );
 }
+
+    
