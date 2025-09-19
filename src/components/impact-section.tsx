@@ -4,8 +4,8 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
-import { HandHeart, CheckCircle, Users2 } from "lucide-react";
-import { projects } from "@/lib/data";
+import { HandHeart, Users, Users2 } from "lucide-react";
+import { projects, volunteers } from "@/lib/data";
 
 const barChartConfig = {
   "peopleHelped": {
@@ -32,10 +32,37 @@ const pieChartConfig = {
   },
 } satisfies ChartConfig;
 
+const volunteerStatusConfig = {
+  volunteers: {
+    label: "Volunteers",
+  },
+  Approved: {
+    label: "Approved",
+    color: "hsl(var(--chart-1))",
+  },
+  Pending: {
+    label: "Pending",
+    color: "hsl(var(--chart-2))",
+  },
+  Rejected: {
+    label: "Rejected",
+    color: "hsl(var(--chart-3))",
+  },
+} satisfies ChartConfig;
+
+
+const volunteerInterestsConfig = {
+  count: {
+    label: "Volunteers",
+    color: "hsl(var(--accent))",
+  },
+} satisfies ChartConfig;
+
+
 export default function ImpactSection() {
   const totalPeopleHelped = projects.reduce((acc, project) => acc + project.peopleHelped, 0);
   const totalProjects = projects.length;
-  const completedProjects = projects.filter(p => p.status === 'Completed').length;
+  const totalVolunteers = volunteers.length;
 
   const projectByCategory = projects.reduce((acc, project) => {
     if (!acc[project.category]) {
@@ -57,10 +84,31 @@ export default function ImpactSection() {
 
   const pieChartData = Object.values(projectByStatus);
 
+  const volunteerStatusData = volunteers.reduce((acc, volunteer) => {
+    if (!acc[volunteer.status]) {
+      acc[volunteer.status] = { name: volunteer.status, value: 0, fill: `var(--color-${volunteer.status})` };
+    }
+    acc[volunteer.status].value++;
+    return acc;
+  }, {} as Record<string, { name: string; value: number, fill: string }>);
+
+  const volunteerStatusChartData = Object.values(volunteerStatusData);
+
+  const volunteerInterestsData = volunteers.flatMap(v => v.interests).reduce((acc, interest) => {
+    if (!acc[interest]) {
+        acc[interest] = { interest: interest, count: 0 };
+    }
+    acc[interest].count++;
+    return acc;
+  }, {} as Record<string, {interest: string, count: number}>);
+
+  const volunteerInterestsChartData = Object.values(volunteerInterestsData);
+
+
   const stats = [
     { icon: Users2, value: totalPeopleHelped.toLocaleString(), label: 'People Helped' },
     { icon: HandHeart, value: totalProjects, label: 'Total Projects' },
-    { icon: CheckCircle, value: completedProjects, label: 'Projects Completed' },
+    { icon: Users, value: totalVolunteers, label: 'Total Volunteers' },
   ];
 
   return (
@@ -69,7 +117,7 @@ export default function ImpactSection() {
         <div className="text-center mb-12">
           <h2 className="font-headline text-4xl md:text-5xl text-primary">Our Tangible Impact</h2>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            We believe in transparency. Here’s a look at the lives we’ve touched and the progress we’ve made together.
+            We believe in transparency. Here’s a look at the lives we’ve touched and the community we've built together.
           </p>
         </div>
 
@@ -89,7 +137,7 @@ export default function ImpactSection() {
           ))}
         </div>
         
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
             <Card className="shadow-lg h-full">
               <CardHeader>
@@ -157,6 +205,83 @@ export default function ImpactSection() {
               </CardContent>
             </Card>
           </div>
+        </div>
+        <div className="text-center my-12">
+            <h3 className="font-headline text-3xl md:text-4xl text-primary">Our Volunteer Community</h3>
+            <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
+                The heart of our organization is our volunteers. Here's a glimpse into our passionate community.
+            </p>
+        </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
+                <Card className="shadow-lg h-full flex flex-col">
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Volunteer Status</CardTitle>
+                    <CardDescription>Application statuses for our volunteers.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 flex items-center justify-center">
+                    <ChartContainer config={volunteerStatusConfig} className="h-[250px] w-full">
+                    <ResponsiveContainer>
+                        <PieChart>
+                        <Tooltip
+                            cursor={false}
+                            content={<ChartTooltipContent hideLabel indicator="dot" nameKey="name" />}
+                        />
+                        <Pie
+                            data={volunteerStatusChartData}
+                            dataKey="value"
+                            nameKey="name"
+                            innerRadius={60}
+                            strokeWidth={5}
+                            >
+                            {volunteerStatusChartData.map((entry) => (
+                                <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                            ))}
+                            </Pie>
+                        </PieChart>
+                    </ResponsiveContainer>
+                    </ChartContainer>
+                </CardContent>
+                </Card>
+            </div>
+             <div className="lg:col-span-2">
+                <Card className="shadow-lg h-full">
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl">Volunteer Interests</CardTitle>
+                    <CardDescription>Top areas where our volunteers want to contribute.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ChartContainer config={volunteerInterestsConfig} className="h-[350px] w-full">
+                    <ResponsiveContainer>
+                        <BarChart data={volunteerInterestsChartData} layout="vertical" margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
+                        <XAxis
+                            type="number"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={12}
+                            hide
+                        />
+                        <YAxis 
+                            dataKey="interest"
+                            type="category"
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                        />
+                        <Tooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator="dot" />}
+                        />
+                        <Bar dataKey="count" name="Volunteers" fill="var(--color-count)" radius={5} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                    </ChartContainer>
+                </CardContent>
+                </Card>
+            </div>
         </div>
       </div>
     </section>
