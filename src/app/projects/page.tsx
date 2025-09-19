@@ -11,10 +11,9 @@ import prisma from '@/lib/prisma';
 import type { Project } from '@prisma/client';
 
 export default async function AllProjectsPage() {
-  // const projects = await prisma.project.findMany({
-  //   orderBy: { startDate: 'desc' }
-  // });
-  const projects: Project[] = [];
+  const projects = await prisma.project.findMany({
+    orderBy: { startDate: 'desc' }
+  });
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

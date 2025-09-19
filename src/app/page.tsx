@@ -7,17 +7,15 @@ import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
 import prisma from '@/lib/prisma';
+import { projects as staticProjects, volunteers as staticVolunteers } from '@/lib/data';
 
 export default async function Home() {
-  // const projects = await prisma.project.findMany();
-  // const volunteers = await prisma.volunteer.findMany();
-  // const totalPeopleHelped = await prisma.project.aggregate({
-  //   _sum: { peopleHelped: true }
-  // });
+  const projects = staticProjects;
+  const volunteers = staticVolunteers;
+  
+  const totalPeopleHelped = projects.reduce((sum, project) => sum + project.peopleHelped, 0);
 
-  const projects = [];
-  const volunteers = [];
-  const totalPeopleHelped = { _sum: { peopleHelped: 0 } };
+  const featuredProjects = projects.slice(0, 3);
 
 
   return (
@@ -26,11 +24,11 @@ export default async function Home() {
       <main className="flex-1">
         <HeroSection />
         <MissionSection />
-        <ProjectsSection projects={[]} />
+        <ProjectsSection projects={featuredProjects} />
         <ImpactSection 
             projects={projects} 
             volunteers={volunteers}
-            totalPeopleHelped={totalPeopleHelped._sum.peopleHelped || 0}
+            totalPeopleHelped={totalPeopleHelped || 0}
         />
         <VolunteerSection />
       </main>
