@@ -9,24 +9,16 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+import { PlusCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
-import { addProject, deleteProject, updateProject } from './_actions/projects';
-import { DeleteProjectDialog } from './_components/delete-project-dialog';
+import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
 import { db } from '@/lib/db';
 import { ProjectCategory, ProjectStatus } from '@/lib/types';
+import { ProjectActions } from './_components/project-actions';
 
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
@@ -66,7 +58,6 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
               <TableHead className='hidden sm:table-cell'>Status</TableHead>
               <TableHead className='hidden md:table-cell'>Category</TableHead>
               <TableHead className='hidden lg:table-cell'>Start Date</TableHead>
-              <TableHead className='hidden xl:table-cell'>People Helped</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -83,29 +74,8 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                     <Badge variant="outline">{project.category}</Badge>
                 </TableCell>
                  <TableCell className='hidden lg:table-cell'>{format(project.startDate, 'yyyy-MM-dd')}</TableCell>
-                <TableCell className='hidden xl:table-cell'>{project.peopleHelped.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                             <ProjectDialog project={project} onSave={updateProject}>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                    Edit
-                                </DropdownMenuItem>
-                            </ProjectDialog>
-                            <DropdownMenuSeparator />
-                             <DeleteProjectDialog onConfirm={() => deleteProject(project.id)}>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
-                                    Delete
-                                </DropdownMenuItem>
-                            </DeleteProjectDialog>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ProjectActions project={project} />
                 </TableCell>
               </TableRow>
             ))}
