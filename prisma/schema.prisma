@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  binaryTargets   = ["native", "debian-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -12,9 +12,9 @@ datasource db {
 }
 
 model Project {
-  id           String    @id @default(uuid())
+  id           String    @id @default(cuid())
   title        String
-  description  String    @db.Text
+  description  String
   imageId      String
   details      String[]
   status       ProjectStatus
@@ -25,41 +25,41 @@ model Project {
 }
 
 model Volunteer {
-  id           String   @id @default(uuid())
+  id           String          @id @default(cuid())
   name         String
-  email        String   @unique
+  email        String          @unique
   phone        String?
-  signupDate   DateTime @default(now())
+  signupDate   DateTime        @default(now())
   skills       String
   interests    String[]
   availability String[]
-  status       VolunteerStatus @default("Pending")
+  status       VolunteerStatus @default(Pending)
 }
 
 model Donation {
-  id        String       @id @default(uuid())
+  id        String      @id @default(cuid())
   donorName String
   email     String
   amount    Float
-  date      DateTime     @default(now())
+  date      DateTime    @default(now())
   type      DonationType
-  project   Project?     @relation(fields: [projectId], references: [id])
+  project   Project?    @relation(fields: [projectId], references: [id])
   projectId String?
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      UserRole
-  joinDate  DateTime @default(now())
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String
+  role     UserRole
+  joinDate DateTime @default(now())
 }
 
 enum ProjectStatus {
+  Planning
   Active
   Completed
-  Planning
 }
 
 enum ProjectCategory {
@@ -83,4 +83,5 @@ enum DonationType {
 
 enum UserRole {
   ADMIN
+  USER
 }
