@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { DonationDialog } from "./donation-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ThemeToggle } from "./theme-toggle";
 
 const navLinks = [
   { href: "#mission", label: "Our Mission" },
@@ -67,9 +68,11 @@ export default function AppHeader() {
             ))}
             </nav>
             <DonationDialog />
+            <ThemeToggle />
         </div>
         
         <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
           {!isProjectPage && (
             <>
               <DonationDialog />

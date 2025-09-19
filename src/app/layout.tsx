@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { Alegreya, Belleza } from 'next/font/google';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Benevolence Hub - Compassion in Action',
@@ -32,11 +33,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${alegreya.variable} ${belleza.variable} scroll-smooth`}>
+    <html lang="en" className={`${alegreya.variable} ${belleza.variable} scroll-smooth`} suppressHydrationWarning>
       <head/>
       <body className="font-body bg-background text-foreground antialiased">
-        {children}
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
