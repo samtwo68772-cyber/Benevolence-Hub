@@ -1,13 +1,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, FolderKanban, Users, HandHeart } from 'lucide-react';
+import { DollarSign, FolderKanban, Users, UserCog } from 'lucide-react';
 import Link from 'next/link';
+import { admins } from '@/lib/data';
+
+const projectCount = 3;
+const volunteerCount = 5;
+const adminCount = admins.length;
+const totalDonations = 975;
 
 const stats = [
-    { title: 'Projects', value: '3', icon: FolderKanban, href: '/admin/projects' },
-    { title: 'Volunteers', value: '5', icon: Users, href: '/admin/volunteers' },
-    { title: 'Total Donations', value: '$975', icon: DollarSign, href: '/admin/donations' },
-    { title: 'People Helped', value: '62,500', icon: Users, href: '/admin/projects' },
+    { title: 'Projects', value: projectCount.toString(), icon: FolderKanban, href: '/admin/projects' },
+    { title: 'Volunteers', value: volunteerCount.toString(), icon: Users, href: '/admin/volunteers' },
+    { title: 'Total Donations', value: `$${totalDonations}`, icon: DollarSign, href: '/admin/donations' },
+    { title: 'Admins', value: adminCount.toString(), icon: UserCog, href: '/admin/admins' },
 ]
 
 export default function AdminDashboardPage() {

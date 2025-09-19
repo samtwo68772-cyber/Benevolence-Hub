@@ -36,24 +36,35 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 
-type AdminFormData = Omit<Admin, 'id' | 'joinDate'>;
+type AdminFormData = Omit<Admin, 'id' | 'joinDate'> & { password?: string; confirmPassword?: string };
 
 function AdminForm({ admin, onSave }: { admin?: Admin, onSave: (adminData: Admin) => void }) {
     const [formData, setFormData] = React.useState<AdminFormData>(
-        admin ? { ...admin } : { name: '', email: '', role: 'Admin' }
+        admin ? { ...admin, role: 'Admin' } : { name: '', email: '', role: 'Admin', password: '', confirmPassword: '' }
     );
+    const [error, setError] = React.useState('');
 
     const handleSave = () => {
+        if (!admin && formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+        if (!admin && (!formData.password || formData.password.length < 8)) {
+            setError("Password must be at least 8 characters long.");
+            return;
+        }
+        setError('');
+        
         const newAdminData: Admin = {
             ...formData,
             id: admin ? admin.id : `adm-${Date.now()}`,
             joinDate: admin ? admin.joinDate : format(new Date(), 'yyyy-MM-dd'),
+            role: 'Admin', // Always 'Admin'
         };
         onSave(newAdminData);
     };
@@ -70,20 +81,22 @@ function AdminForm({ admin, onSave }: { admin?: Admin, onSave: (adminData: Admin
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="role" className="text-right">Role</Label>
-                 <Select value={formData.role} onValueChange={(value) => setFormData({...formData, role: value as Admin['role']})}>
-                    <SelectTrigger className="col-span-2">
-                        <SelectValue placeholder="Select Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Admin">Admin</SelectItem>
-                        <SelectItem value="Super Admin">Super Admin</SelectItem>
-                    </SelectContent>
-                </Select>
+                <Input id="role" value="Admin" disabled className="col-span-3 bg-muted" />
             </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password" className="text-right">{admin ? 'New Password' : 'Password'}</Label>
+                <Input id="password" type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder={admin ? 'Leave blank to keep current' : '••••••••'} className="col-span-3" />
+            </div>
+             <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="confirmPassword" className="text-right">Confirm Password</Label>
+                <Input id="confirmPassword" type="password" value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} placeholder="••••••••" className="col-span-3" />
+            </div>
+            {error && <p className="text-destructive text-sm text-center col-span-4">{error}</p>}
              <DialogFooter>
                 <DialogClose asChild>
-                    <Button type="button" onClick={handleSave}>Save Admin</Button>
+                    <Button type="button" variant="outline">Cancel</Button>
                 </DialogClose>
+                <Button type="button" onClick={handleSave}>Save Admin</Button>
             </DialogFooter>
         </div>
     )
@@ -132,7 +145,6 @@ function DeleteAdminDialog({ children, onConfirm }: { children: React.ReactNode,
 export default function AdminAdminsPage() {
     const { toast } = useToast();
     const [admins, setAdmins] = React.useState<Admin[]>(initialAdmins);
-    const [roleFilter, setRoleFilter] = React.useState('all');
 
     const handleAddAdmin = (newAdmin: Admin) => {
         setAdmins(prev => [newAdmin, ...prev]);
@@ -152,10 +164,6 @@ export default function AdminAdminsPage() {
         }
     };
 
-    const filteredAdmins = admins.filter(admin => {
-        return roleFilter === 'all' || admin.role === roleFilter;
-    });
-
   return (
     <div className="flex flex-col h-full gap-6 px-6 py-6">
       <div className="flex justify-end items-center">
@@ -165,21 +173,9 @@ export default function AdminAdminsPage() {
       </div>
 
        <Card>
-            <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
-                <div>
-                    <Label htmlFor="role-filter">Role</Label>
-                    <Select value={roleFilter} onValueChange={setRoleFilter}>
-                        <SelectTrigger id="role-filter">
-                            <SelectValue placeholder="Filter by role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Roles</SelectItem>
-                            <SelectItem value="Admin">Admin</SelectItem>
-                            <SelectItem value="Super Admin">Super Admin</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </CardContent>
+          <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Manage administrator accounts for the dashboard.</p>
+          </CardContent>
        </Card>
 
       <div className="rounded-lg border flex-1 relative">
@@ -195,12 +191,12 @@ export default function AdminAdminsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAdmins.map((admin) => (
+            {admins.map((admin) => (
               <TableRow key={admin.id}>
                 <TableCell className="font-medium">{admin.name}</TableCell>
                 <TableCell>{admin.email}</TableCell>
                 <TableCell>
-                  <Badge variant={admin.role === 'Super Admin' ? 'default' : 'secondary'}>
+                  <Badge variant='secondary'>
                     {admin.role}
                   </Badge>
                 </TableCell>

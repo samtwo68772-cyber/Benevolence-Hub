@@ -5,6 +5,7 @@
 
 
 
+
 export type Project = {
     id: string;
     title: string;
@@ -100,12 +101,12 @@ export type Admin = {
     id: string;
     name: string;
     email: string;
-    role: 'Admin' | 'Super Admin';
+    role: 'Admin';
     joinDate: string;
 }
 
 export let admins: Admin[] = [
-    { id: 'ADM-001', name: 'Michael Scott', email: 'michael.s@benevolence.com', role: 'Super Admin', joinDate: '2021-01-01' },
+    { id: 'ADM-001', name: 'Michael Scott', email: 'michael.s@benevolence.com', role: 'Admin', joinDate: '2021-01-01' },
     { id: 'ADM-002', name: 'Dwight Schrute', email: 'dwight.s@benevolence.com', role: 'Admin', joinDate: '2021-06-15' },
     { id: 'ADM-003', name: 'Pam Beesly', email: 'pam.b@benevolence.com', role: 'Admin', joinDate: '2022-03-10' },
 ];
