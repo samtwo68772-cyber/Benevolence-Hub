@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HandHeart, LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home } from 'lucide-react';
+import { HandHeart, LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UsersCog } from 'lucide-react';
 import {
   SidebarProvider,
   Sidebar,
@@ -14,6 +14,7 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
+  SheetTitle,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 
@@ -22,6 +23,7 @@ const navItems = [
   { href: '/admin/projects', icon: FolderKanban, label: 'Projects' },
   { href: '/admin/volunteers', icon: Users, label: 'Volunteers' },
   { href: '/admin/donations', icon: DollarSign, label: 'Donations' },
+  { href: '/admin/admins', icon: UsersCog, label: 'Admins' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -43,6 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <SidebarProvider>
       <div className="flex min-h-screen">
         <Sidebar>
+          <SheetTitle className="sr-only">Admin Menu</SheetTitle>
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
@@ -94,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </Sidebar>
         <SidebarInset>
           <header className="flex h-14 items-center gap-4 border-b bg-card">
-            <SidebarTrigger className="md:hidden" />
+            <SidebarTrigger className="ml-4 md:hidden" />
             <h1 className="flex-1 text-xl font-semibold">{getPageTitle()}</h1>
           </header>
           <main className="flex-1">{children}</main>

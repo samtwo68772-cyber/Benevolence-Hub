@@ -4,6 +4,7 @@
 
 
 
+
 export type Project = {
     id: string;
     title: string;
@@ -93,6 +94,20 @@ export const donations = [
     { id: 'DON-003', donorName: 'Peter Jones', email: 'peter.j@example.com', amount: 250, date: '2024-02-10', type: 'One-time', project: 'Emergency Medical Aid' },
     { id: 'DON-004', donorName: 'Mary Miller', email: 'mary.m@example.com', amount: 25, date: '2024-02-12', type: 'Monthly', project: 'General Fund' },
     { id: 'DON-005', donorName: 'David Garcia', email: 'david.g@example.com', amount: 500, date: '2024-02-15', type: 'One-time', project: 'Water for Villages' },
+];
+
+export type Admin = {
+    id: string;
+    name: string;
+    email: string;
+    role: 'Admin' | 'Super Admin';
+    joinDate: string;
+}
+
+export let admins: Admin[] = [
+    { id: 'ADM-001', name: 'Michael Scott', email: 'michael.s@benevolence.com', role: 'Super Admin', joinDate: '2021-01-01' },
+    { id: 'ADM-002', name: 'Dwight Schrute', email: 'dwight.s@benevolence.com', role: 'Admin', joinDate: '2021-06-15' },
+    { id: 'ADM-003', name: 'Pam Beesly', email: 'pam.b@benevolence.com', role: 'Admin', joinDate: '2022-03-10' },
 ];
 
   
