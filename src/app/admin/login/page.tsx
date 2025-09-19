@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { HandHeart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { useActionState } from "react";
 import { authenticate } from "../_actions/auth";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
@@ -25,7 +26,7 @@ function LoginButton() {
 export default function AdminLoginPage() {
     const router = useRouter();
     const { toast } = useToast();
-    const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+    const [errorMessage, dispatch] = useActionState(authenticate, undefined);
 
     React.useEffect(() => {
         if (errorMessage) {
