@@ -243,9 +243,8 @@ export default function AdminProjectsPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Projects</h1>
+    <div className="flex flex-col h-full gap-6 w-full">
+      <div className="flex justify-end items-center">
         <ProjectDialog onSave={handleAddProject}>
              <Button><PlusCircle className="mr-2" />Add Project</Button>
         </ProjectDialog>
