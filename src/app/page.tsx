@@ -6,14 +6,13 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-// import prisma from '@/lib/prisma';
 import { db } from '@/lib/db';
 
 export default async function Home() {
   const projects = await db.project.findMany();
   const volunteers = await db.volunteer.findMany();
   
-  const totalPeopleHelped = projects.reduce((sum, project) => sum + project.peopleHelped, 0);
+  const totalDonations = await db.donation.aggregate({_sum: { amount: true}});
   
   const featuredProjects = await db.project.findMany({ orderBy: { startDate: 'desc' }, take: 3 });
 
@@ -27,7 +26,7 @@ export default async function Home() {
         <ImpactSection 
             projects={projects} 
             volunteers={volunteers}
-            totalPeopleHelped={totalPeopleHelped || 0}
+            totalDonations={totalDonations._sum.amount || 0}
         />
         <VolunteerSection />
       </main>

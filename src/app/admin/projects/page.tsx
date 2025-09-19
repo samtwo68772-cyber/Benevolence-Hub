@@ -25,7 +25,6 @@ import { ProjectDialog } from './_components/project-dialog';
 import { addProject, deleteProject, updateProject } from './_actions/projects';
 import { DeleteProjectDialog } from './_components/delete-project-dialog';
 import { ProjectFilter } from './_components/project-filter';
-// import prisma from '@/lib/prisma';
 import { db } from '@/lib/db';
 import { ProjectCategory, ProjectStatus } from '@/lib/types';
 

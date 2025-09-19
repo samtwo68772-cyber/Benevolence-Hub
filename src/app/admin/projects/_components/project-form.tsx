@@ -21,11 +21,9 @@ const projectFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   details: z.string().min(10, "Details must be at least 10 characters."),
-  imageId: z.string().min(1, "Image ID is required."),
   startDate: z.date({ required_error: "A start date is required."}),
   status: z.enum(['Active', 'Completed', 'Planning']),
   category: z.enum(['Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief']),
-  peopleHelped: z.coerce.number().int().positive(),
 });
 
 type ProjectFormProps = {
@@ -40,11 +38,9 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
       title: project?.title || '',
       description: project?.description || '',
       details: project?.details.join('\\n') || '',
-      imageId: project?.imageId || '',
       startDate: project ? new Date(project.startDate) : new Date(),
       status: project?.status || 'Planning',
       category: project?.category || 'Community Development',
-      peopleHelped: project?.peopleHelped || 0,
     },
   });
 
@@ -99,32 +95,6 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
               <FormLabel>Key Achievements (one per line)</FormLabel>
               <FormControl>
                 <Textarea {...field} rows={5} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="imageId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image ID</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="e.g., project-water" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="peopleHelped"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>People Helped</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

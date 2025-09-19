@@ -5,7 +5,7 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
-import { HandHeart, Users, Users2 } from "lucide-react";
+import { DollarSign, HandHeart, Users, Users2 } from "lucide-react";
 import { Project, Volunteer } from "@/lib/types";
 
 
@@ -64,10 +64,10 @@ const volunteerInterestsConfig = {
 type ImpactSectionProps = {
     projects: Project[];
     volunteers: Volunteer[];
-    totalPeopleHelped: number;
+    totalDonations: number;
 }
 
-export default function ImpactSection({ projects, volunteers, totalPeopleHelped }: ImpactSectionProps) {
+export default function ImpactSection({ projects, volunteers, totalDonations }: ImpactSectionProps) {
   const totalProjects = projects.length;
   const totalVolunteers = volunteers.length;
 
@@ -113,8 +113,8 @@ export default function ImpactSection({ projects, volunteers, totalPeopleHelped 
 
 
   const stats = [
-    { icon: Users2, value: totalPeopleHelped.toLocaleString(), label: 'People Helped' },
     { icon: HandHeart, value: totalProjects, label: 'Total Projects' },
+    { icon: DollarSign, value: `$${totalDonations.toLocaleString()}`, label: 'Total Donations' },
     { icon: Users, value: totalVolunteers, label: 'Total Volunteers' },
   ];
 
