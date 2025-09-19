@@ -137,8 +137,8 @@ export default function ImpactSection() {
           ))}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-          <div className="md:col-span-2 lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
             <Card className="shadow-lg h-full">
               <CardHeader>
                 <CardTitle className="font-headline text-2xl">Community Reach by Sector</CardTitle>
@@ -174,7 +174,7 @@ export default function ImpactSection() {
               </CardContent>
             </Card>
           </div>
-          <div className="md:col-span-1 lg:col-span-1">
+          <div className="lg:col-span-1">
             <Card className="shadow-lg h-full flex flex-col">
               <CardHeader>
                 <CardTitle className="font-headline text-2xl">Project Status Overview</CardTitle>
@@ -212,8 +212,8 @@ export default function ImpactSection() {
                 The heart of our organization is our volunteers. Here's a glimpse into our passionate community.
             </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="md:col-span-1 lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
                 <Card className="shadow-lg h-full flex flex-col">
                 <CardHeader>
                     <CardTitle className="font-headline text-2xl">Volunteer Status</CardTitle>
@@ -244,7 +244,7 @@ export default function ImpactSection() {
                 </CardContent>
                 </Card>
             </div>
-             <div className="md:col-span-2 lg:col-span-2">
+             <div className="lg:col-span-2">
                 <Card className="shadow-lg h-full">
                 <CardHeader>
                     <CardTitle className="font-headline text-2xl">Volunteer Interests</CardTitle>

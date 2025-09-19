@@ -22,7 +22,7 @@ export default function HeroSection() {
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
-        <h1 className="font-headline text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-tight drop-shadow-2xl">
+        <h1 className="font-headline text-4xl sm:text-6xl md:text-7xl leading-tight drop-shadow-2xl">
           Compassion in Action
         </h1>
         <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto font-light drop-shadow-lg">
