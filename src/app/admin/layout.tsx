@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { SheetTitle } from '@/components/ui/sheet';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const navItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -117,6 +118,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <header className="flex h-14 items-center gap-4 border-b bg-card px-4 sm:px-6">
             <SidebarTrigger className="md:hidden" />
             <h1 className="flex-1 text-lg sm:text-xl font-semibold">{getPageTitle()}</h1>
+            <ThemeToggle />
           </header>
           <main className="flex-1">{children}</main>
         </SidebarInset>

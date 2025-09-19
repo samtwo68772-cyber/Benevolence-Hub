@@ -73,9 +73,11 @@ export default function AppHeader() {
         
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
+           {!isProjectPage && (
+              <DonationDialog />
+            )}
           {!isProjectPage && (
             <>
-              <DonationDialog />
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon">
