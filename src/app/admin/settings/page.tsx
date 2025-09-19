@@ -23,7 +23,7 @@ export default function AdminSettingsPage() {
 
     return (
         <div className="flex flex-col h-full gap-6 px-6 py-6">
-            <div className="grid gap-6 mx-auto w-full max-w-4xl">
+            <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
                 <Card>
                     <CardHeader>
                         <CardTitle>Profile Information</CardTitle>
