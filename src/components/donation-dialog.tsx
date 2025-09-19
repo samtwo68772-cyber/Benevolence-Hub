@@ -78,7 +78,7 @@ export function DonationDialog() {
           Donate Now
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex justify-center items-center bg-primary/10 w-16 h-16 rounded-full mx-auto mb-4">
              <Gift className="w-8 h-8 text-primary" />
@@ -131,7 +131,7 @@ export function DonationDialog() {
                         }
                       }}
                       defaultValue={field.value}
-                      className="grid grid-cols-2 sm:grid-cols-2 gap-4"
+                      className="grid grid-cols-2 sm:grid-cols-4 gap-4"
                     >
                       {presetAmounts.map((amount) => (
                         <FormItem key={amount}>
