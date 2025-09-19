@@ -44,6 +44,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Project } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 
 type ProjectFormData = Omit<Project, 'id' | 'imageId'> & { image?: File | null };
@@ -213,6 +214,9 @@ export default function AdminProjectsPage() {
     const { toast } = useToast();
     const [projects, setProjects] = React.useState<Project[]>(initialProjects);
 
+    const [statusFilter, setStatusFilter] = React.useState('all');
+    const [categoryFilter, setCategoryFilter] = React.useState('all');
+
     const handleAddProject = (newProject: Project) => {
         setProjects(prev => [newProject, ...prev]);
         toast({ title: "Project Added", description: `"${newProject.title}" has been successfully added.` });
@@ -231,15 +235,59 @@ export default function AdminProjectsPage() {
         }
     };
 
+    const filteredProjects = projects.filter(project => {
+        const statusMatch = statusFilter === 'all' || project.status === statusFilter;
+        const categoryMatch = categoryFilter === 'all' || project.category === categoryFilter;
+        return statusMatch && categoryMatch;
+    });
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Projects</h1>
         <ProjectDialog onSave={handleAddProject}>
              <Button><PlusCircle className="mr-2" />Add Project</Button>
         </ProjectDialog>
       </div>
+
+       <Card>
+            <CardHeader>
+                <CardTitle>Filters</CardTitle>
+            </CardHeader>
+            <CardContent className="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <Label htmlFor="status-filter">Status</Label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger id="status-filter">
+                            <SelectValue placeholder="Filter by status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="Active">Active</SelectItem>
+                            <SelectItem value="Completed">Completed</SelectItem>
+                            <SelectItem value="Planning">Planning</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <Label htmlFor="category-filter">Category</Label>
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                        <SelectTrigger id="category-filter">
+                            <SelectValue placeholder="Filter by category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                             <SelectItem value="all">All Categories</SelectItem>
+                            <SelectItem value="Water">Water</SelectItem>
+                            <SelectItem value="Education">Education</SelectItem>
+                            <SelectItem value="Medical">Medical</SelectItem>
+                            <SelectItem value="Shelter">Shelter</SelectItem>
+                            <SelectItem value="General Aid">General Aid</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </CardContent>
+       </Card>
+
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
@@ -252,7 +300,7 @@ export default function AdminProjectsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <TableRow key={project.id}>
                 <TableCell className="font-medium">{project.title}</TableCell>
                 <TableCell>

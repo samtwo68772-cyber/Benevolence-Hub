@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { volunteers as initialVolunteers } from '@/lib/data';
+import { volunteers as initialVolunteers, projects } from '@/lib/data';
 import {
   Table,
   TableBody,
@@ -36,6 +36,10 @@ import type { Volunteer } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const interestItems = ["Education", "Medical", "Community Development", "Disaster Relief", "General Support"];
 
 function ViewVolunteerDialog({ children, volunteer }: { children: React.ReactNode; volunteer: Volunteer }) {
     return (
@@ -127,6 +131,9 @@ export default function AdminVolunteersPage() {
     const { toast } = useToast();
     const [volunteers, setVolunteers] = React.useState<Volunteer[]>(initialVolunteers);
 
+    const [statusFilter, setStatusFilter] = React.useState('all');
+    const [interestFilter, setInterestFilter] = React.useState('all');
+
     const handleDeleteVolunteer = (volunteerId: string) => {
         const volunteerToDelete = volunteers.find(v => v.id === volunteerId);
         if(volunteerToDelete) {
@@ -143,12 +150,54 @@ export default function AdminVolunteersPage() {
         }
     };
 
+    const filteredVolunteers = volunteers.filter(volunteer => {
+        const statusMatch = statusFilter === 'all' || volunteer.status === statusFilter;
+        const interestMatch = interestFilter === 'all' || volunteer.interests.includes(interestFilter);
+        return statusMatch && interestMatch;
+    });
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Volunteer Submissions</h1>
       </div>
+
+       <Card>
+            <CardHeader>
+                <CardTitle>Filters</CardTitle>
+            </CardHeader>
+            <CardContent className="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <Label htmlFor="status-filter">Status</Label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger id="status-filter">
+                            <SelectValue placeholder="Filter by status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="Pending">Pending</SelectItem>
+                            <SelectItem value="Approved">Approved</SelectItem>
+                            <SelectItem value="Rejected">Rejected</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <Label htmlFor="interest-filter">Interest</Label>
+                    <Select value={interestFilter} onValueChange={setInterestFilter}>
+                        <SelectTrigger id="interest-filter">
+                            <SelectValue placeholder="Filter by interest" />
+                        </SelectTrigger>
+                        <SelectContent>
+                             <SelectItem value="all">All Interests</SelectItem>
+                             {interestItems.map(item => (
+                                <SelectItem key={item} value={item}>{item}</SelectItem>
+                             ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </CardContent>
+       </Card>
+
        <div className="rounded-lg border">
         <Table>
             <TableHeader>
@@ -161,7 +210,7 @@ export default function AdminVolunteersPage() {
             </TableRow>
             </TableHeader>
             <TableBody>
-            {volunteers.map((volunteer) => (
+            {filteredVolunteers.map((volunteer) => (
                 <TableRow key={volunteer.id}>
                 <TableCell className="font-medium">{volunteer.name}</TableCell>
                 <TableCell>{volunteer.email}</TableCell>

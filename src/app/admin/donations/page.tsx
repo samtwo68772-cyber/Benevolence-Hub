@@ -1,5 +1,8 @@
 
-import { donations } from '@/lib/data';
+'use client';
+
+import * as React from 'react';
+import { donations as initialDonations, projects } from '@/lib/data';
 import {
   Table,
   TableBody,
@@ -11,13 +14,64 @@ import {
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 export default function AdminDonationsPage() {
+    const [typeFilter, setTypeFilter] = React.useState('all');
+    const [projectFilter, setProjectFilter] = React.useState('all');
+
+    const projectNames = ['General Fund', ...projects.map(p => p.title)];
+
+    const filteredDonations = initialDonations.filter(donation => {
+        const typeMatch = typeFilter === 'all' || donation.type === typeFilter;
+        const projectMatch = projectFilter === 'all' || donation.project === projectFilter;
+        return typeMatch && projectMatch;
+    });
+
   return (
-    <div>
-        <div className="flex justify-between items-center mb-6">
+    <div className="space-y-6">
+        <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold">Donations</h1>
         </div>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Filters</CardTitle>
+            </CardHeader>
+            <CardContent className="grid sm:grid-cols-2 gap-4">
+                <div>
+                    <Label htmlFor="type-filter">Donation Type</Label>
+                    <Select value={typeFilter} onValueChange={setTypeFilter}>
+                        <SelectTrigger id="type-filter">
+                            <SelectValue placeholder="Filter by type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            <SelectItem value="One-time">One-time</SelectItem>
+                            <SelectItem value="Monthly">Monthly</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div>
+                    <Label htmlFor="project-filter">Project</Label>
+                    <Select value={projectFilter} onValueChange={setProjectFilter}>
+                        <SelectTrigger id="project-filter">
+                            <SelectValue placeholder="Filter by project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Projects</SelectItem>
+                            {projectNames.map(name => (
+                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </CardContent>
+        </Card>
+
          <div className="rounded-lg border">
             <Table>
                 <TableHeader>
@@ -31,7 +85,7 @@ export default function AdminDonationsPage() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {donations.map((donation) => (
+                {filteredDonations.map((donation) => (
                     <TableRow key={donation.id}>
                     <TableCell className="font-medium">{donation.donorName}</TableCell>
                     <TableCell>${donation.amount.toFixed(2)}</TableCell>
