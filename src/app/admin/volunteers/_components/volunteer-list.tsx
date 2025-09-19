@@ -30,35 +30,76 @@ import { VolunteerFilter, interestItems } from './volunteer-filter';
 import { deleteVolunteer, updateVolunteerStatus } from '../_actions/volunteers';
 import { format } from 'date-fns';
 import { Volunteer } from '@/lib/types';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunteer[] }) {
     const { toast } = useToast();
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [volunteers, setVolunteers] = React.useState<Volunteer[]>(initialVolunteers);
     const [optimisticStatus, setOptimisticStatus] = React.useState<{[key: string]: 'Approved' | 'Rejected' | 'Pending'}>({});
 
-    const [statusFilter, setStatusFilter] = React.useState('all');
-    const [interestFilter, setInterestFilter] = React.useState('all');
+    const statusFilter = searchParams.get('status') || 'all';
+    const interestFilter = searchParams.get('interest') || 'all';
+
+    const handleFilterChange = (type: 'status' | 'interest', value: string) => {
+        const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+        if (value === 'all') {
+            current.delete(type);
+        } else {
+            current.set(type, value);
+        }
+
+        const search = current.toString();
+        const query = search ? `?${search}` : '';
+        router.push(`${pathname}${query}`);
+    };
 
     const handleDelete = async (volunteerId: string) => {
         const volunteerToDelete = volunteers.find(v => v.id === volunteerId);
         if(volunteerToDelete) {
             setVolunteers(prev => prev.filter(v => v.id !== volunteerId));
-            await deleteVolunteer(volunteerId);
-            toast({ title: "Submission Deleted", description: `The submission from "${volunteerToDelete.name}" has been deleted.` });
+            try {
+                await deleteVolunteer(volunteerId);
+                toast({ title: "Submission Deleted", description: `The submission from "${volunteerToDelete.name}" has been deleted.` });
+            } catch (error) {
+                toast({ variant: 'destructive', title: "Error", description: "Failed to delete submission." });
+                 setVolunteers(initialVolunteers);
+            }
         }
     };
 
     const handleStatusChange = async (volunteerId: string, status: 'Approved' | 'Rejected') => {
+        const originalVolunteers = volunteers;
         const volunteerToUpdate = volunteers.find(v => v.id === volunteerId);
+
         if (volunteerToUpdate) {
+            // Optimistic update
+            const newVolunteers = volunteers.map(v => v.id === volunteerId ? {...v, status} : v);
+            setVolunteers(newVolunteers);
             setOptimisticStatus(prev => ({...prev, [volunteerId]: status}));
-            setVolunteers(prev => prev.map(v => v.id === volunteerId ? {...v, status} : v));
-            await updateVolunteerStatus(volunteerId, status);
-            toast({ title: `Application ${status}`, description: `The submission from "${volunteerToUpdate.name}" has been ${status.toLowerCase()}.` });
+
+            try {
+                await updateVolunteerStatus(volunteerId, status);
+                toast({ title: `Application ${status}`, description: `The submission from "${volunteerToUpdate.name}" has been ${status.toLowerCase()}.` });
+            } catch (error) {
+                // Revert on error
+                setVolunteers(originalVolunteers);
+                toast({ variant: 'destructive', title: "Error", description: `Failed to update status for ${volunteerToUpdate.name}.` });
+            } finally {
+                setOptimisticStatus(prev => {
+                    const newOptimisticStatus = {...prev};
+                    delete newOptimisticStatus[volunteerId];
+                    return newOptimisticStatus;
+                });
+            }
         }
     };
 
-    const filteredVolunteers = volunteers.filter(volunteer => {
+    const filteredVolunteers = initialVolunteers.filter(volunteer => {
         const statusMatch = statusFilter === 'all' || volunteer.status === statusFilter;
         const interestMatch = interestFilter === 'all' || volunteer.interests.includes(interestFilter);
         return statusMatch && interestMatch;
@@ -68,13 +109,7 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
        <Card>
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
-                <VolunteerFilter 
-                    interestItems={interestItems}
-                    statusFilter={statusFilter}
-                    interestFilter={interestFilter}
-                    onStatusChange={setStatusFilter}
-                    onInterestChange={setInterestFilter}
-                />
+                <VolunteerFilter />
             </CardContent>
        </Card>
 
@@ -95,7 +130,7 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
                     <TableRow key={volunteer.id} className={optimisticStatus[volunteer.id] ? 'opacity-50' : ''}>
                     <TableCell className="font-medium">{volunteer.name}</TableCell>
                     <TableCell className='hidden sm:table-cell'>{volunteer.email}</TableCell>
-                    <TableCell className='hidden md:table-cell'>{format(volunteer.signupDate, 'yyyy-MM-dd')}</TableCell>
+                    <TableCell className='hidden md:table-cell'>{format(new Date(volunteer.signupDate), 'yyyy-MM-dd')}</TableCell>
                     <TableCell>
                         <Badge variant={
                             volunteer.status === 'Approved' ? 'default' :
