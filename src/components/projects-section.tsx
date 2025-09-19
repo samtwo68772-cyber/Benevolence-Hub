@@ -5,15 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowRight } from "lucide-react";
-import prisma from "@/lib/prisma";
+import type { Project } from "@prisma/client";
 
-export default async function ProjectsSection() {
-  const featuredProjects = await prisma.project.findMany({
-    take: 3,
-    orderBy: {
-        startDate: 'desc'
-    }
-  });
+export default function ProjectsSection({ projects: featuredProjects }: { projects: Project[] }) {
 
   return (
     <section id="projects" className="section-padding">
