@@ -20,6 +20,8 @@ function assignImageId(category: z.infer<typeof projectSchema>['category']): str
         case 'Water': return 'project-water';
         case 'Education': return 'project-education';
         case 'Medical': return 'project-medical';
+        case 'Community Development': return 'project-community-development';
+        case 'Disaster Relief': return 'project-disaster-relief';
         default: return `project-${category.toLowerCase().replace(' ', '-')}`;
     }
 }

@@ -30,6 +30,18 @@
       "description": "A diverse group of volunteers working together to build a house.",
       "imageUrl": "https://picsum.photos/seed/mission-img/800/600",
       "imageHint": "volunteers building"
+    },
+    {
+      "id": "project-community-development",
+      "description": "Volunteers planting trees in a community garden.",
+      "imageUrl": "https://picsum.photos/seed/proj-community/600/400",
+      "imageHint": "community garden"
+    },
+    {
+      "id": "project-disaster-relief",
+      "description": "Emergency responders providing aid after a natural disaster.",
+      "imageUrl": "https://picsum.photos/seed/proj-disaster/600/400",
+      "imageHint": "disaster relief"
     }
   ]
 }
