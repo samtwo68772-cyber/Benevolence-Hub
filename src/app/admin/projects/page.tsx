@@ -87,7 +87,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                         <Button
                         variant={"outline"}
                         className={cn(
-                            "w-full sm:w-[280px] justify-start text-left font-normal col-span-3",
+                            "w-full justify-start text-left font-normal col-span-3",
                             !selectedDate && "text-muted-foreground"
                         )}
                         >
@@ -110,7 +110,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 Status
                 </Label>
                  <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value as "Active" | "Completed" | "Planning"})}>
-                    <SelectTrigger className="col-span-3 sm:col-span-2">
+                    <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -125,7 +125,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 Category
                 </Label>
                  <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value as Project['category']})}>
-                    <SelectTrigger className="col-span-3 sm:col-span-2">
+                    <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -141,7 +141,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 <Label htmlFor="peopleHelped" className="text-right">
                     People Helped
                 </Label>
-                <Input id="peopleHelped" type="number" value={formData.peopleHelped} onChange={e => setFormData({...formData, peopleHelped: Number(e.target.value)})} placeholder="0" className="col-span-3 sm:col-span-2" />
+                <Input id="peopleHelped" type="number" value={formData.peopleHelped} onChange={e => setFormData({...formData, peopleHelped: Number(e.target.value)})} placeholder="0" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="image" className="text-right">
@@ -292,7 +292,8 @@ export default function AdminProjectsPage() {
               <TableHead>Title</TableHead>
               <TableHead className='hidden sm:table-cell'>Status</TableHead>
               <TableHead className='hidden md:table-cell'>Category</TableHead>
-              <TableHead className='hidden lg:table-cell'>People Helped</TableHead>
+              <TableHead className='hidden lg:table-cell'>Start Date</TableHead>
+              <TableHead className='hidden xl:table-cell'>People Helped</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -308,7 +309,8 @@ export default function AdminProjectsPage() {
                 <TableCell className='hidden md:table-cell'>
                     <Badge variant="outline">{project.category}</Badge>
                 </TableCell>
-                <TableCell className='hidden lg:table-cell'>{project.peopleHelped.toLocaleString()}</TableCell>
+                 <TableCell className='hidden lg:table-cell'>{project.startDate}</TableCell>
+                <TableCell className='hidden xl:table-cell'>{project.peopleHelped.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -341,3 +343,5 @@ export default function AdminProjectsPage() {
     </div>
   );
 }
+
+    
