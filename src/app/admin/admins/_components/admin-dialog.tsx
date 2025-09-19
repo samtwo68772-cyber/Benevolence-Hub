@@ -16,20 +16,11 @@ type AdminDialogProps = {
 
 export function AdminDialog({ children, admin, onSave }: AdminDialogProps) {
   const [open, setOpen] = React.useState(false);
-  const formRef = React.useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
-  const handleSave = async () => {
-    if (formRef.current) {
-      // Programmatically submit the form
-      formRef.current.requestSubmit();
-    }
-  };
-  
-  const handleFormSubmit = async (formData: FormData) => {
-    const data = Object.fromEntries(formData.entries());
+  const handleFormSubmit = async (data: any) => {
     if (admin?.id) {
-        (data as any).id = admin.id;
+        data.id = admin.id;
     }
     
     try {
@@ -58,11 +49,7 @@ export function AdminDialog({ children, admin, onSave }: AdminDialogProps) {
             {admin ? 'Update the details for the administrator account.' : 'Fill in the form to create a new administrator account.'}
           </DialogDescription>
         </DialogHeader>
-        <AdminForm ref={formRef} admin={admin} onSubmit={handleFormSubmit} />
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave}>Save</Button>
-        </DialogFooter>
+        <AdminForm admin={admin} onSubmit={handleFormSubmit} onCancel={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );

@@ -8,13 +8,19 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { User } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 const adminFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   password: z.string().min(8, "Password must be at least 8 characters.").optional().or(z.literal('')),
   confirmPassword: z.string().optional(),
-}).refine(data => data.password === data.confirmPassword, {
+}).refine(data => {
+    if (data.password) {
+        return data.password === data.confirmPassword;
+    }
+    return true;
+}, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
 });
@@ -22,11 +28,12 @@ const adminFormSchema = z.object({
 
 type AdminFormProps = {
   admin?: User;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: z.infer<typeof adminFormSchema>) => void;
+  onCancel: () => void;
 };
 
-export const AdminForm = React.forwardRef<HTMLFormElement, AdminFormProps>(({ admin, onSubmit }, ref) => {
-  const form = useForm({
+export const AdminForm: React.FC<AdminFormProps> = ({ admin, onSubmit, onCancel }) => {
+  const form = useForm<z.infer<typeof adminFormSchema>>({
     resolver: zodResolver(adminFormSchema),
     defaultValues: {
       name: admin?.name || '',
@@ -38,7 +45,7 @@ export const AdminForm = React.forwardRef<HTMLFormElement, AdminFormProps>(({ ad
 
   return (
     <Form {...form}>
-      <form ref={ref} action={onSubmit} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
@@ -91,9 +98,11 @@ export const AdminForm = React.forwardRef<HTMLFormElement, AdminFormProps>(({ ad
             </FormItem>
           )}
         />
+        <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+            <Button type="submit">Save</Button>
+        </div>
       </form>
     </Form>
   );
-});
-
-AdminForm.displayName = 'AdminForm';
+};

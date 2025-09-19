@@ -14,15 +14,15 @@ const adminSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters.").optional(),
 });
 
-export async function addAdmin(data: z.infer<typeof adminSchema>) {
-    const validatedFields = adminSchema.safeParse(data);
+const addAdminSchema = adminSchema.extend({
+    password: z.string().min(8, "Password must be at least 8 characters."),
+});
+
+export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
+    const validatedFields = addAdminSchema.safeParse(data);
 
     if (!validatedFields.success) {
         throw new Error('Invalid admin data.');
-    }
-
-    if (!validatedFields.data.password) {
-        throw new Error('Password is required for new admins.');
     }
     
     const hashedPassword = await bcrypt.hash(validatedFields.data.password, 10);
