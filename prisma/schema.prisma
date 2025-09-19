@@ -1,50 +1,52 @@
-generator client {
-  provider = "prisma-client-js"
-}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
 model Project {
-  id           String        @id @default(uuid())
+  id           String          @id @default(cuid())
   title        String
   description  String
   imageId      String
   details      String[]
-  status       ProjectStatus
-  startDate    DateTime
-  peopleHelped Int
+  status       ProjectStatus   @default(PLANNING)
+  startDate    DateTime        @default(now())
+  peopleHelped Int             @default(0)
   category     ProjectCategory
   donations    Donation[]
 }
 
 model Volunteer {
-  id           String          @id @default(uuid())
+  id           String   @id @default(cuid())
   name         String
-  email        String          @unique
+  email        String   @unique
   phone        String?
-  signupDate   DateTime        @default(now())
+  signupDate   DateTime @default(now())
   skills       String
   interests    String[]
   availability String[]
-  status       VolunteerStatus @default(Pending)
+  status       VolunteerStatus @default(PENDING)
 }
 
 model Donation {
-  id        String       @id @default(uuid())
+  id        String       @id @default(cuid())
   donorName String
   email     String
   amount    Float
   date      DateTime     @default(now())
   type      DonationType
+  project   Project?     @relation(fields: [projectId], references: [id])
   projectId String?
-  project   Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
 }
 
 model User {
-  id       String   @id @default(uuid())
+  id       String   @id @default(cuid())
   name     String
   email    String   @unique
   password String
@@ -53,23 +55,23 @@ model User {
 }
 
 enum ProjectStatus {
-  Active
-  Completed
-  Planning
+  PLANNING
+  ACTIVE
+  COMPLETED
 }
 
 enum ProjectCategory {
-  Water
-  Education
-  Medical
-  Community_Development
-  Disaster_Relief
+  WATER
+  EDUCATION
+  MEDICAL
+  COMMUNITY_DEVELOPMENT
+  DISASTER_RELIEF
 }
 
 enum VolunteerStatus {
-  Pending
-  Approved
-  Rejected
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum DonationType {
