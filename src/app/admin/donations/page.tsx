@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -39,9 +39,6 @@ export default function AdminDonationsPage() {
         </div>
 
         <Card>
-            <CardHeader className="p-4">
-                <CardTitle>Filters</CardTitle>
-            </CardHeader>
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>
                     <Label htmlFor="type-filter">Donation Type</Label>
@@ -110,5 +107,3 @@ export default function AdminDonationsPage() {
     </div>
   );
 }
-
-    
