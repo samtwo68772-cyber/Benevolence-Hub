@@ -37,7 +37,7 @@ async function writeDb(db: Db): Promise<void> {
 
 export const db = {
   user: {
-    findMany: async ({ where, orderBy }: { where?: { role?: 'ADMIN' }, orderBy?: { joinDate: 'desc' } } = {}) => {
+    findMany: async ({ where, orderBy, skip, take }: { where?: { role?: 'ADMIN' }, orderBy?: { joinDate: 'desc' }, skip?: number, take?: number } = {}) => {
       const data = await readDb();
       let users = data.users;
       if (where?.role) {
@@ -45,6 +45,9 @@ export const db = {
       }
       if (orderBy?.joinDate === 'desc') {
         users.sort((a, b) => b.joinDate.getTime() - a.joinDate.getTime());
+      }
+      if (skip !== undefined && take !== undefined) {
+        return users.slice(skip, skip + take);
       }
       return users;
     },
@@ -85,12 +88,16 @@ export const db = {
         await writeDb(db);
     },
     count: async({ where }: { where?: { role?: 'ADMIN' } } = {}) => {
-        const users = await db.user.findMany({where});
+        const data = await readDb();
+        let users = data.users;
+        if (where?.role) {
+            users = users.filter(u => u.role === where.role);
+        }
         return users.length;
     }
   },
   project: {
-    findMany: async ({ where, orderBy, take }: { where?: { status?: ProjectStatus, category?: ProjectCategory }, orderBy?: { startDate: 'desc' }, take?: number } = {}) => {
+    findMany: async ({ where, orderBy, take, skip }: { where?: { status?: ProjectStatus, category?: ProjectCategory }, orderBy?: { startDate: 'desc' }, take?: number, skip?: number } = {}) => {
         const data = await readDb();
         let projects = data.projects;
         if (where?.status) {
@@ -101,6 +108,9 @@ export const db = {
         }
         if (orderBy?.startDate === 'desc') {
             projects.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+        }
+        if (skip !== undefined && take !== undefined) {
+            return projects.slice(skip, skip + take);
         }
         if(take) {
             return projects.slice(0, take);
@@ -134,17 +144,27 @@ export const db = {
         db.projects = db.projects.filter(p => p.id !== where.id);
         await writeDb(db);
     },
-    count: async() => {
+    count: async({ where }: { where?: { status?: ProjectStatus, category?: ProjectCategory } } = {}) => {
         const data = await readDb();
-        return data.projects.length;
+        let projects = data.projects;
+         if (where?.status) {
+            projects = projects.filter(p => p.status === where.status);
+        }
+        if (where?.category) {
+            projects = projects.filter(p => p.category === where.category);
+        }
+        return projects.length;
     }
   },
   volunteer: {
-    findMany: async ({orderBy}: {orderBy?: {signupDate: 'desc'}} = {}) => {
+    findMany: async ({orderBy, skip, take}: {orderBy?: {signupDate: 'desc'}, skip?: number, take?: number} = {}) => {
         const data = await readDb();
         let volunteers = data.volunteers;
          if (orderBy?.signupDate === 'desc') {
             volunteers.sort((a, b) => new Date(b.signupDate).getTime() - new Date(a.signupDate).getTime());
+        }
+        if (skip !== undefined && take !== undefined) {
+            return volunteers.slice(skip, skip + take);
         }
         return volunteers;
     },
@@ -173,13 +193,20 @@ export const db = {
         db.volunteers = db.volunteers.filter(v => v.id !== where.id);
         await writeDb(db);
     },
-     count: async() => {
+     count: async({ where }: { where?: { status?: VolunteerStatus, interests?: { has: string } } } = {}) => {
         const data = await readDb();
-        return data.volunteers.length;
+        let volunteers = data.volunteers;
+        if (where?.status) {
+            volunteers = volunteers.filter(v => v.status === where.status);
+        }
+        if (where?.interests?.has) {
+            volunteers = volunteers.filter(v => v.interests.includes(where.interests!.has));
+        }
+        return volunteers.length;
     }
   },
   donation: {
-    findMany: async ({ where, include, orderBy }: { where?: { type?: DonationType, project?: { title?: string } }, include?: { project?: boolean }, orderBy?: { date: 'desc' } } = {}) => {
+    findMany: async ({ where, include, orderBy, skip, take }: { where?: { type?: DonationType, project?: { title?: string } }, include?: { project?: boolean }, orderBy?: { date: 'desc' }, skip?: number, take?: number } = {}) => {
         const data = await readDb();
         let donations = data.donations.map(d => ({
             ...d,
@@ -198,6 +225,10 @@ export const db = {
         }
         if (orderBy?.date === 'desc') {
             donations.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        }
+
+        if (skip !== undefined && take !== undefined) {
+            donations = donations.slice(skip, skip + take);
         }
 
         if (!include?.project) {
@@ -224,6 +255,29 @@ export const db = {
             return { _sum: { amount: total } };
         }
         return { _sum: { amount: 0 } };
+    },
+    count: async({ where }: { where?: { type?: DonationType, project?: { title?: string } } } = {}) => {
+        const data = await readDb();
+        let donations = data.donations;
+
+        if (where?.type) {
+            donations = donations.filter(d => d.type === where.type);
+        }
+        if (where?.project?.title) {
+            if (where.project.title === 'General Fund') {
+                donations = donations.filter(d => d.projectId === null);
+            } else {
+                const project = data.projects.find(p => p.title === where.project?.title);
+                if (project) {
+                    donations = donations.filter(d => d.projectId === project.id);
+                } else {
+                    donations = [];
+                }
+            }
+        }
+        return donations.length;
     }
   }
 };
+
+    

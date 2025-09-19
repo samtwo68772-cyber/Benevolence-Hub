@@ -201,14 +201,6 @@
       "joinDate": "2021-06-15T00:00:00.000Z"
     },
     {
-      "id": "ADM-003",
-      "name": "Pam Beesly",
-      "email": "pam.b@benevolence.com",
-      "password": "$2a$10$w3/gS.VAiK6q2/s2l.fUv.2L02x.pGLkR/OFctE8KUDRy9U1uTqS2",
-      "role": "ADMIN",
-      "joinDate": "2022-03-10T00:00:00.000Z"
-    },
-    {
       "id": "ADM-1758314742216",
       "joinDate": "2025-09-19T20:45:42.216Z",
       "name": "Samuel Getachew",

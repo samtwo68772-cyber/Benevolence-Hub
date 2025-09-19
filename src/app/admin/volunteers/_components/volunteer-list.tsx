@@ -26,39 +26,22 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { VolunteerFilter, interestItems } from './volunteer-filter';
+import { VolunteerFilter } from './volunteer-filter';
 import { deleteVolunteer, updateVolunteerStatus } from '../_actions/volunteers';
 import { format } from 'date-fns';
 import { Volunteer } from '@/lib/types';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunteer[] }) {
     const { toast } = useToast();
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-
     const [volunteers, setVolunteers] = React.useState<Volunteer[]>(initialVolunteers);
     const [optimisticStatus, setOptimisticStatus] = React.useState<{[key: string]: 'Approved' | 'Rejected' | 'Pending'}>({});
 
-    const statusFilter = searchParams.get('status') || 'all';
-    const interestFilter = searchParams.get('interest') || 'all';
-
-    const handleFilterChange = (type: 'status' | 'interest', value: string) => {
-        const current = new URLSearchParams(Array.from(searchParams.entries()));
-
-        if (value === 'all') {
-            current.delete(type);
-        } else {
-            current.set(type, value);
-        }
-
-        const search = current.toString();
-        const query = search ? `?${search}` : '';
-        router.push(`${pathname}${query}`);
-    };
+    React.useEffect(() => {
+        setVolunteers(initialVolunteers);
+    }, [initialVolunteers]);
 
     const handleDelete = async (volunteerId: string) => {
+        const originalVolunteers = volunteers;
         const volunteerToDelete = volunteers.find(v => v.id === volunteerId);
         if(volunteerToDelete) {
             setVolunteers(prev => prev.filter(v => v.id !== volunteerId));
@@ -67,7 +50,7 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
                 toast({ title: "Submission Deleted", description: `The submission from "${volunteerToDelete.name}" has been deleted.` });
             } catch (error) {
                 toast({ variant: 'destructive', title: "Error", description: "Failed to delete submission." });
-                 setVolunteers(initialVolunteers);
+                 setVolunteers(originalVolunteers);
             }
         }
     };
@@ -99,12 +82,6 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
         }
     };
 
-    const filteredVolunteers = initialVolunteers.filter(volunteer => {
-        const statusMatch = statusFilter === 'all' || volunteer.status === statusFilter;
-        const interestMatch = interestFilter === 'all' || volunteer.interests.includes(interestFilter);
-        return statusMatch && interestMatch;
-    });
-
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
        <Card>
@@ -126,7 +103,7 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {filteredVolunteers.map((volunteer) => (
+                {volunteers.map((volunteer) => (
                     <TableRow key={volunteer.id} className={optimisticStatus[volunteer.id] ? 'opacity-50' : ''}>
                     <TableCell className="font-medium">{volunteer.name}</TableCell>
                     <TableCell className='hidden sm:table-cell'>{volunteer.email}</TableCell>
@@ -185,3 +162,5 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
     </div>
   );
 }
+
+    

@@ -19,21 +19,33 @@ import { ProjectFilter } from './_components/project-filter';
 import { db } from '@/lib/db';
 import { ProjectCategory, ProjectStatus } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
+import { PaginationControls } from '@/components/ui/pagination';
 
+const ITEMS_PER_PAGE = 10;
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
+    const page = Number(searchParams.page || '1');
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+    
     const statusFilter = searchParams.status as ProjectStatus | undefined;
     const categoryFilter = searchParams.category as ProjectCategory | undefined;
 
+    const whereClause = {
+      status: statusFilter === 'all' ? undefined : statusFilter,
+      category: categoryFilter === 'all' ? undefined : categoryFilter,
+    };
+
     const projects = await db.project.findMany({
-      where: {
-        status: statusFilter === 'all' ? undefined : statusFilter,
-        category: categoryFilter === 'all' ? undefined : categoryFilter,
-      },
+      where: whereClause,
       orderBy: {
         startDate: 'desc'
-      }
+      },
+      skip: skip,
+      take: ITEMS_PER_PAGE,
     });
+
+    const totalProjects = await db.project.count({ where: whereClause });
+    const totalPages = Math.ceil(totalProjects / ITEMS_PER_PAGE);
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
@@ -49,40 +61,52 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
             </CardContent>
        </Card>
 
-      <div className="rounded-lg border flex-1 relative">
-        <ScrollArea className="absolute inset-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead className='hidden sm:table-cell'>Status</TableHead>
-              <TableHead className='hidden md:table-cell'>Category</TableHead>
-              <TableHead className='hidden lg:table-cell'>Start Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {projects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell className="font-medium">{project.title}</TableCell>
-                <TableCell className='hidden sm:table-cell'>
-                  <Badge variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
-                    {project.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className='hidden md:table-cell'>
-                    <Badge variant="outline">{project.category}</Badge>
-                </TableCell>
-                 <TableCell className='hidden lg:table-cell'>{format(project.startDate, 'yyyy-MM-dd')}</TableCell>
-                <TableCell className="text-right">
-                    <ProjectActions project={project} />
-                </TableCell>
+      <div className="rounded-lg border flex-1 flex flex-col">
+        <div className="relative flex-grow">
+          <ScrollArea className="absolute inset-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead className='hidden sm:table-cell'>Status</TableHead>
+                <TableHead className='hidden md:table-cell'>Category</TableHead>
+                <TableHead className='hidden lg:table-cell'>Start Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        </ScrollArea>
+            </TableHeader>
+            <TableBody>
+              {projects.map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell className="font-medium">{project.title}</TableCell>
+                  <TableCell className='hidden sm:table-cell'>
+                    <Badge variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
+                      {project.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className='hidden md:table-cell'>
+                      <Badge variant="outline">{project.category}</Badge>
+                  </TableCell>
+                   <TableCell className='hidden lg:table-cell'>{format(project.startDate, 'yyyy-MM-dd')}</TableCell>
+                  <TableCell className="text-right">
+                      <ProjectActions project={project} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          </ScrollArea>
+        </div>
+        {totalPages > 1 && (
+            <div className="p-4 border-t">
+                <PaginationControls
+                    currentPage={page}
+                    totalPages={totalPages}
+                />
+            </div>
+        )}
       </div>
     </div>
   );
 }
+
+    

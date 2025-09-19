@@ -17,16 +17,28 @@ import { AdminDialog } from './_components/admin-dialog';
 import { addAdmin } from './_actions/admins';
 import { db } from '@/lib/db';
 import { AdminActions } from './_components/admin-actions';
+import { PaginationControls } from '@/components/ui/pagination';
 
-export default async function AdminAdminsPage() {
+const ITEMS_PER_PAGE = 10;
+
+export default async function AdminAdminsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
+    const page = Number(searchParams.page || '1');
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+
     const admins = await db.user.findMany({
         where: { role: 'ADMIN' },
-        orderBy: { joinDate: 'desc' }
+        orderBy: { joinDate: 'desc' },
+        skip: skip,
+        take: ITEMS_PER_PAGE,
     });
+    
+    const totalAdmins = await db.user.count({ where: { role: 'ADMIN' } });
+    const totalPages = Math.ceil(totalAdmins / ITEMS_PER_PAGE);
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
-      <div className="flex justify-end items-center">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">Admins</h1>
         <AdminDialog onSave={addAdmin}>
              <Button><PlusCircle className="mr-2" />Add Admin</Button>
         </AdminDialog>
@@ -38,38 +50,50 @@ export default async function AdminAdminsPage() {
           </CardContent>
        </Card>
 
-      <div className="rounded-lg border flex-1 relative">
-        <ScrollArea className="absolute inset-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className='hidden sm:table-cell'>Email</TableHead>
-              <TableHead className='hidden md:table-cell'>Role</TableHead>
-              <TableHead className='hidden md:table-cell'>Date Joined</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {admins.map((admin) => (
-              <TableRow key={admin.id}>
-                <TableCell className="font-medium">{admin.name}</TableCell>
-                <TableCell className='hidden sm:table-cell'>{admin.email}</TableCell>
-                <TableCell className='hidden md:table-cell'>
-                  <Badge variant='secondary'>
-                    {admin.role}
-                  </Badge>
-                </TableCell>
-                <TableCell className='hidden md:table-cell'>{format(admin.joinDate, 'yyyy-MM-dd')}</TableCell>
-                <TableCell className="text-right">
-                    <AdminActions admin={admin} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        </ScrollArea>
+      <div className="rounded-lg border flex-1 flex flex-col">
+        <div className="relative flex-grow">
+          <ScrollArea className="absolute inset-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead className='hidden sm:table-cell'>Email</TableHead>
+                  <TableHead className='hidden md:table-cell'>Role</TableHead>
+                  <TableHead className='hidden md:table-cell'>Date Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {admins.map((admin) => (
+                  <TableRow key={admin.id}>
+                    <TableCell className="font-medium">{admin.name}</TableCell>
+                    <TableCell className='hidden sm:table-cell'>{admin.email}</TableCell>
+                    <TableCell className='hidden md:table-cell'>
+                      <Badge variant='secondary'>
+                        {admin.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className='hidden md:table-cell'>{format(admin.joinDate, 'yyyy-MM-dd')}</TableCell>
+                    <TableCell className="text-right">
+                        <AdminActions admin={admin} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </div>
+        {totalPages > 1 && (
+            <div className="p-4 border-t">
+                <PaginationControls
+                    currentPage={page}
+                    totalPages={totalPages}
+                />
+            </div>
+        )}
       </div>
     </div>
   );
 }
+
+    
