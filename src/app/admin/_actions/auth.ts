@@ -2,7 +2,8 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import prisma from '@/lib/prisma';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
 export async function authenticate(
@@ -17,11 +18,11 @@ export async function authenticate(
         return 'Please provide both email and password.';
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { email },
     });
 
-    if (!user || user.role !== 'ADMIN') {
+    if (!user || user.role !== 'ADMIN' || !user.password) {
       return 'Invalid credentials.';
     }
 

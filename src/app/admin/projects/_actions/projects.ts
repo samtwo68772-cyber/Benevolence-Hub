@@ -2,9 +2,11 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
-import type { ProjectStatus, ProjectCategory } from '@prisma/client';
+import { ProjectCategory, ProjectStatus } from '@/lib/types';
+
 
 const projectSchema = z.object({
   id: z.string().optional(),
@@ -25,7 +27,7 @@ export async function addProject(data: z.infer<typeof projectSchema>) {
         throw new Error('Invalid project data.');
     }
     
-    await prisma.project.create({
+    await db.project.create({
         data: validatedFields.data,
     });
 
@@ -41,8 +43,8 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
     
     const { id, ...updateData } = validatedFields.data;
     
-    await prisma.project.update({
-        where: { id },
+    await db.project.update({
+        where: { id: id! },
         data: updateData,
     });
 
@@ -50,7 +52,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
 }
 
 export async function deleteProject(projectId: string) {
-    await prisma.project.delete({
+    await db.project.delete({
         where: { id: projectId },
     });
     revalidatePath('/admin/projects');

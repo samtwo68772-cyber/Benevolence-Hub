@@ -6,17 +6,16 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-import prisma from '@/lib/prisma';
-import { projects as staticProjects, volunteers as staticVolunteers } from '@/lib/data';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export default async function Home() {
-  const projects = staticProjects;
-  const volunteers = staticVolunteers;
+  const projects = await db.project.findMany();
+  const volunteers = await db.volunteer.findMany();
   
   const totalPeopleHelped = projects.reduce((sum, project) => sum + project.peopleHelped, 0);
-
-  const featuredProjects = projects.slice(0, 3);
-
+  
+  const featuredProjects = await db.project.findMany({ orderBy: { startDate: 'desc' }, take: 3 });
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -4,11 +4,12 @@
 import * as React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import type { Volunteer } from '@prisma/client';
+import { Volunteer } from '@/lib/types';
+import { format } from 'date-fns';
 
 type ViewVolunteerDialogProps = {
   children: React.ReactNode;
-  volunteer: Volunteer & { signupDate: string };
+  volunteer: Volunteer;
 };
 
 export function ViewVolunteerDialog({ children, volunteer }: ViewVolunteerDialogProps) {
@@ -35,7 +36,7 @@ export function ViewVolunteerDialog({ children, volunteer }: ViewVolunteerDialog
             )}
             <div className="grid grid-cols-3 items-center gap-4">
                 <p className="text-sm font-medium text-muted-foreground">Signup Date</p>
-                <p className="col-span-2 text-sm">{volunteer.signupDate}</p>
+                <p className="col-span-2 text-sm">{format(volunteer.signupDate, 'yyyy-MM-dd')}</p>
             </div>
              <div className="grid grid-cols-3 items-center gap-4">
                 <p className="text-sm font-medium text-muted-foreground">Status</p>

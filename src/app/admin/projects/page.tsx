@@ -25,17 +25,19 @@ import { ProjectDialog } from './_components/project-dialog';
 import { addProject, deleteProject, updateProject } from './_actions/projects';
 import { DeleteProjectDialog } from './_components/delete-project-dialog';
 import { ProjectFilter } from './_components/project-filter';
-import prisma from '@/lib/prisma';
-import type { ProjectStatus, ProjectCategory } from '@prisma/client';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
+import { ProjectCategory, ProjectStatus } from '@/lib/types';
+
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-    const statusFilter = searchParams.status as ProjectStatus | 'all' | undefined;
-    const categoryFilter = searchParams.category as ProjectCategory | 'all' | undefined;
+    const statusFilter = searchParams.status as ProjectStatus | undefined;
+    const categoryFilter = searchParams.category as ProjectCategory | undefined;
 
-    const projects = await prisma.project.findMany({
+    const projects = await db.project.findMany({
       where: {
-        status: statusFilter && statusFilter !== 'all' ? statusFilter : undefined,
-        category: categoryFilter && categoryFilter !== 'all' ? categoryFilter : undefined,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        category: categoryFilter === 'all' ? undefined : categoryFilter,
       },
       orderBy: {
         startDate: 'desc'
@@ -92,7 +94,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                             <ProjectDialog project={{...project, startDate: format(project.startDate, 'yyyy-MM-dd')}} onSave={updateProject}>
+                             <ProjectDialog project={project} onSave={updateProject}>
                                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                     Edit
                                 </DropdownMenuItem>

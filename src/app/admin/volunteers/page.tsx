@@ -1,10 +1,11 @@
 
 import * as React from 'react';
-import prisma from '@/lib/prisma';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { VolunteerList } from './_components/volunteer-list';
 
 export default async function AdminVolunteersPage() {
-  const volunteers = await prisma.volunteer.findMany({
+  const volunteers = await db.volunteer.findMany({
     orderBy: {
       signupDate: 'desc',
     },

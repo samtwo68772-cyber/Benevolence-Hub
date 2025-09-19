@@ -6,7 +6,8 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChar
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { HandHeart, Users, Users2 } from "lucide-react";
-import type { Project, Volunteer } from "@prisma/client";
+import { Project, Volunteer } from "@/lib/types";
+
 
 const barChartConfig = {
   "peopleHelped": {

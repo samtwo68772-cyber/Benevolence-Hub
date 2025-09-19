@@ -15,7 +15,7 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import type { Project } from '@prisma/client';
+import { Project } from '@/lib/types';
 
 const projectFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
@@ -29,7 +29,7 @@ const projectFormSchema = z.object({
 });
 
 type ProjectFormProps = {
-  project?: Project & { startDate: string };
+  project?: Project;
   onSubmit: (data: FormData) => void;
 };
 
@@ -39,7 +39,7 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
     defaultValues: {
       title: project?.title || '',
       description: project?.description || '',
-      details: project?.details.join('\n') || '',
+      details: project?.details.join('\\n') || '',
       imageId: project?.imageId || '',
       startDate: project ? new Date(project.startDate) : new Date(),
       status: project?.status || 'Planning',

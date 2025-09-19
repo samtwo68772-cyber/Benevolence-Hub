@@ -14,18 +14,20 @@ import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import prisma from '@/lib/prisma';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { format } from 'date-fns';
 import { DonationFilter } from './_components/donation-filter';
+import { DonationType } from '@/lib/types';
 
 export default async function AdminDonationsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
     const typeFilter = searchParams.type as string | undefined;
     const projectFilter = searchParams.project as string | undefined;
 
-    const projects = await prisma.project.findMany({ select: { title: true } });
+    const projects = await db.project.findMany({ select: { title: true } });
     const projectNames = ['General Fund', ...projects.map(p => p.title)];
 
-    const donations = await prisma.donation.findMany({
+    const donations = await db.donation.findMany({
         where: {
             type: typeFilter && typeFilter !== 'all' ? (typeFilter === 'One-time' ? 'ONE_TIME' : 'MONTHLY') : undefined,
             project: {

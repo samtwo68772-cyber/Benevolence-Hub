@@ -1,8 +1,11 @@
+
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import { DonationType } from '@/lib/types';
 
 const donationSchema = z.object({
     donorName: z.string().min(2, "Name must be at least 2 characters."),
@@ -19,7 +22,7 @@ export async function addDonation(data: z.infer<typeof donationSchema>) {
         throw new Error('Invalid donation data.');
     }
     
-    await prisma.donation.create({
+    await db.donation.create({
         data: validatedFields.data,
     });
 

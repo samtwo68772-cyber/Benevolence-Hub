@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import type { User } from '@prisma/client';
+import { User } from '@/lib/types';
 
 const adminFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -21,7 +21,7 @@ const adminFormSchema = z.object({
 
 
 type AdminFormProps = {
-  admin?: User & { joinDate: string };
+  admin?: User;
   onSubmit: (data: FormData) => void;
 };
 

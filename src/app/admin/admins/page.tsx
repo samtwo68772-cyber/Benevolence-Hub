@@ -21,14 +21,14 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
-import { AdminForm } from './_components/admin-form';
 import { AdminDialog } from './_components/admin-dialog';
 import { DeleteAdminDialog } from './_components/delete-admin-dialog';
 import { addAdmin, deleteAdmin, updateAdmin } from './_actions/admins';
-import prisma from '@/lib/prisma';
+// import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export default async function AdminAdminsPage() {
-    const admins = await prisma.user.findMany({
+    const admins = await db.user.findMany({
         where: { role: 'ADMIN' },
         orderBy: { joinDate: 'desc' }
     });
@@ -80,7 +80,7 @@ export default async function AdminAdminsPage() {
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                              <AdminDialog 
-                                admin={{...admin, joinDate: format(admin.joinDate, 'yyyy-MM-dd')}} 
+                                admin={admin} 
                                 onSave={updateAdmin}
                               >
                                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>

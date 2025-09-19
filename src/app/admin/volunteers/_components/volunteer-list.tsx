@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DeleteVolunteerDialog } from './delete-volunteer-dialog';
 import { ViewVolunteerDialog } from './view-volunteer-dialog';
-import type { Volunteer } from '@prisma/client';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,6 +29,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { VolunteerFilter, interestItems } from './volunteer-filter';
 import { deleteVolunteer, updateVolunteerStatus } from '../_actions/volunteers';
 import { format } from 'date-fns';
+import { Volunteer } from '@/lib/types';
 
 export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunteer[] }) {
     const { toast } = useToast();
@@ -116,7 +116,7 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <ViewVolunteerDialog volunteer={{...volunteer, signupDate: format(volunteer.signupDate, 'yyyy-MM-dd')}}>
+                                <ViewVolunteerDialog volunteer={volunteer}>
                                     <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                         View Details
                                     </DropdownMenuItem>

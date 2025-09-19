@@ -5,12 +5,12 @@ import * as React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ProjectForm } from './project-form';
-import type { Project } from '@prisma/client';
 import { useToast } from '@/hooks/use-toast';
+import { Project } from '@/lib/types';
 
 type ProjectDialogProps = {
   children: React.ReactNode;
-  project?: Project & { startDate: string };
+  project?: Project;
   onSave: (data: any) => Promise<void>;
 };
 

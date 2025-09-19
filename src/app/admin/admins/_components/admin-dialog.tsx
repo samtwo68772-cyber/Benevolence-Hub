@@ -5,12 +5,12 @@ import * as React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AdminForm } from './admin-form';
-import type { User } from '@prisma/client';
 import { useToast } from '@/hooks/use-toast';
+import { User } from '@/lib/types';
 
 type AdminDialogProps = {
   children: React.ReactNode;
-  admin?: User & { joinDate: string };
+  admin?: User;
   onSave: (data: any) => Promise<void>;
 };
 
