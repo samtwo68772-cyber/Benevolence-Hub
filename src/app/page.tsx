@@ -7,11 +7,23 @@ import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
 import prisma from '@/lib/prisma';
-import { projects as staticProjects, volunteers as staticVolunteers } from '@/lib/data';
 
 export default async function Home() {
-  const projects = staticProjects;
-  const volunteers = staticVolunteers;
+  // Fetch projects and volunteers from the database instead of using static data
+  const projects = await prisma.project.findMany({
+    where: {
+      status: 'Active' // This is valid as 'Active' is in the ProjectStatus enum
+    },
+    orderBy: {
+      startDate: 'desc'
+    }
+  });
+  
+  const volunteers = await prisma.volunteer.findMany({
+    where: {
+      status: 'Approved'
+    }
+  });
   
   const totalPeopleHelped = projects.reduce((sum, project) => sum + project.peopleHelped, 0);
 

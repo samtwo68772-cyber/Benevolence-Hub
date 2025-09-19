@@ -19,8 +19,10 @@ import { format } from 'date-fns';
 import { DonationFilter } from './_components/donation-filter';
 
 export default async function AdminDonationsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-    const typeFilter = searchParams.type as string | undefined;
-    const projectFilter = searchParams.project as string | undefined;
+    // Await searchParams to fix the "sync-dynamic-apis" error
+    const params = await Promise.resolve(searchParams);
+    const typeFilter = params.type as string | undefined;
+    const projectFilter = params.project as string | undefined;
 
     const projects = await prisma.project.findMany({ select: { title: true } });
     const projectNames = ['General Fund', ...projects.map(p => p.title)];

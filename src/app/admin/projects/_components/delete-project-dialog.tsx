@@ -17,15 +17,17 @@ import { useToast } from '@/hooks/use-toast';
 
 type DeleteProjectDialogProps = {
   children: React.ReactNode;
-  onConfirm: () => Promise<void>;
+  projectId: string;
 };
 
-export function DeleteProjectDialog({ children, onConfirm }: DeleteProjectDialogProps) {
+import { deleteProject } from '../_actions/projects';
+
+export function DeleteProjectDialog({ children, projectId }: DeleteProjectDialogProps) {
     const { toast } = useToast();
 
     const handleConfirm = async () => {
         try {
-            await onConfirm();
+            await deleteProject(projectId);
             toast({
                 title: 'Project Deleted',
                 description: 'The project has been successfully deleted.',

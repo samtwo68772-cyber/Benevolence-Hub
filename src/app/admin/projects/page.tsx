@@ -29,8 +29,10 @@ import prisma from '@/lib/prisma';
 import type { ProjectStatus, ProjectCategory } from '@prisma/client';
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-    const statusFilter = searchParams.status as ProjectStatus | 'all' | undefined;
-    const categoryFilter = searchParams.category as ProjectCategory | 'all' | undefined;
+    // Await searchParams to fix the "sync-dynamic-apis" error
+    const params = await Promise.resolve(searchParams);
+    const statusFilter = params.status as ProjectStatus | 'all' | undefined;
+    const categoryFilter = params.category as ProjectCategory | 'all' | undefined;
 
     const projects = await prisma.project.findMany({
       where: {
@@ -45,7 +47,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
       <div className="flex justify-end items-center">
-        <ProjectDialog onSave={addProject}>
+        <ProjectDialog actionType="add">
              <Button><PlusCircle className="mr-2" />Add Project</Button>
         </ProjectDialog>
       </div>
@@ -92,14 +94,14 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                             <ProjectDialog project={{...project, startDate: format(project.startDate, 'yyyy-MM-dd')}} onSave={updateProject}>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                             <ProjectDialog project={{...project, startDate: format(project.startDate, 'yyyy-MM-dd')}} actionType="update">
+                                <DropdownMenuItem>
                                     Edit
                                 </DropdownMenuItem>
                             </ProjectDialog>
                             <DropdownMenuSeparator />
-                             <DeleteProjectDialog onConfirm={() => deleteProject(project.id)}>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                             <DeleteProjectDialog projectId={project.id}>
+                                <DropdownMenuItem className="text-destructive">
                                     Delete
                                 </DropdownMenuItem>
                             </DeleteProjectDialog>

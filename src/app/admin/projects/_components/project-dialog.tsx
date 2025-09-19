@@ -11,10 +11,12 @@ import { useToast } from '@/hooks/use-toast';
 type ProjectDialogProps = {
   children: React.ReactNode;
   project?: Project & { startDate: string };
-  onSave: (data: any) => Promise<void>;
+  actionType: 'add' | 'update';
 };
 
-export function ProjectDialog({ children, project, onSave }: ProjectDialogProps) {
+import { addProject, updateProject } from '../_actions/projects';
+
+export function ProjectDialog({ children, project, actionType }: ProjectDialogProps) {
   const [open, setOpen] = React.useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
   const { toast } = useToast();
@@ -32,7 +34,12 @@ export function ProjectDialog({ children, project, onSave }: ProjectDialogProps)
     }
     
     try {
-        await onSave(data);
+        if (actionType === 'add') {
+          await addProject(data);
+        } else {
+          await updateProject(data);
+        }
+        
         toast({
             title: `Project ${project ? 'Updated' : 'Added'}`,
             description: `The project "${data.title}" has been successfully ${project ? 'updated' : 'added'}.`
