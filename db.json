@@ -207,6 +207,22 @@
       "password": "$2a$10$w3/gS.VAiK6q2/s2l.fUv.2L02x.pGLkR/OFctE8KUDRy9U1uTqS2",
       "role": "ADMIN",
       "joinDate": "2022-03-10T00:00:00.000Z"
+    },
+    {
+      "id": "ADM-1758314742216",
+      "joinDate": "2025-09-19T20:45:42.216Z",
+      "name": "Samuel Getachew",
+      "email": "approver@example.com",
+      "password": "$2a$10$pvAZT9ATjHASTPHHG4MPp.iFrfI/I.PnL.w5SHGM7pNbc5wHtYu2i",
+      "role": "ADMIN"
+    },
+    {
+      "id": "ADM-1758314750031",
+      "joinDate": "2025-09-19T20:45:50.031Z",
+      "name": "Samuel Getachew",
+      "email": "approver@example.com",
+      "password": "$2a$10$LvuKcDXMGIUqJpo0t39/ju1XqmDfpejbfr4C2yL8NWrO1ZBr2hTdW",
+      "role": "ADMIN"
     }
   ]
 }
