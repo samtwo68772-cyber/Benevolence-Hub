@@ -24,6 +24,14 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
     if (!validatedFields.success) {
         throw new Error('Invalid admin data.');
     }
+
+    const existingUser = await db.user.findUnique({
+        where: { email: validatedFields.data.email }
+    });
+
+    if (existingUser) {
+        throw new Error('An account with this email already exists.');
+    }
     
     const hashedPassword = await bcrypt.hash(validatedFields.data.password, 10);
 
@@ -47,6 +55,14 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
     }
     
     const { id, password, ...updateData } = validatedFields.data;
+
+    const existingUserByEmail = await db.user.findUnique({
+        where: { email: updateData.email }
+    });
+
+    if (existingUserByEmail && existingUserByEmail.id !== id) {
+        throw new Error('An account with this email already exists.');
+    }
 
     let hashedPassword;
     if (password) {
