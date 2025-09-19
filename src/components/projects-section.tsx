@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 import { projects } from "@/lib/data";
 
 export default function ProjectsSection() {
+  const featuredProjects = projects.slice(0, 3);
   return (
     <section id="projects" className="section-padding">
       <div className="container mx-auto">
@@ -18,7 +19,7 @@ export default function ProjectsSection() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project) => {
+          {featuredProjects.map((project) => {
             const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
             return (
               <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
@@ -51,7 +52,13 @@ export default function ProjectsSection() {
             );
           })}
         </div>
+        <div className="text-center mt-12">
+          <Button asChild size="lg">
+            <Link href="/projects">View All Projects</Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
 }
+
