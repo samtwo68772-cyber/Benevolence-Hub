@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowDown } from "lucide-react";
 
-export default function HeroSection({ heroImage: heroImageProp }: { heroImage?: string | null }) {
+export default function HeroSection({ heroImage: heroImageId }: { heroImage?: string | null }) {
   const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background');
-  const heroImage = heroImageProp || defaultHeroImage?.imageUrl;
-  const heroAlt = heroImageProp ? "Project background image" : defaultHeroImage?.description || "Hero background";
+  const projectImage = PlaceHolderImages.find(img => img.id === heroImageId);
+
+  const heroImage = projectImage?.imageUrl || defaultHeroImage?.imageUrl;
+  const heroAlt = projectImage?.description || defaultHeroImage?.description || "Hero background";
   
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center">
@@ -19,7 +21,7 @@ export default function HeroSection({ heroImage: heroImageProp }: { heroImage?: 
           fill
           className="object-cover"
           priority
-          data-ai-hint={heroImageProp ? 'project image' : defaultHeroImage?.imageHint}
+          data-ai-hint={heroImageId ? 'project image' : defaultHeroImage?.imageHint}
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />

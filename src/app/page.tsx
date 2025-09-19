@@ -6,20 +6,13 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-import prisma from '@/lib/prisma';
+import { projects as allProjects, volunteers as allVolunteers } from '@/lib/data';
+import type { Project, Volunteer } from '@prisma/client';
 
 export default async function Home() {
-  const projects = await prisma.project.findMany({
-    orderBy: {
-      startDate: 'desc'
-    }
-  });
+  const projects: Project[] = allProjects;
   
-  const volunteers = await prisma.volunteer.findMany({
-    where: {
-      status: 'Approved'
-    }
-  });
+  const volunteers: Volunteer[] = allVolunteers.filter(v => v.status === 'Approved');
   
   const totalPeopleHelped = projects.reduce((sum, project) => sum + project.peopleHelped, 0);
 

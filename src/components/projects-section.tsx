@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import type { Project } from "@prisma/client";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function ProjectsSection({ projects: featuredProjects }: { projects: Project[] }) {
 
@@ -19,8 +20,9 @@ export default function ProjectsSection({ projects: featuredProjects }: { projec
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredProjects.map((project) => {
-            const projectImage = project.imageId;
-            const isLocalImage = projectImage.startsWith('/');
+            const placeholder = PlaceHolderImages.find(p => p.id === project.imageId);
+            const projectImage = placeholder?.imageUrl;
+            const isLocalImage = project.imageId.startsWith('/');
             return (
               <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <CardHeader className="p-0">
