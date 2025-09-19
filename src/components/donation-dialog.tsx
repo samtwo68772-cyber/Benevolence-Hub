@@ -78,7 +78,7 @@ export function DonationDialog() {
           Donate Now
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex justify-center items-center bg-primary/10 w-16 h-16 rounded-full mx-auto mb-4">
              <Gift className="w-8 h-8 text-primary" />
