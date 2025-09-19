@@ -45,7 +45,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <SidebarProvider>
       <div className="flex min-h-screen">
         <Sidebar>
-          <SheetTitle className="sr-only">Admin Menu</SheetTitle>
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
