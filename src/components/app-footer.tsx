@@ -1,5 +1,9 @@
+
+'use client';
+
 import { HandHeart, Twitter, Facebook, Instagram } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation";
 
 const socialLinks = [
   { icon: Twitter, href: "#" },
@@ -16,6 +20,9 @@ const footerLinks = [
 ]
 
 export default function AppFooter() {
+  const pathname = usePathname();
+  const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
+
   return (
     <footer className="bg-card border-t">
       <div className="container mx-auto section-padding !py-12">
@@ -29,18 +36,20 @@ export default function AppFooter() {
             </Link>
             <p className="text-muted-foreground">Compassion in Action.</p>
           </div>
-          <div>
-            <h3 className="font-headline text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              {footerLinks.map(link => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {!isProjectPage && (
+            <div>
+              <h3 className="font-headline text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                {footerLinks.map(link => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
            <div>
             <h3 className="font-headline text-lg font-semibold mb-4">Connect With Us</h3>
             <div className="flex items-center gap-4">
