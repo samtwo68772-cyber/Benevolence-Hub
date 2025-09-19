@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HandHeart, LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UsersCog } from 'lucide-react';
+import { HandHeart, LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UserCog } from 'lucide-react';
 import {
   SidebarProvider,
   Sidebar,
@@ -14,16 +14,16 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
-  SheetTitle,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import { SheetTitle } from '@/components/ui/sheet';
 
 const navItems = [
   { href: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/admin/projects', icon: FolderKanban, label: 'Projects' },
   { href: '/admin/volunteers', icon: Users, label: 'Volunteers' },
   { href: '/admin/donations', icon: DollarSign, label: 'Donations' },
-  { href: '/admin/admins', icon: UsersCog, label: 'Admins' },
+  { href: '/admin/admins', icon: UserCog, label: 'Admins' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
