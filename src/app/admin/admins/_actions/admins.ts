@@ -1,0 +1,71 @@
+
+'use server';
+
+import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+import bcrypt from 'bcryptjs';
+
+const adminSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  password: z.string().min(8, "Password must be at least 8 characters.").optional(),
+});
+
+export async function addAdmin(data: z.infer<typeof adminSchema>) {
+    const validatedFields = adminSchema.safeParse(data);
+
+    if (!validatedFields.success) {
+        throw new Error('Invalid admin data.');
+    }
+
+    if (!validatedFields.data.password) {
+        throw new Error('Password is required for new admins.');
+    }
+    
+    const hashedPassword = await bcrypt.hash(validatedFields.data.password, 10);
+
+    await prisma.user.create({
+        data: {
+            name: validatedFields.data.name,
+            email: validatedFields.data.email,
+            password: hashedPassword,
+            role: 'ADMIN',
+        },
+    });
+
+    revalidatePath('/admin/admins');
+}
+
+export async function updateAdmin(data: z.infer<typeof adminSchema>) {
+    const validatedFields = adminSchema.safeParse(data);
+
+    if (!validatedFields.success || !validatedFields.data.id) {
+        throw new Error('Invalid admin data for update.');
+    }
+    
+    const { id, password, ...updateData } = validatedFields.data;
+
+    let hashedPassword;
+    if (password) {
+        hashedPassword = await bcrypt.hash(password, 10);
+    }
+    
+    await prisma.user.update({
+        where: { id },
+        data: {
+            ...updateData,
+            ...(hashedPassword && { password: hashedPassword })
+        },
+    });
+
+    revalidatePath('/admin/admins');
+}
+
+export async function deleteAdmin(adminId: string) {
+    await prisma.user.delete({
+        where: { id: adminId },
+    });
+    revalidatePath('/admin/admins');
+}
