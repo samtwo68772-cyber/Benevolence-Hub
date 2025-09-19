@@ -13,11 +13,11 @@ import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { db } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { format } from 'date-fns';
 import { DonationFilter } from './_components/donation-filter';
 import { PaginationControls } from '@/components/ui/pagination';
-import { DonationType } from '@/lib/types';
+import { DonationType } from '@prisma/client';
 
 const ITEMS_PER_PAGE = 7;
 
@@ -28,17 +28,17 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
     const typeFilter = searchParams.type as string | undefined;
     const projectFilter = searchParams.project as string | undefined;
 
-    const whereClause = {
-        type: typeFilter && typeFilter !== 'all' ? (typeFilter === 'One-time' ? 'ONE_TIME' : 'MONTHLY') : undefined,
+    const whereClause: any = {
+        type: typeFilter && typeFilter !== 'all' ? (typeFilter === 'One-time' ? 'ONE_TIME' : 'MONTHLY') as DonationType : undefined,
         project: {
             title: projectFilter && projectFilter !== 'all' ? projectFilter : undefined
         },
     };
 
-    const projects = await db.project.findMany({ select: { title: true } });
+    const projects = await prisma.project.findMany({ select: { title: true } });
     const projectNames = ['General Fund', ...projects.map(p => p.title)];
 
-    const donations = await db.donation.findMany({
+    const donations = await prisma.donation.findMany({
         where: whereClause,
         include: {
             project: true
@@ -50,7 +50,7 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
         take: ITEMS_PER_PAGE,
     });
 
-    const totalDonations = await db.donation.count({ where: whereClause });
+    const totalDonations = await prisma.donation.count({ where: whereClause });
     const totalPages = Math.ceil(totalDonations / ITEMS_PER_PAGE);
 
   return (
@@ -110,5 +110,3 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
     </div>
   );
 }
-
-    

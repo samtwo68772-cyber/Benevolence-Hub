@@ -2,8 +2,9 @@
 'use server';
 
 import { z } from 'zod';
-import { db } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { ProjectCategory, ProjectStatus } from '@prisma/client';
 
 const projectSchema = z.object({
   id: z.string().optional(),
@@ -12,17 +13,17 @@ const projectSchema = z.object({
   details: z.string().transform(val => val.split('\n').filter(line => line.trim() !== '')),
   startDate: z.string().transform(val => new Date(val)),
   status: z.enum(['Active', 'Completed', 'Planning']),
-  category: z.enum(['Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief']),
+  category: z.enum(['Water', 'Education', 'Medical', 'Community_Development', 'Disaster_Relief']),
 });
 
-function assignImageId(category: z.infer<typeof projectSchema>['category']): string {
+function assignImageId(category: ProjectCategory): string {
     switch (category) {
         case 'Water': return 'project-water';
         case 'Education': return 'project-education';
         case 'Medical': return 'project-medical';
-        case 'Community Development': return 'project-community-development';
-        case 'Disaster Relief': return 'project-disaster-relief';
-        default: return `project-${category.toLowerCase().replace(' ', '-')}`;
+        case 'Community_Development': return 'project-community-development';
+        case 'Disaster_Relief': return 'project-disaster-relief';
+        default: return `project-${category.toLowerCase().replace('_', '-')}`;
     }
 }
 
@@ -34,11 +35,15 @@ export async function addProject(data: z.infer<typeof projectSchema>) {
         throw new Error('Invalid project data.');
     }
 
-    const imageId = assignImageId(validatedFields.data.category);
+    const { category, ...rest } = validatedFields.data;
+    const prismaCategory = category.replace(' ', '_') as ProjectCategory;
+
+    const imageId = assignImageId(prismaCategory);
     
-    await db.project.create({
+    await prisma.project.create({
         data: {
-            ...validatedFields.data,
+            ...rest,
+            category: prismaCategory,
             imageId,
             peopleHelped: 0, // Default value
         }
@@ -55,13 +60,15 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
         throw new Error('Invalid project data for update.');
     }
     
-    const { id, ...updateData } = validatedFields.data;
-    const imageId = assignImageId(validatedFields.data.category);
+    const { id, category, ...updateData } = validatedFields.data;
+    const prismaCategory = category.replace(' ', '_') as ProjectCategory;
+    const imageId = assignImageId(prismaCategory);
     
-    await db.project.update({
+    await prisma.project.update({
         where: { id: id! },
         data: {
             ...updateData,
+            category: prismaCategory,
             imageId,
         },
     });
@@ -72,7 +79,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
 }
 
 export async function deleteProject(projectId: string) {
-    await db.project.delete({
+    await prisma.project.delete({
         where: { id: projectId },
     });
     revalidatePath('/admin/projects');

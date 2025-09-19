@@ -2,8 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-// import prisma from '@/lib/prisma';
-import { db } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 
@@ -25,7 +24,7 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
         throw new Error('Invalid admin data.');
     }
 
-    const existingUser = await db.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
         where: { email: validatedFields.data.email }
     });
 
@@ -35,7 +34,7 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
     
     const hashedPassword = await bcrypt.hash(validatedFields.data.password, 10);
 
-    await db.user.create({
+    await prisma.user.create({
         data: {
             name: validatedFields.data.name,
             email: validatedFields.data.email,
@@ -56,7 +55,7 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
     
     const { id, password, ...updateData } = validatedFields.data;
 
-    const existingUserByEmail = await db.user.findUnique({
+    const existingUserByEmail = await prisma.user.findUnique({
         where: { email: updateData.email }
     });
 
@@ -69,7 +68,7 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
         hashedPassword = await bcrypt.hash(password, 10);
     }
     
-    await db.user.update({
+    await prisma.user.update({
         where: { id },
         data: {
             ...updateData,
@@ -81,7 +80,7 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
 }
 
 export async function deleteAdmin(adminId: string) {
-    await db.user.delete({
+    await prisma.user.delete({
         where: { id: adminId },
     });
     revalidatePath('/admin/admins');

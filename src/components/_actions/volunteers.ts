@@ -2,8 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-// import prisma from '@/lib/prisma';
-import { db } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
 const volunteerSchema = z.object({
@@ -22,7 +21,7 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
         throw new Error('Invalid volunteer data.');
     }
     
-    await db.volunteer.create({
+    await prisma.volunteer.create({
         data: {
             name: validatedFields.data.name,
             email: validatedFields.data.email,

@@ -16,8 +16,8 @@ import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
 import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
-import { db } from '@/lib/db';
-import { ProjectCategory, ProjectStatus } from '@/lib/types';
+import prisma from '@/lib/prisma';
+import { ProjectCategory, ProjectStatus } from '@prisma/client';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -30,12 +30,12 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     const statusFilter = searchParams.status as ProjectStatus | undefined;
     const categoryFilter = searchParams.category as ProjectCategory | undefined;
 
-    const whereClause = {
+    const whereClause: any = {
       status: statusFilter === 'all' ? undefined : statusFilter,
-      category: categoryFilter === 'all' ? undefined : categoryFilter,
+      category: categoryFilter === 'all' ? undefined : categoryFilter?.replace(' ', '_'),
     };
 
-    const projects = await db.project.findMany({
+    const projects = await prisma.project.findMany({
       where: whereClause,
       orderBy: {
         startDate: 'desc'
@@ -44,7 +44,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
       take: ITEMS_PER_PAGE,
     });
 
-    const totalProjects = await db.project.count({ where: whereClause });
+    const totalProjects = await prisma.project.count({ where: whereClause });
     const totalPages = Math.ceil(totalProjects / ITEMS_PER_PAGE);
 
   return (
@@ -84,7 +84,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                     </Badge>
                   </TableCell>
                   <TableCell className='hidden md:table-cell'>
-                      <Badge variant="outline">{project.category}</Badge>
+                      <Badge variant="outline">{project.category.replace('_', ' ')}</Badge>
                   </TableCell>
                    <TableCell className='hidden lg:table-cell'>{format(project.startDate, 'yyyy-MM-dd')}</TableCell>
                   <TableCell className="text-right">
@@ -108,5 +108,3 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     </div>
   );
 }
-
-    
