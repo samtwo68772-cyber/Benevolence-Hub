@@ -21,7 +21,7 @@ export default function ProjectsSection({ projects: featuredProjects }: { projec
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredProjects.map((project) => {
             const placeholder = PlaceHolderImages.find(p => p.id === project.imageId);
-            const projectImage = placeholder?.imageUrl;
+            const projectImage = project.imageId.startsWith('/') ? project.imageId : placeholder?.imageUrl;
             const isLocalImage = project.imageId.startsWith('/');
             return (
               <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">

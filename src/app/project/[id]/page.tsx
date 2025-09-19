@@ -6,20 +6,19 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
-import prisma from '@/lib/prisma';
-import { isStaticGen } from 'next/dist/build/utils';
+import { projects } from '@/lib/data';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = await prisma.project.findUnique({
-    where: { id: params.id },
-  });
+  const project = projects.find((p) => p.id === params.id);
   
   if (!project) {
     notFound();
   }
   
-  const projectImage = project.imageId;
-  const isLocalImage = projectImage.startsWith('/');
+  const placeholder = PlaceHolderImages.find(p => p.id === project.imageId);
+  const projectImage = project.imageId.startsWith('/') ? project.imageId : placeholder?.imageUrl;
+  const isLocalImage = project.imageId.startsWith('/');
 
   return (
     <div className="flex min-h-screen flex-col bg-card">

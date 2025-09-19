@@ -22,7 +22,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
-import { addProject, deleteProject, updateProject } from './_actions/projects';
 import { DeleteProjectDialog } from './_components/delete-project-dialog';
 import { ProjectFilter } from './_components/project-filter';
 import prisma from '@/lib/prisma';
@@ -95,13 +94,13 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                              <ProjectDialog project={{...project, startDate: format(project.startDate, 'yyyy-MM-dd')}} actionType="update">
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                     Edit
                                 </DropdownMenuItem>
                             </ProjectDialog>
                             <DropdownMenuSeparator />
                              <DeleteProjectDialog projectId={project.id}>
-                                <DropdownMenuItem className="text-destructive">
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
                                     Delete
                                 </DropdownMenuItem>
                             </DeleteProjectDialog>

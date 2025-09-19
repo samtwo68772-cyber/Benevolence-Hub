@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
-import type { Project } from '@prisma/client';
-import { projects as allProjects } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { projects as allProjects } from '@/lib/data';
+import type { Project } from '@prisma/client';
 
 export default async function AllProjectsPage() {
   const projects: Project[] = allProjects;
@@ -28,14 +28,14 @@ export default async function AllProjectsPage() {
             {projects.length === 0 ? (
                  <div className="text-center text-muted-foreground bg-card border rounded-lg p-12">
                     <h3 className="text-xl font-semibold">No projects to display</h3>
-                    <p className="mt-2">Database not connected or no projects have been created yet.</p>
+                    <p className="mt-2">No projects have been created yet. Add one in the admin dashboard.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project) => {
                     const placeholder = PlaceHolderImages.find(p => p.id === project.imageId);
-                    const projectImage = placeholder?.imageUrl || project.imageId;
-                    const isLocalImage = projectImage.startsWith('/');
+                    const projectImage = project.imageId.startsWith('/') ? project.imageId : placeholder?.imageUrl;
+                    const isLocalImage = project.imageId.startsWith('/');
 
                     return (
                     <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-card">
