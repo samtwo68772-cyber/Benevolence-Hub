@@ -159,11 +159,7 @@ export default function AdminVolunteersPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6 p-6">
-      <div className="flex justify-end items-center">
-        {/* Title is now in the layout header */}
-      </div>
-
+    <div className="flex flex-col h-full gap-6 px-6 py-6">
        <Card>
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>

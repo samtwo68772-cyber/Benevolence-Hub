@@ -87,11 +87,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-14 items-center gap-4 border-b bg-card">
-            <div className="flex items-center gap-4 px-6 w-full">
-                <SidebarTrigger className="md:hidden" />
-                <h1 className="flex-1 text-xl font-semibold">{getPageTitle()}</h1>
-            </div>
+          <header className="flex h-14 items-center gap-4 border-b bg-card px-6">
+            <SidebarTrigger className="md:hidden" />
+            <h1 className="flex-1 text-xl font-semibold">{getPageTitle()}</h1>
           </header>
           <main className="flex-1">{children}</main>
         </SidebarInset>

@@ -243,7 +243,7 @@ export default function AdminProjectsPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6 p-6">
+    <div className="flex flex-col h-full gap-6 px-6 py-6">
       <div className="flex justify-end items-center">
         <ProjectDialog onSave={handleAddProject}>
              <Button><PlusCircle className="mr-2" />Add Project</Button>
