@@ -27,6 +27,10 @@ const navItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
   const getPageTitle = () => {
     if (pathname === '/admin') {
       return 'Dashboard';
@@ -78,16 +82,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <SidebarMenuButton tooltip={{children: "Logout"}}>
-                        <LogOut />
-                        <span>Logout</span>
+                    <SidebarMenuButton asChild tooltip={{children: "Logout"}}>
+                        <Link href="/admin/login">
+                            <LogOut />
+                            <span>Logout</span>
+                        </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-14 items-center gap-4 border-b bg-card px-6">
+          <header className="flex h-14 items-center gap-4 border-b bg-card">
             <SidebarTrigger className="md:hidden" />
             <h1 className="flex-1 text-xl font-semibold">{getPageTitle()}</h1>
           </header>
