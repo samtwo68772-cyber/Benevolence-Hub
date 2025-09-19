@@ -30,8 +30,8 @@ export default function ProjectDetailsPage({ params }: { params: { id: string } 
               data-ai-hint={projectImage.imageHint}
             />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-          <div className="relative z-10 container mx-auto h-full flex flex-col justify-end pb-12">
-            <h1 className="font-headline text-5xl md:text-7xl drop-shadow-2xl">
+          <div className="relative z-10 container mx-auto h-full flex flex-col justify-end px-4 sm:px-6 lg:px-8 pb-12">
+            <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl drop-shadow-2xl">
               {project.title}
             </h1>
           </div>

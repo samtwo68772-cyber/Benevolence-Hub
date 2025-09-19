@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import * as React from 'react';
@@ -88,7 +87,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                         <Button
                         variant={"outline"}
                         className={cn(
-                            "w-[280px] justify-start text-left font-normal",
+                            "w-full sm:w-[280px] justify-start text-left font-normal col-span-3",
                             !selectedDate && "text-muted-foreground"
                         )}
                         >
@@ -111,7 +110,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 Status
                 </Label>
                  <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value as "Active" | "Completed" | "Planning"})}>
-                    <SelectTrigger className="col-span-2">
+                    <SelectTrigger className="col-span-3 sm:col-span-2">
                         <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -126,7 +125,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 Category
                 </Label>
                  <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value as Project['category']})}>
-                    <SelectTrigger className="col-span-2">
+                    <SelectTrigger className="col-span-3 sm:col-span-2">
                         <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -142,7 +141,7 @@ function ProjectForm({ project, onSave }: { project?: Project, onSave: (projectD
                 <Label htmlFor="peopleHelped" className="text-right">
                     People Helped
                 </Label>
-                <Input id="peopleHelped" type="number" value={formData.peopleHelped} onChange={e => setFormData({...formData, peopleHelped: Number(e.target.value)})} placeholder="0" className="col-span-2" />
+                <Input id="peopleHelped" type="number" value={formData.peopleHelped} onChange={e => setFormData({...formData, peopleHelped: Number(e.target.value)})} placeholder="0" className="col-span-3 sm:col-span-2" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="image" className="text-right">
@@ -243,7 +242,7 @@ export default function AdminProjectsPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6 px-6 py-6">
+    <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
       <div className="flex justify-end items-center">
         <ProjectDialog onSave={handleAddProject}>
              <Button><PlusCircle className="mr-2" />Add Project</Button>
@@ -291,9 +290,9 @@ export default function AdminProjectsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>People Helped</TableHead>
+              <TableHead className='hidden sm:table-cell'>Status</TableHead>
+              <TableHead className='hidden md:table-cell'>Category</TableHead>
+              <TableHead className='hidden lg:table-cell'>People Helped</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -301,15 +300,15 @@ export default function AdminProjectsPage() {
             {filteredProjects.map((project) => (
               <TableRow key={project.id}>
                 <TableCell className="font-medium">{project.title}</TableCell>
-                <TableCell>
+                <TableCell className='hidden sm:table-cell'>
                   <Badge variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
                     {project.status}
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell className='hidden md:table-cell'>
                     <Badge variant="outline">{project.category}</Badge>
                 </TableCell>
-                <TableCell>{project.peopleHelped.toLocaleString()}</TableCell>
+                <TableCell className='hidden lg:table-cell'>{project.peopleHelped.toLocaleString()}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

@@ -33,7 +33,7 @@ export default function AdminDonationsPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6 px-6 py-6">
+    <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
         <Card>
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>
@@ -73,9 +73,9 @@ export default function AdminDonationsPage() {
                     <TableRow>
                         <TableHead>Donor Name</TableHead>
                         <TableHead>Amount</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Project</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead className='hidden sm:table-cell'>Type</TableHead>
+                        <TableHead className='hidden md:table-cell'>Project</TableHead>
+                        <TableHead className='hidden lg:table-cell'>Date</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                     </TableHeader>
@@ -84,11 +84,11 @@ export default function AdminDonationsPage() {
                         <TableRow key={donation.id}>
                         <TableCell className="font-medium">{donation.donorName}</TableCell>
                         <TableCell>${donation.amount.toFixed(2)}</TableCell>
-                        <TableCell>
+                        <TableCell className='hidden sm:table-cell'>
                             <Badge variant={donation.type === 'Monthly' ? 'outline' : 'default'}>{donation.type}</Badge>
                         </TableCell>
-                        <TableCell>{donation.project}</TableCell>
-                        <TableCell>{donation.date}</TableCell>
+                        <TableCell className='hidden md:table-cell'>{donation.project}</TableCell>
+                        <TableCell className='hidden lg:table-cell'>{donation.date}</TableCell>
                         <TableCell className="text-right">
                             <Button variant="ghost" size="icon">
                                 <MoreHorizontal className="h-4 w-4" />

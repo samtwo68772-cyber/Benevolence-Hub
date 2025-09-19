@@ -34,7 +34,7 @@ export default function AppHeader() {
         isScrolled ? "bg-card/80 backdrop-blur-sm shadow-md" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto flex h-20 items-center justify-between px-6 lg:px-8">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <HandHeart className="h-7 w-7 text-primary" />
           <span className="font-headline text-2xl font-bold tracking-wide text-foreground">

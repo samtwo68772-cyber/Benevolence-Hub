@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import * as React from 'react';
@@ -159,7 +158,7 @@ export default function AdminVolunteersPage() {
     });
 
   return (
-    <div className="flex flex-col h-full gap-6 px-6 py-6">
+    <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
        <Card>
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <div>
@@ -199,8 +198,8 @@ export default function AdminVolunteersPage() {
                 <TableHeader>
                 <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Signup Date</TableHead>
+                    <TableHead className='hidden sm:table-cell'>Email</TableHead>
+                    <TableHead className='hidden md:table-cell'>Signup Date</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -209,8 +208,8 @@ export default function AdminVolunteersPage() {
                 {filteredVolunteers.map((volunteer) => (
                     <TableRow key={volunteer.id}>
                     <TableCell className="font-medium">{volunteer.name}</TableCell>
-                    <TableCell>{volunteer.email}</TableCell>
-                    <TableCell>{volunteer.signupDate}</TableCell>
+                    <TableCell className='hidden sm:table-cell'>{volunteer.email}</TableCell>
+                    <TableCell className='hidden md:table-cell'>{volunteer.signupDate}</TableCell>
                     <TableCell>
                         <Badge variant={
                             volunteer.status === 'Approved' ? 'default' :

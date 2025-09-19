@@ -169,7 +169,7 @@ export default function AdminAdminsPage() {
     };
 
   return (
-    <div className="flex flex-col h-full gap-6 px-6 py-6">
+    <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
       <div className="flex justify-end items-center">
         <AdminDialog onSave={handleAddAdmin}>
              <Button><PlusCircle className="mr-2" />Add Admin</Button>
@@ -188,9 +188,9 @@ export default function AdminAdminsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Date Joined</TableHead>
+              <TableHead className='hidden sm:table-cell'>Email</TableHead>
+              <TableHead className='hidden md:table-cell'>Role</TableHead>
+              <TableHead className='hidden md:table-cell'>Date Joined</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -198,13 +198,13 @@ export default function AdminAdminsPage() {
             {admins.map((admin) => (
               <TableRow key={admin.id}>
                 <TableCell className="font-medium">{admin.name}</TableCell>
-                <TableCell>{admin.email}</TableCell>
-                <TableCell>
+                <TableCell className='hidden sm:table-cell'>{admin.email}</TableCell>
+                <TableCell className='hidden md:table-cell'>
                   <Badge variant='secondary'>
                     {admin.role}
                   </Badge>
                 </TableCell>
-                <TableCell>{admin.joinDate}</TableCell>
+                <TableCell className='hidden md:table-cell'>{admin.joinDate}</TableCell>
                 <TableCell className="text-right">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

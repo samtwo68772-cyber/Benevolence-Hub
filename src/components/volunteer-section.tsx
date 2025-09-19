@@ -99,7 +99,7 @@ export default function VolunteerSection() {
               Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started.
             </p>
           </div>
-          <div className="rounded-lg bg-card p-8 shadow-xl">
+          <div className="rounded-lg bg-card p-6 sm:p-8 shadow-xl">
              <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <h3 className="font-headline text-2xl mb-6 text-center">Join Our Team</h3>
