@@ -23,55 +23,53 @@ export default function AdminSettingsPage() {
 
     return (
         <div className="flex flex-col h-full gap-6 px-6 py-6">
-            <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Profile Information</CardTitle>
-                        <CardDescription>Update your personal details.</CardDescription>
-                    </CardHeader>
-                    <form onSubmit={handleProfileSave}>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input id="name" defaultValue="Michael Scott" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" defaultValue="michael.s@benevolence.com" />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit">Save Changes</Button>
-                        </CardFooter>
-                    </form>
-                </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Profile Information</CardTitle>
+                    <CardDescription>Update your personal details.</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleProfileSave}>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input id="name" defaultValue="Michael Scott" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input id="email" type="email" defaultValue="michael.s@benevolence.com" />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button type="submit">Save Changes</Button>
+                    </CardFooter>
+                </form>
+            </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Change Password</CardTitle>
-                        <CardDescription>Update your login password.</CardDescription>
-                    </CardHeader>
-                    <form onSubmit={handlePasswordSave}>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="current-password">Current Password</Label>
-                                <Input id="current-password" type="password" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="new-password">New Password</Label>
-                                <Input id="new-password" type="password" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                                <Input id="confirm-password" type="password" />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit">Update Password</Button>
-                        </CardFooter>
-                    </form>
-                </Card>
-            </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Change Password</CardTitle>
+                    <CardDescription>Update your login password.</CardDescription>
+                </CardHeader>
+                <form onSubmit={handlePasswordSave}>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="current-password">Current Password</Label>
+                            <Input id="current-password" type="password" />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="new-password">New Password</Label>
+                            <Input id="new-password" type="password" />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="confirm-password">Confirm New Password</Label>
+                            <Input id="confirm-password" type="password" />
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <Button type="submit">Update Password</Button>
+                    </CardFooter>
+                </form>
+            </Card>
         </div>
     );
 }
