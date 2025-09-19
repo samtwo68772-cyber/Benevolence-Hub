@@ -215,6 +215,22 @@
       "email": "adminnnnnn@example.com",
       "password": "$2a$10$lml40Ke/XDeOUX8nyIWUye/wL4bHDIBdTcCSGax8WJWvYLVxbr8ky",
       "role": "ADMIN"
+    },
+    {
+      "id": "ADM-1758316401111",
+      "joinDate": "2025-09-19T21:13:21.111Z",
+      "name": "Samuel Getachew",
+      "email": "adminnnndnn@example.com",
+      "password": "$2a$10$rPOWZPy1bGEDOigZln2hD.uJhztILNLYMxBmaJJAlie/hUn1FpQNq",
+      "role": "ADMIN"
+    },
+    {
+      "id": "ADM-1758316433982",
+      "joinDate": "2025-09-19T21:13:53.982Z",
+      "name": "Samuel Getachew",
+      "email": "adminnnxndnn@example.com",
+      "password": "$2a$10$Pl2COBgV5Ad/W7oaE24Nk.z5VlMopX33MqrCRk1yx3tgSP1tdUwf.",
+      "role": "ADMIN"
     }
   ]
 }

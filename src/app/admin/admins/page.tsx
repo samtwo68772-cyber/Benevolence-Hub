@@ -19,7 +19,7 @@ import { db } from '@/lib/db';
 import { AdminActions } from './_components/admin-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5;
 
 export default async function AdminAdminsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
     const page = Number(searchParams.page || '1');
