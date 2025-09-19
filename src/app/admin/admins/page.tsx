@@ -83,14 +83,18 @@ function AdminForm({ admin, onSave }: { admin?: Admin, onSave: (adminData: Admin
                 <Label htmlFor="role" className="text-right">Role</Label>
                 <Input id="role" value="Admin" disabled className="col-span-3 bg-muted" />
             </div>
-             <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="password" className="text-right">{admin ? 'New Password' : 'Password'}</Label>
-                <Input id="password" type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder={admin ? 'Leave blank to keep current' : '••••••••'} className="col-span-3" />
-            </div>
-             <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="confirmPassword" className="text-right">Confirm Password</Label>
-                <Input id="confirmPassword" type="password" value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} placeholder="••••••••" className="col-span-3" />
-            </div>
+            {!admin && (
+                <>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="password" className="text-right">Password</Label>
+                        <Input id="password" type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="confirmPassword" className="text-right">Confirm Password</Label>
+                        <Input id="confirmPassword" type="password" value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} placeholder="••••••••" className="col-span-3" />
+                    </div>
+                </>
+            )}
             {error && <p className="text-destructive text-sm text-center col-span-4">{error}</p>}
              <DialogFooter>
                 <DialogClose asChild>
