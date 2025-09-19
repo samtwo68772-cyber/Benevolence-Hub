@@ -10,7 +10,8 @@ import { db } from '@/lib/db';
 
 export default async function Home() {
   const projects = await db.project.findMany();
-  const volunteers = await db.volunteer.findMany();
+  const allVolunteers = await db.volunteer.findMany();
+  const approvedVolunteers = allVolunteers.filter(v => v.status === 'Approved');
   
   const totalDonations = await db.donation.aggregate({_sum: { amount: true}});
   
@@ -25,7 +26,7 @@ export default async function Home() {
         <ProjectsSection projects={featuredProjects} />
         <ImpactSection 
             projects={projects} 
-            volunteers={volunteers}
+            volunteers={approvedVolunteers}
             totalDonations={totalDonations._sum.amount || 0}
         />
         <VolunteerSection />
@@ -34,3 +35,4 @@ export default async function Home() {
     </div>
   );
 }
+
