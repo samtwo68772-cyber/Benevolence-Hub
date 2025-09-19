@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
-// import prisma from '@/lib/prisma';
 import { db } from '@/lib/db';
 import { Project } from '@/lib/types';
+import { Badge } from '@/components/ui/badge';
 
 export default async function AllProjectsPage() {
   const projects = await db.project.findMany({
@@ -39,7 +39,7 @@ export default async function AllProjectsPage() {
                     const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
                     return (
                     <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-card">
-                        <CardHeader className="p-0">
+                        <CardHeader className="p-0 relative">
                         {projectImage ? (
                             <div className="relative h-56 w-full">
                             <Image
@@ -53,6 +53,9 @@ export default async function AllProjectsPage() {
                         ) : (
                             <div className='relative h-56 w-full bg-muted' />
                         )}
+                        <Badge className="absolute top-4 right-4" variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
+                            {project.status}
+                        </Badge>
                         </CardHeader>
                         <CardContent className="pt-6 flex-1">
                         <CardTitle className="font-headline text-2xl">{project.title}</CardTitle>

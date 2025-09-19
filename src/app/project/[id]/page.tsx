@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
-// import prisma from '@/lib/prisma';
 import { db } from '@/lib/db';
+import { Badge } from '@/components/ui/badge';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
   const project = await db.project.findUnique({
@@ -39,9 +39,17 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
             )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
           <div className="relative z-10 container mx-auto h-full flex flex-col justify-end px-4 sm:px-6 lg:px-8 pb-12">
-            <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl drop-shadow-2xl">
-              {project.title}
-            </h1>
+            <div className='flex items-center gap-4'>
+                <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl drop-shadow-2xl">
+                {project.title}
+                </h1>
+                 <Badge 
+                    variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}
+                    className="text-lg sm:text-xl"
+                >
+                    {project.status}
+                </Badge>
+            </div>
           </div>
         </section>
 
