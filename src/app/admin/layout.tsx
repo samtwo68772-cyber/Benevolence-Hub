@@ -79,8 +79,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <Sidebar className="w-auto">
+      <div className="flex min-h-screen w-full bg-muted/40">
+        <Sidebar>
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
@@ -115,14 +115,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
              </form>
           </SidebarFooter>
         </Sidebar>
-        <SidebarInset>
-          <header className="flex h-14 items-center gap-4 border-b bg-card px-4 sm:px-6">
-            <SidebarTrigger className="md:hidden" />
-            <h1 className="flex-1 text-lg sm:text-xl font-semibold">{getPageTitle()}</h1>
-            <ThemeToggle />
-          </header>
-          <main className="flex-1">{children}</main>
-        </SidebarInset>
+        <div className="flex flex-1 flex-col">
+            <header className="flex h-14 items-center gap-4 border-b bg-card px-4 sm:px-6">
+                <SidebarTrigger className="md:hidden" />
+                <h1 className="flex-1 text-lg sm:text-xl font-semibold">{getPageTitle()}</h1>
+                <ThemeToggle />
+            </header>
+            <main className="flex-1">{children}</main>
+        </div>
       </div>
     </SidebarProvider>
   );

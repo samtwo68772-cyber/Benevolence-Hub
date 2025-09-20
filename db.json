@@ -61,7 +61,7 @@
     { "id": "DON-001", "donorName": "John Smith", "email": "john.s@example.com", "amount": 100, "date": "2024-02-01T00:00:00.000Z", "type": "ONE_TIME", "projectId": "water-for-villages" },
     { "id": "DON-002", "donorName": "Jane Doe", "email": "jane.d@example.com", "amount": 50, "date": "2024-02-05T00:00:00.000Z", "type": "MONTHLY", "projectId": "education-for-all" },
     { "id": "DON-003", "donorName": "Peter Jones", "email": "peter.j@example.com", "amount": 250, "date": "2024-02-10T00:00:00.000Z", "type": "ONE_TIME", "projectId": "emergency-medical-aid" },
-    { "id": "DON-004", "donorName": "Mary Miller", "email": "mary.m@example.com", "amount": 25, "date": "2024-02-12T00:00:00.000Z", "type": "MONTHLY", "projectId": null },
+    { "id": "DON-004", "name": "Mary Miller", "email": "mary.m@example.com", "amount": 25, "date": "2024-02-12T00:00:00.000Z", "type": "MONTHLY", "projectId": null },
     { "id": "DON-005", "donorName": "David Garcia", "email": "david.g@example.com", "amount": 500, "date": "2024-02-15T00:00:00.000Z", "type": "ONE_TIME", "projectId": "water-for-villages" }
   ],
   "users": [
