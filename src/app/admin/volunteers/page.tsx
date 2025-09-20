@@ -35,10 +35,10 @@ export default async function AdminVolunteersPage({ searchParams }: { searchPara
   const totalPages = Math.ceil(totalVolunteers / ITEMS_PER_PAGE);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full max-w-full overflow-x-auto">
         <VolunteerList initialVolunteers={volunteers} />
          {totalPages > 1 && (
-            <div className="p-4 border-t bg-card">
+            <div className="p-4 border-t bg-card w-full">
                 <PaginationControls
                     currentPage={page}
                     totalPages={totalPages}

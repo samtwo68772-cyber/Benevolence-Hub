@@ -13,7 +13,7 @@ const projectSchema = z.object({
   details: z.string().transform(val => val.split('\n').filter(line => line.trim() !== '')),
   startDate: z.string().transform(val => new Date(val)),
   status: z.enum(['Active', 'Completed', 'Planning']),
-  category: z.enum(['Water', 'Education', 'Medical', 'Community_Development', 'Disaster_Relief']),
+  category: z.enum(['Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief']),
 });
 
 function assignImageId(category: ProjectCategory): string {
@@ -36,7 +36,7 @@ export async function addProject(data: z.infer<typeof projectSchema>) {
     }
 
     const { category, ...rest } = validatedFields.data;
-    const prismaCategory = category.replace(' ', '_') as ProjectCategory;
+    const prismaCategory = category.replace(/ /g, '_') as ProjectCategory;
 
     const imageId = assignImageId(prismaCategory);
     
@@ -61,7 +61,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
     }
     
     const { id, category, ...updateData } = validatedFields.data;
-    const prismaCategory = category.replace(' ', '_') as ProjectCategory;
+    const prismaCategory = category.replace(/ /g, '_') as ProjectCategory;
     const imageId = assignImageId(prismaCategory);
     
     await prisma.project.update({

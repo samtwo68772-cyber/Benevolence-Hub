@@ -5,7 +5,7 @@ import { z } from 'zod';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { getSession } from '@/lib/session';
+import { getSession, createSession, SessionPayload } from '@/lib/session';
 
 const profileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -43,6 +43,16 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
         where: { id: session.userId },
         data: { name, email },
     });
+    
+    // Update the session with new user data
+    const updatedSession: SessionPayload = {
+        userId: session.userId,
+        name,
+        email,
+        role: session.role
+    };
+    
+    await createSession(updatedSession);
 
     revalidatePath('/admin/settings');
     return { message: 'Profile updated successfully.' };

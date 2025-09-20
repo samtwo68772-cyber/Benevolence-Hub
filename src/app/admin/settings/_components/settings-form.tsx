@@ -67,8 +67,8 @@ export function SettingsForm({ session }: { session: SessionPayload }) {
     };
 
     return (
-        <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
-            <Card>
+        <div className="flex flex-col h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+            <Card className="w-full">
                  <Form {...profileForm}>
                     <form onSubmit={profileForm.handleSubmit(handleProfileSave)}>
                         <CardHeader>
@@ -112,7 +112,7 @@ export function SettingsForm({ session }: { session: SessionPayload }) {
                 </Form>
             </Card>
 
-            <Card>
+            <Card className="w-full">
                  <Form {...passwordForm}>
                     <form onSubmit={passwordForm.handleSubmit(handlePasswordSave)}>
                         <CardHeader>

@@ -48,22 +48,23 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     const totalPages = Math.ceil(totalProjects / ITEMS_PER_PAGE);
 
   return (
-    <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
-      <div className="flex justify-end items-center">
-          <ProjectDialog onSave={addProject}>
-              <Button><PlusCircle className="mr-2" />Add Project</Button>
-          </ProjectDialog>
-      </div>
+    <div className="flex flex-col h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+            <h1 className="text-2xl font-semibold"></h1>
+            <ProjectDialog onSave={addProject}>
+                <Button><PlusCircle className="mr-2" />Add Project</Button>
+            </ProjectDialog>
+        </div>
 
-       <Card>
+       <Card className="w-full">
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                <ProjectFilter />
             </CardContent>
        </Card>
 
-      <div className="rounded-lg border flex-1 flex flex-col">
-        <div className="relative flex-grow">
-          <ScrollArea className="absolute inset-0">
+      <div className="rounded-lg border flex-1 flex flex-col w-full overflow-x-auto">
+        <div className="relative flex-grow w-full">
+          <ScrollArea className="absolute inset-0 w-full">
           <Table>
             <TableHeader>
               <TableRow>

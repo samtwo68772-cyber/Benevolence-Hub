@@ -22,8 +22,8 @@ export default async function AdminDashboardPage() {
     ]
 
   return (
-    <div className="grid gap-6 p-4 sm:p-6">
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
             <Card key={stat.title} className="hover:bg-muted/50 transition-colors">
                  <Link href={stat.href}>
@@ -39,7 +39,7 @@ export default async function AdminDashboardPage() {
             </Card>
         ))}
       </div>
-      <Card>
+      <Card className="w-full">
         <CardHeader>
             <CardTitle>Welcome to the Admin Dashboard</CardTitle>
         </CardHeader>

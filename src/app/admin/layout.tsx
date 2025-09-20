@@ -79,8 +79,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
-        <Sidebar>
+      <div className="flex min-h-screen w-full">
+        <Sidebar className="w-auto">
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
-            </form>
+             </form>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>

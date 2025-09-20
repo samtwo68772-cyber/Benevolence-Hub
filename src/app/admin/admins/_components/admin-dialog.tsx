@@ -19,6 +19,7 @@ export function AdminDialog({ children, admin, onSave }: AdminDialogProps) {
   const { toast } = useToast();
 
   const handleFormSubmit = async (data: any) => {
+    // Always include the ID when editing an existing admin
     if (admin?.id) {
         data.id = admin.id;
     }
