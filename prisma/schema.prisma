@@ -1,32 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Project {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
-  description  String        @db.Text
-  imageUrl     String?
+  description  String    @db.Text
+  imageUrl     String?   @db.Text
   details      String[]
-  status       String // Active, Completed, Planning
+  status       String
   startDate    DateTime
   peopleHelped Int
-  category     Category?     @relation(fields: [categoryId], references: [id])
+  category     Category? @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
-}
-
-model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  projects Project[]
-  donations Donation[]
 }
 
 model Volunteer {
@@ -38,20 +34,20 @@ model Volunteer {
   skills       String   @db.Text
   interests    String[]
   availability String[]
-  status       String // Pending, Approved, Rejected
+  status       String
 }
 
 model Donation {
-  id        String   @id @default(cuid())
-  donorName String
-  email     String
-  amount    Float
-  date      DateTime @default(now())
-  type      String // ONE_TIME, MONTHLY
-  project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  id          String   @id @default(cuid())
+  donorName   String
+  email       String
+  amount      Float
+  date        DateTime @default(now())
+  type        String
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
 }
 
 model User {
@@ -59,32 +55,37 @@ model User {
   name     String
   email    String   @unique
   password String
-  role     String // ADMIN
+  role     String
   joinDate DateTime @default(now())
 }
 
 model Settings {
-  id                      String    @id @default(cuid())
-  appName                 String?
-  logo                    String?
-  logoType                String?
-  volunteerIcon           String?
-  heroTitle               String?
-  heroDescription         String?
-  heroImages              String[]
-  missionIntroTitle       String?
-  missionIntroDescription String?
-  missionImage            String?
-  missionTitle            String?
-  missionDescription      String?
-  visionTitle             String?
-  visionDescription       String?
-  valuesTitle             String?
-  valuesDescription       String?
-  volunteerIntroTitle     String?
-  volunteerIntroDescription1 String?
-  volunteerIntroDescription2 String?
-  socialLinksTwitter      String?
-  socialLinksFacebook     String?
-  socialLinksInstagram    String?
+  id                        String   @id @default(cuid())
+  appName                   String
+  logo                      String
+  logoType                  String
+  volunteerIcon             String
+  heroTitle                 String
+  heroDescription           String
+  heroImages                String[]
+  missionIntroTitle         String
+  missionIntroDescription   String
+  missionImage              String?
+  missionTitle              String
+  missionDescription        String
+  visionTitle               String
+  visionDescription         String
+  valuesTitle               String
+  valuesDescription         String
+  volunteerIntroTitle       String
+  volunteerIntroDescription1 String
+  volunteerIntroDescription2 String
+  socialLinks               Json
+}
+
+model Category {
+  id       String @id @default(cuid())
+  name     String @unique
+  projects Project[]
+  donations Donation[]
 }

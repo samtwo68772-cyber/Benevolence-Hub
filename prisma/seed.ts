@@ -107,43 +107,38 @@ async function main() {
 
   // Seed Settings
   const settings = dbData.settings;
+  const settingsData = {
+    appName: settings.appName,
+    logo: settings.logo,
+    logoType: settings.logoType,
+    volunteerIcon: settings.volunteerIcon,
+    heroTitle: settings.hero.title,
+    heroDescription: settings.hero.description,
+    heroImages: settings.heroImages,
+    missionIntroTitle: settings.missionIntro.title,
+    missionIntroDescription: settings.missionIntro.description,
+    missionImage: settings.heroImage,
+    missionTitle: settings.mission.title,
+    missionDescription: settings.mission.description,
+    visionTitle: settings.vision.title,
+    visionDescription: settings.vision.description,
+    valuesTitle: settings.values.title,
+    valuesDescription: settings.values.description,
+    volunteerIntroTitle: settings.volunteerIntro.title,
+    volunteerIntroDescription1: settings.volunteerIntro.description1,
+    volunteerIntroDescription2: settings.volunteerIntro.description2,
+    socialLinks: settings.socialLinks,
+  };
+
   const existingSettings = await prisma.settings.findFirst();
   if (existingSettings) {
       await prisma.settings.update({
           where: { id: existingSettings.id },
-          data: {
-              appName: settings.appName,
-              logo: settings.logo,
-              logoType: settings.logoType,
-              volunteerIcon: settings.volunteerIcon,
-              hero: settings.hero,
-              heroImages: settings.heroImages,
-              missionIntro: settings.missionIntro,
-              missionImage: settings.heroImage, // Using heroImage as missionImage
-              mission: settings.mission,
-              vision: settings.vision,
-              values: settings.values,
-              volunteerIntro: settings.volunteerIntro,
-              socialLinks: settings.socialLinks,
-          }
+          data: settingsData
       });
   } else {
        await prisma.settings.create({
-          data: {
-              appName: settings.appName,
-              logo: settings.logo,
-              logoType: settings.logoType,
-              volunteerIcon: settings.volunteerIcon,
-              hero: settings.hero,
-              heroImages: settings.heroImages,
-              missionIntro: settings.missionIntro,
-              missionImage: settings.heroImage,
-              mission: settings.mission,
-              vision: settings.vision,
-              values: settings.values,
-              volunteerIntro: settings.volunteerIntro,
-              socialLinks: settings.socialLinks,
-          }
+          data: settingsData
        });
   }
 
