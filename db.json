@@ -1,4 +1,3 @@
-
 {
   "projects": [
     {
@@ -51,23 +50,188 @@
     }
   ],
   "volunteers": [
-    { "id": "VOL-001", "name": "Alice Johnson", "email": "alice.j@example.com", "phone": "123-456-7890", "signupDate": "2023-10-22T00:00:00.000Z", "skills": "Medical background, speaks Spanish", "interests": ["Medical", "Disaster Relief"], "availability": ["Weekends"], "status": "Pending" },
-    { "id": "VOL-002", "name": "Bob Williams", "email": "bob.w@example.com", "phone": "234-567-8901", "signupDate": "2023-11-05T00:00:00.000Z", "skills": "Construction, project management", "interests": ["Community Development"], "availability": ["Weekdays"], "status": "Approved" },
-    { "id": "VOL-003", "name": "Charlie Brown", "email": "charlie.b@example.com", "phone": null, "signupDate": "2023-11-15T00:00:00.000Z", "skills": "Teaching, childcare", "interests": ["Education"], "availability": ["Weekdays", "Evenings"], "status": "Pending" },
-    { "id": "VOL-004", "name": "Diana Prince", "email": "diana.p@example.com", "phone": "456-789-0123", "signupDate": "2023-12-01T00:00:00.000Z", "skills": "Logistics and coordination", "interests": ["Disaster Relief"], "availability": ["Weekends"], "status": "Rejected" },
-    { "id": "VOL-005", "name": "Ethan Hunt", "email": "ethan.h@example.com", "phone": null, "signupDate": "2024-01-10T00:00:00.000Z", "skills": "IT Support, communications", "interests": ["General Support"], "availability": ["Evenings"], "status": "Approved" }
+    {
+      "id": "VOL-001",
+      "name": "Alice Johnson",
+      "email": "alice.j@example.com",
+      "phone": "123-456-7890",
+      "signupDate": "2023-10-22T00:00:00.000Z",
+      "skills": "Medical background, speaks Spanish",
+      "interests": [
+        "Medical",
+        "Disaster Relief"
+      ],
+      "availability": [
+        "Weekends"
+      ],
+      "status": "Pending"
+    },
+    {
+      "id": "VOL-002",
+      "name": "Bob Williams",
+      "email": "bob.w@example.com",
+      "phone": "234-567-8901",
+      "signupDate": "2023-11-05T00:00:00.000Z",
+      "skills": "Construction, project management",
+      "interests": [
+        "Community Development"
+      ],
+      "availability": [
+        "Weekdays"
+      ],
+      "status": "Approved"
+    },
+    {
+      "id": "VOL-003",
+      "name": "Charlie Brown",
+      "email": "charlie.b@example.com",
+      "phone": null,
+      "signupDate": "2023-11-15T00:00:00.000Z",
+      "skills": "Teaching, childcare",
+      "interests": [
+        "Education"
+      ],
+      "availability": [
+        "Weekdays",
+        "Evenings"
+      ],
+      "status": "Pending"
+    },
+    {
+      "id": "VOL-004",
+      "name": "Diana Prince",
+      "email": "diana.p@example.com",
+      "phone": "456-789-0123",
+      "signupDate": "2023-12-01T00:00:00.000Z",
+      "skills": "Logistics and coordination",
+      "interests": [
+        "Disaster Relief"
+      ],
+      "availability": [
+        "Weekends"
+      ],
+      "status": "Rejected"
+    },
+    {
+      "id": "VOL-005",
+      "name": "Ethan Hunt",
+      "email": "ethan.h@example.com",
+      "phone": null,
+      "signupDate": "2024-01-10T00:00:00.000Z",
+      "skills": "IT Support, communications",
+      "interests": [
+        "General Support"
+      ],
+      "availability": [
+        "Evenings"
+      ],
+      "status": "Approved"
+    },
+    {
+      "name": "Samuel Getachew",
+      "email": "SamuelGetachew@temesgen2023.onmicrosoft.com",
+      "phone": "0973095314",
+      "skills": "wtwtwr rt yrtyrty yer y er",
+      "availability": [
+        "weekdays"
+      ],
+      "interests": [
+        "Medical",
+        "General Support"
+      ],
+      "id": "vol-1758441094858",
+      "status": "Pending",
+      "signupDate": "2025-09-21T07:51:34.858Z"
+    }
   ],
   "donations": [
-    { "id": "DON-001", "donorName": "John Smith", "email": "john.s@example.com", "amount": 100, "date": "2024-02-01T00:00:00.000Z", "type": "ONE_TIME", "projectId": "water-for-villages" },
-    { "id": "DON-002", "donorName": "Jane Doe", "email": "jane.d@example.com", "amount": 50, "date": "2024-02-05T00:00:00.000Z", "type": "MONTHLY", "projectId": "education-for-all" },
-    { "id": "DON-003", "donorName": "Peter Jones", "email": "peter.j@example.com", "amount": 250, "date": "2024-02-10T00:00:00.000Z", "type": "ONE_TIME", "projectId": "emergency-medical-aid" },
-    { "id": "DON-004", "name": "Mary Miller", "email": "mary.m@example.com", "amount": 25, "date": "2024-02-12T00:00:00.000Z", "type": "MONTHLY", "projectId": null },
-    { "id": "DON-005", "donorName": "David Garcia", "email": "david.g@example.com", "amount": 500, "date": "2024-02-15T00:00:00.000Z", "type": "ONE_TIME", "projectId": "water-for-villages" }
+    {
+      "id": "DON-001",
+      "donorName": "John Smith",
+      "email": "john.s@example.com",
+      "amount": 100,
+      "date": "2024-02-01T00:00:00.000Z",
+      "type": "ONE_TIME",
+      "projectId": "water-for-villages"
+    },
+    {
+      "id": "DON-002",
+      "donorName": "Jane Doe",
+      "email": "jane.d@example.com",
+      "amount": 50,
+      "date": "2024-02-05T00:00:00.000Z",
+      "type": "MONTHLY",
+      "projectId": "education-for-all"
+    },
+    {
+      "id": "DON-003",
+      "donorName": "Peter Jones",
+      "email": "peter.j@example.com",
+      "amount": 250,
+      "date": "2024-02-10T00:00:00.000Z",
+      "type": "ONE_TIME",
+      "projectId": "emergency-medical-aid"
+    },
+    {
+      "id": "DON-004",
+      "name": "Mary Miller",
+      "email": "mary.m@example.com",
+      "amount": 25,
+      "date": "2024-02-12T00:00:00.000Z",
+      "type": "MONTHLY",
+      "projectId": null
+    },
+    {
+      "id": "DON-005",
+      "donorName": "David Garcia",
+      "email": "david.g@example.com",
+      "amount": 500,
+      "date": "2024-02-15T00:00:00.000Z",
+      "type": "ONE_TIME",
+      "projectId": "water-for-villages"
+    },
+    {
+      "donorName": "Samuel Getachew",
+      "email": "SamuelGetachew@temesgen2023.onmicrosoft.com",
+      "amount": 50,
+      "type": "MONTHLY",
+      "id": "don-1758441125715",
+      "date": "2025-09-21T07:52:05.715Z"
+    },
+    {
+      "donorName": "SGT-Devops",
+      "email": "sam.etete.0712@gmail.com",
+      "amount": 50,
+      "type": "MONTHLY",
+      "id": "don-1758441144089",
+      "date": "2025-09-21T07:52:24.089Z"
+    }
   ],
   "users": [
-    { "id": "ADM-001", "name": "Michael Scott", "email": "michael.s@benevolence.com", "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M", "role": "ADMIN", "joinDate": "2021-01-01T00:00:00.000Z" },
-    { "id": "ADM-002", "name": "Dwight Schrute", "email": "dwight.s@benevolence.com", "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M", "role": "ADMIN", "joinDate": "2021-06-15T00:00:00.000Z" },
-    { "id": "ADM-003", "name": "Pam Beesly", "email": "pam.b@benevolence.com", "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M", "role": "ADMIN", "joinDate": "2022-03-10T00:00:00.000Z" }
+    {
+      "id": "ADM-001",
+      "name": "Michael Scott",
+      "email": "michael.s@benevolence.com",
+      "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M",
+      "role": "ADMIN",
+      "joinDate": "2021-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "ADM-002",
+      "name": "Dwight Schrute",
+      "email": "dwight.s@benevolence.com",
+      "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M",
+      "role": "ADMIN",
+      "joinDate": "2021-06-15T00:00:00.000Z"
+    },
+    {
+      "id": "ADM-003",
+      "name": "Pam Beesly",
+      "email": "pam.b@benevolence.com",
+      "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M",
+      "role": "ADMIN",
+      "joinDate": "2022-03-10T00:00:00.000Z"
+    }
   ],
   "settings": {
     "appName": "Benevolence Hub",
