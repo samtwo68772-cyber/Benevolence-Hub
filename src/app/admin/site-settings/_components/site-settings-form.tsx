@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { updateSiteSettings } from '../_actions/settings';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { X } from 'lucide-react';
 
 function SettingsSubmitButton() {
     const { pending } = useFormStatus();
@@ -29,8 +30,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
     
-    const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background')?.imageUrl;
-    const [heroImagePreview, setHeroImagePreview] = React.useState<string | null>(settings.heroImage || defaultHeroImage || null);
+    const [heroImagePreviews, setHeroImagePreviews] = React.useState<string[]>(settings.heroImages || []);
     
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
@@ -45,6 +45,23 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                 setter(reader.result as string);
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const handleMultipleImageChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string[]>>) => {
+        const files = e.target.files;
+        if (files) {
+            const newPreviews: string[] = [];
+            Array.from(files).forEach(file => {
+                 const reader = new FileReader();
+                reader.onloadend = () => {
+                    newPreviews.push(reader.result as string);
+                    if (newPreviews.length === files.length) {
+                        setter(prev => [...prev, ...newPreviews]);
+                    }
+                };
+                reader.readAsDataURL(file);
+            })
         }
     };
     
@@ -66,13 +83,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
             return <Icon className="w-10 h-10 text-primary" />;
         }
         return null;
-    }
-
-    const HeroImagePreview = () => {
-      if (heroImagePreview) {
-        return <Image src={heroImagePreview} alt="Hero background preview" width={160} height={90} className="rounded-md object-cover" />;
-      }
-      return null;
     }
 
     const MissionImagePreview = () => {
@@ -126,14 +136,25 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="heroImage">Background Image</Label>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-40 h-auto flex items-center justify-center">
-                                        <HeroImagePreview />
-                                    </div>
-                                    <Input id="heroImage" name="heroImage" type="file" accept="image/png, image/jpeg" onChange={(e) => handleImageChange(e, setHeroImagePreview)} />
+                                <Label htmlFor="heroImages">Background Images</Label>
+                                <div className="flex flex-wrap items-center gap-4">
+                                    {heroImagePreviews.map((src, index) => (
+                                        <div key={index} className="relative w-40 h-auto">
+                                            <Image src={src} alt={`Hero image preview ${index + 1}`} width={160} height={90} className="rounded-md object-cover" />
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                size="icon"
+                                                className="absolute top-1 right-1 h-6 w-6"
+                                                onClick={() => setHeroImagePreviews(heroImagePreviews.filter((_, i) => i !== index))}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Input id="heroImages" name="heroImages" type="file" accept="image/png, image/jpeg" multiple onChange={(e) => handleMultipleImageChange(e, setHeroImagePreviews)} />
                                 </div>
-                                <p className="text-sm text-muted-foreground">Upload an image for the hero section background. Recommended size: 1920x1080. Max 2MB.</p>
+                                <p className="text-sm text-muted-foreground">Upload images for the hero section background. Max 2MB per image.</p>
                             </div>
                         </div>
 

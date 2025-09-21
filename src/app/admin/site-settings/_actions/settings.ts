@@ -20,7 +20,7 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
-    const heroImageFile = formData.get('heroImage') as File;
+    const heroImageFiles = formData.getAll('heroImages') as File[];
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
     const missionImageFile = formData.get('missionImage') as File;
@@ -57,12 +57,14 @@ export async function updateSiteSettings(formData: FormData) {
         logoType = 'image';
     }
 
-    let heroImageData: string | undefined;
-    if (heroImageFile && heroImageFile.size > 0) {
-        if (heroImageFile.size > 2 * 1024 * 1024) { // 2MB limit
-            throw new Error("Hero image must be less than 2MB.");
+    const heroImageUrls: string[] = [];
+    for (const file of heroImageFiles) {
+        if (file.size > 0) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                throw new Error(`Hero image "${file.name}" must be less than 2MB.`);
+            }
+            heroImageUrls.push(await fileToDataURI(file));
         }
-        heroImageData = await fileToDataURI(heroImageFile);
     }
 
     let missionImageData: string | undefined;
@@ -93,8 +95,8 @@ export async function updateSiteSettings(formData: FormData) {
         newSettings.logoType = logoType;
     }
 
-    if (heroImageData) {
-        newSettings.heroImage = heroImageData;
+    if (heroImageUrls.length > 0) {
+        newSettings.heroImages = heroImageUrls;
     }
 
     if (missionImageData) {

@@ -12,7 +12,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import Autoplay from 'embla-carousel-autoplay';
 import Fade from 'embla-carousel-fade';
 
-const slideshowImages = PlaceHolderImages.filter(img => 
+const defaultSlideshowImages = PlaceHolderImages.filter(img => 
     img.id === 'hero-background' || 
     img.id === 'mission-image' || 
     img.id === 'project-community-development'
@@ -26,6 +26,10 @@ export default function HeroSection({ settings }: { settings: Settings }) {
   const fadePlugin = React.useRef(
     Fade()
   );
+
+  const slideshowImages = (settings.heroImages && settings.heroImages.length > 0)
+    ? settings.heroImages.map((url, index) => ({ imageUrl: url, description: `Hero image ${index + 1}` }))
+    : defaultSlideshowImages;
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center">
@@ -45,7 +49,6 @@ export default function HeroSection({ settings }: { settings: Settings }) {
                         fill
                         className="object-cover"
                         priority={index === 0}
-                        data-ai-hint={image.imageHint}
                     />
                 </CarouselItem>
                 ))}
