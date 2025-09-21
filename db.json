@@ -220,6 +220,15 @@
       "type": "MONTHLY",
       "id": "don-1758441144089",
       "date": "2025-09-21T07:52:24.089Z"
+    },
+    {
+      "donorName": "Samuel Getachew",
+      "email": "samuelgetachewsgt@gmail.com",
+      "amount": 50,
+      "type": "ONE_TIME",
+      "categoryId": "now",
+      "id": "don-1758452496596",
+      "date": "2025-09-21T11:01:36.596Z"
     }
   ],
   "users": [

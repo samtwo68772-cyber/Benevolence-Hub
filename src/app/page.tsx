@@ -29,6 +29,7 @@ export default async function Home() {
         <ProjectsSection projects={featuredProjects} />
         <ImpactSection 
             projects={projects} 
+            donations={allDonations}
             volunteers={allVolunteers}
             approvedVolunteersCount={approvedVolunteersCount}
             totalDonations={totalDonations}
@@ -40,3 +41,4 @@ export default async function Home() {
     </div>
   );
 }
+

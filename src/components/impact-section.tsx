@@ -2,17 +2,21 @@
 
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell, Legend } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
-import { DollarSign, HandHeart, Users, Users2 } from "lucide-react";
-import { Project, Volunteer, Category } from "@/lib/types";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { DollarSign, HandHeart, Users } from "lucide-react";
+import { Project, Volunteer, Category, Donation } from "@/lib/types";
 
 
 const barChartConfig = {
-  "peopleHelped": {
-    label: "People Reached",
-    color: "hsl(var(--primary))",
+  donations: {
+    label: "Donations",
+    color: "hsl(var(--chart-1))",
+  },
+  volunteers: {
+    label: "Volunteers",
+    color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
@@ -63,27 +67,31 @@ const volunteerInterestsConfig = {
 
 type ImpactSectionProps = {
     projects: Project[];
+    donations: Donation[];
     volunteers: Volunteer[];
     approvedVolunteersCount: number;
     totalDonations: number;
     categories: Category[];
 }
 
-export default function ImpactSection({ projects, volunteers, approvedVolunteersCount, totalDonations, categories }: ImpactSectionProps) {
+export default function ImpactSection({ projects, donations, volunteers, approvedVolunteersCount, totalDonations, categories }: ImpactSectionProps) {
   const totalProjects = projects.length;
 
-  const projectByCategory = categories.reduce((acc, category) => {
-    acc[category.name] = { category: category.name, peopleHelped: 0 };
-    return acc;
-  }, {} as Record<string, { category: string; peopleHelped: number }>);
+  const engagementByCategory = categories.map(category => {
+    const categoryDonations = donations
+      .filter(d => d.categoryId === category.id)
+      .reduce((sum, d) => sum + d.amount, 0);
 
-  projects.forEach(project => {
-    if (projectByCategory[project.category]) {
-        projectByCategory[project.category].peopleHelped += project.peopleHelped;
-    }
+    const categoryVolunteers = volunteers.filter(v => 
+        v.status === 'Approved' && v.interests.includes(category.name)
+    ).length;
+
+    return {
+      category: category.name,
+      donations: categoryDonations,
+      volunteers: categoryVolunteers,
+    };
   });
-
-  const barChartData = Object.values(projectByCategory);
   
   const projectByStatus = projects.reduce((acc, project) => {
     if (!acc[project.status]) {
@@ -155,13 +163,13 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
           <div className="lg:col-span-2">
             <Card className="shadow-lg h-full">
               <CardHeader>
-                <CardTitle className="font-headline text-2xl">Community Reach by Sector</CardTitle>
-                <CardDescription>Number of individuals helped across different project categories.</CardDescription>
+                <CardTitle className="font-headline text-2xl">Engagement by Sector</CardTitle>
+                <CardDescription>Donations and approved volunteers for each category.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={barChartConfig} className="h-[350px] w-full">
                   <ResponsiveContainer>
-                    <BarChart data={barChartData} margin={{ top: 20, right: 20, left: -10, bottom: 5 }}>
+                    <BarChart data={engagementByCategory} margin={{ top: 20, right: 20, left: -10, bottom: 5 }}>
                       <XAxis
                         dataKey="category"
                         tickLine={false}
@@ -171,17 +179,28 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
                         fontSize={12}
                       />
                       <YAxis 
+                        yAxisId="left"
                         stroke="hsl(var(--muted-foreground))"
                         fontSize={12}
                         tickLine={false}
                         axisLine={false}
-                        tickFormatter={(value) => `${Number(value) / 1000}k`}
+                        tickFormatter={(value) => `$${Number(value) / 1000}k`}
                       />
-                      <Tooltip
+                      <YAxis
+                        yAxisId="right"
+                        orientation="right"
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                       />
+                      <ChartTooltip
                         cursor={false}
-                        content={<ChartTooltipContent indicator="dot" labelKey="peopleHelped" />}
+                        content={<ChartTooltipContent indicator="dot" />}
                       />
-                      <Bar dataKey="peopleHelped" name="People Reached" fill="var(--color-peopleHelped)" radius={8} />
+                       <ChartLegend content={<ChartLegendContent />} />
+                      <Bar yAxisId="left" dataKey="donations" fill="var(--color-donations)" radius={4} />
+                      <Bar yAxisId="right" dataKey="volunteers" fill="var(--color-volunteers)" radius={4} />
                     </BarChart>
                   </ResponsiveContainer>
                 </ChartContainer>
@@ -198,7 +217,7 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
                 <ChartContainer config={pieChartConfig} className="h-[250px] w-full">
                   <ResponsiveContainer>
                     <PieChart>
-                      <Tooltip
+                      <ChartTooltip
                         cursor={false}
                         content={<ChartTooltipContent hideLabel indicator="dot" nameKey="name" />}
                       />
@@ -237,7 +256,7 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
                     <ChartContainer config={volunteerStatusConfig} className="h-[250px] w-full">
                     <ResponsiveContainer>
                         <PieChart>
-                        <Tooltip
+                        <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent hideLabel indicator="dot" nameKey="name" />}
                         />
@@ -285,7 +304,7 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
                             tickLine={false}
                             axisLine={false}
                         />
-                        <Tooltip
+                        <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent indicator="dot" />}
                         />
