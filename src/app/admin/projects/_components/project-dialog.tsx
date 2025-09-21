@@ -5,32 +5,31 @@ import * as React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { ProjectForm } from './project-form';
 import { useToast } from '@/hooks/use-toast';
-import { Project } from '@/lib/types';
+import { Project, Category } from '@/lib/types';
 
 type ProjectDialogProps = {
   children: React.ReactNode;
   project?: Project;
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: FormData) => Promise<void>;
+  categories: Category[];
 };
 
-export function ProjectDialog({ children, project, onSave }: ProjectDialogProps) {
+export function ProjectDialog({ children, project, onSave, categories }: ProjectDialogProps) {
   const [open, setOpen] = React.useState(false);
   const { toast } = useToast();
+  const formRef = React.useRef<HTMLFormElement>(null);
 
-  const handleFormSubmit = async (values: any) => {
-    const data = {
-        ...values,
-        startDate: values.startDate.toISOString(),
-    }
-    if (project?.id) {
-        data.id = project.id;
-    }
+  const handleFormSubmit = async () => {
+    if (!formRef.current) return;
     
+    const formData = new FormData(formRef.current);
+    const title = formData.get('title') as string;
+
     try {
-        await onSave(data);
+        await onSave(formData);
         toast({
             title: `Project ${project ? 'Updated' : 'Added'}`,
-            description: `The project "${data.title}" has been successfully ${project ? 'updated' : 'added'}.`
+            description: `The project "${title}" has been successfully ${project ? 'updated' : 'added'}.`
         });
         setOpen(false);
     } catch (error) {
@@ -52,7 +51,13 @@ export function ProjectDialog({ children, project, onSave }: ProjectDialogProps)
             {project ? 'Update the details for this project.' : 'Fill in the form to create a new project.'}
           </DialogDescription>
         </DialogHeader>
-        <ProjectForm project={project} onSubmit={handleFormSubmit} onCancel={() => setOpen(false)} />
+        <ProjectForm 
+            ref={formRef}
+            project={project}
+            categories={categories}
+            onSubmit={handleFormSubmit}
+            onCancel={() => setOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

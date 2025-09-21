@@ -4,7 +4,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { Project, Volunteer, Donation, User, Settings } from './types';
+import { Project, Volunteer, Donation, User, Settings, Category } from './types';
 
 const dbPath = path.join(process.cwd(), 'db.json');
 
@@ -14,6 +14,7 @@ type DbData = {
   donations: Donation[];
   users: User[];
   settings: Settings;
+  categories: Category[];
 };
 
 async function readDb(): Promise<DbData> {
@@ -34,6 +35,13 @@ async function readDb(): Promise<DbData> {
             volunteers: [], 
             donations: [], 
             users: [], 
+            categories: [
+                { id: 'water', name: 'Water' },
+                { id: 'education', name: 'Education' },
+                { id: 'medical', name: 'Medical' },
+                { id: 'community-development', name: 'Community Development' },
+                { id: 'disaster-relief', name: 'Disaster Relief' },
+            ],
             settings: { 
                 appName: 'Benevolence Hub', 
                 logo: 'HandHeart', 
@@ -55,6 +63,7 @@ async function readDb(): Promise<DbData> {
         volunteers: [], 
         donations: [], 
         users: [], 
+        categories: [],
         settings: { 
             appName: 'Benevolence Hub', 
             logo: 'HandHeart', 
@@ -74,6 +83,45 @@ async function readDb(): Promise<DbData> {
 async function writeDb(data: DbData) {
   await fs.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
 }
+
+// Categories
+export async function getCategories(): Promise<Category[]> {
+    const db = await readDb();
+    return db.categories || [];
+}
+
+export async function createCategory(name: string): Promise<Category> {
+    const db = await readDb();
+    const newCategory: Category = {
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        name: name,
+    };
+    db.categories = [...(db.categories || []), newCategory];
+    await writeDb(db);
+    return newCategory;
+}
+
+export async function updateCategory(id: string, name: string): Promise<Category> {
+    const db = await readDb();
+    const index = db.categories.findIndex(c => c.id === id);
+    if (index === -1) throw new Error('Category not found');
+    db.categories[index].name = name;
+    await writeDb(db);
+    return db.categories[index];
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+    const db = await readDb();
+    db.categories = db.categories.filter(c => c.id !== id);
+    // Optional: Also update projects that use this category
+    db.projects.forEach(p => {
+        if (p.category === id) {
+            p.category = 'Uncategorized'; // Or some other default
+        }
+    });
+    await writeDb(db);
+}
+
 
 export async function getProjects() {
     const db = await readDb();
@@ -270,3 +318,4 @@ export async function updateSettings(settings: Partial<Settings>) {
     await writeDb(dbData);
     return dbData.settings;
 }
+

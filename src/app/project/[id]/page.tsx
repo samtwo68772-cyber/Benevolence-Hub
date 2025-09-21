@@ -1,4 +1,5 @@
 
+
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -17,24 +18,23 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
   if (!project) {
     notFound();
   }
-  
-  const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
 
   return (
     <div className="flex min-h-screen flex-col bg-card">
       <AppHeader settings={settings} />
       <main className="flex-1">
         <section className="relative h-64 md:h-96 w-full text-white">
-            {projectImage ? (
+            {project.imageUrl ? (
                 <Image
-                src={projectImage.imageUrl}
-                alt={projectImage.description}
+                src={project.imageUrl}
+                alt={project.title}
                 fill
                 className="object-cover"
-                data-ai-hint={projectImage.imageHint}
                 />
             ) : (
-                <div className="bg-muted w-full h-full" />
+                <div className="bg-muted w-full h-full flex items-center justify-center">
+                    <span className="text-muted-foreground text-xl">No Image</span>
+                </div>
             )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
           <div className="relative z-10 container mx-auto h-full flex flex-col justify-end px-4 sm:px-6 lg:px-8 pb-12">

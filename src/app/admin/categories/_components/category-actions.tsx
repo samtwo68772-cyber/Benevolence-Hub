@@ -12,12 +12,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
-import { ProjectDialog } from './project-dialog';
-import { DeleteProjectDialog } from './delete-project-dialog';
-import { updateProject, deleteProject } from '../_actions/projects';
-import { Project, Category } from '@/lib/types';
+import { CategoryDialog } from './category-dialog';
+import { DeleteCategoryDialog } from './delete-category-dialog';
+import { updateCategory, deleteCategory } from '../_actions/categories';
+import { Category } from '@/lib/types';
 
-export function ProjectActions({ project, categories }: { project: Project, categories: Category[] }) {
+export function CategoryActions({ category }: { category: Category }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -27,20 +27,20 @@ export function ProjectActions({ project, categories }: { project: Project, cate
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <ProjectDialog project={project} onSave={updateProject} categories={categories}>
+        <CategoryDialog category={category} onSave={updateCategory}>
           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
             Edit
           </DropdownMenuItem>
-        </ProjectDialog>
+        </CategoryDialog>
         <DropdownMenuSeparator />
-        <DeleteProjectDialog onConfirm={() => deleteProject(project.id)}>
+        <DeleteCategoryDialog onConfirm={() => deleteCategory(category.id)}>
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
             className="text-destructive"
           >
             Delete
           </DropdownMenuItem>
-        </DeleteProjectDialog>
+        </DeleteCategoryDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );

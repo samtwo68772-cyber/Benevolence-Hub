@@ -1,10 +1,8 @@
 
+
 'use client';
 
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,170 +13,104 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Project } from '@/lib/types';
-
-const projectFormSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters."),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-  details: z.string().min(10, "Details must be at least 10 characters."),
-  startDate: z.date({ required_error: "A start date is required."}),
-  status: z.enum(['Active', 'Completed', 'Planning']),
-  category: z.enum(['Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief']),
-});
+import { Project, Category } from '@/lib/types';
+import Image from 'next/image';
 
 type ProjectFormProps = {
   project?: Project;
-  onSubmit: (values: z.infer<typeof projectFormSchema>) => void;
+  categories: Category[];
+  onSubmit: () => void;
   onCancel: () => void;
 };
 
-export const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }) => {
-  const form = useForm<z.infer<typeof projectFormSchema>>({
-    resolver: zodResolver(projectFormSchema),
-    defaultValues: {
-      title: project?.title || '',
-      description: project?.description || '',
-      details: project?.details.join('\n') || '',
-      startDate: project ? new Date(project.startDate) : new Date(),
-      status: project?.status || 'Planning',
-      category: project?.category.replace('_', ' ') as any || 'Community Development'
-    },
-  });
+export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>(({ project, categories, onSubmit, onCancel }, ref) => {
+    const [imagePreview, setImagePreview] = React.useState<string | null>(project?.imageUrl || null);
+    
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+  
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      onSubmit();
+    }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={3} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="details"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Key Achievements (one per line)</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={5} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Start Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
+      <form ref={ref} onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <input type="hidden" name="id" defaultValue={project?.id} />
+        <div className="md:col-span-2 space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" name="title" defaultValue={project?.title || ''} required />
+        </div>
+        
+        <div className="md:col-span-2 space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" name="description" defaultValue={project?.description || ''} required rows={3} />
+        </div>
+        
+        <div className="md:col-span-2 space-y-2">
+            <Label htmlFor="details">Key Achievements (one per line)</Label>
+            <Textarea id="details" name="details" defaultValue={project?.details.join('\n') || ''} required rows={5} />
+        </div>
+        
+        <div className="md:col-span-2 space-y-2">
+            <Label htmlFor="image">Project Image</Label>
+            <div className="flex items-center gap-4">
+                {imagePreview && (
+                    <div className="w-40 h-auto flex items-center justify-center">
+                        <Image src={imagePreview} alt="Project image preview" width={160} height={90} className="rounded-md object-cover" />
+                    </div>
+                )}
+                <Input id="image" name="image" type="file" accept="image/png, image/jpeg" onChange={handleImageChange} />
+            </div>
+            <p className="text-sm text-muted-foreground">Upload an image for the project. Max 2MB.</p>
+        </div>
+        
+        <div className="space-y-2">
+            <Label>Start Date</Label>
+            <Input type="date" name="startDate" defaultValue={project ? format(new Date(project.startDate), 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd')} required />
+        </div>
+        
+        <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select name="status" defaultValue={project?.status || 'Planning'}>
+                <SelectTrigger>
                     <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                </FormControl>
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Planning">Planning</SelectItem>
                   <SelectItem value="Active">Active</SelectItem>
                   <SelectItem value="Completed">Completed</SelectItem>
                 </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
+            </Select>
+        </div>
+        
+         <div className="md:col-span-2 space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Select name="category" defaultValue={project?.category || ''}>
+                <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
+                </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Water">Water</SelectItem>
-                  <SelectItem value="Education">Education</SelectItem>
-                  <SelectItem value="Medical">Medical</SelectItem>
-                  <SelectItem value="Community Development">Community Development</SelectItem>
-                  <SelectItem value="Disaster Relief">Disaster Relief</SelectItem>
+                  {categories.map(cat => (
+                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                  ))}
                 </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            </Select>
+        </div>
         <div className="md:col-span-2 flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
             <Button type="submit">Save</Button>
         </div>
       </form>
-    </Form>
   );
-};
+});
+
+ProjectForm.displayName = 'ProjectForm';

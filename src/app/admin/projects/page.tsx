@@ -1,4 +1,5 @@
 
+
 import {
   Table,
   TableBody,
@@ -16,8 +17,8 @@ import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
 import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
-import { getProjects } from '@/lib/db';
-import { ProjectCategory, ProjectStatus } from '@/lib/types';
+import { getProjects, getCategories } from '@/lib/db';
+import { ProjectCategory, ProjectStatus, Category } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -28,9 +29,10 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     const skip = (page - 1) * ITEMS_PER_PAGE;
     
     const statusFilter = searchParams.status as ProjectStatus | undefined;
-    const categoryFilter = searchParams.category as ProjectCategory | undefined;
+    const categoryFilter = searchParams.category as string | undefined;
 
     const allProjects = await getProjects();
+    const allCategories = await getCategories();
 
     const filteredProjects = allProjects.filter(project => {
         const statusMatch = !statusFilter || statusFilter === 'all' || project.status === statusFilter;
@@ -49,14 +51,14 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
             <h1 className="text-2xl font-semibold"></h1>
-            <ProjectDialog onSave={addProject}>
+            <ProjectDialog onSave={addProject} categories={allCategories}>
                 <Button><PlusCircle className="mr-2" />Add Project</Button>
             </ProjectDialog>
         </div>
 
        <Card className="w-full">
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
-               <ProjectFilter />
+               <ProjectFilter categories={allCategories} />
             </CardContent>
        </Card>
 
@@ -83,11 +85,11 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                     </Badge>
                   </TableCell>
                   <TableCell className='hidden md:table-cell'>
-                      <Badge variant="outline">{project.category.replace('_', ' ')}</Badge>
+                      <Badge variant="outline">{project.category}</Badge>
                   </TableCell>
                    <TableCell className='hidden lg:table-cell'>{format(new Date(project.startDate), 'yyyy-MM-dd')}</TableCell>
                   <TableCell className="text-right">
-                      <ProjectActions project={project} />
+                      <ProjectActions project={project} categories={allCategories} />
                   </TableCell>
                 </TableRow>
               ))}

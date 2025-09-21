@@ -3,7 +3,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UserCog, Cog, Settings as SettingsIcon } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UserCog, Cog, Settings as SettingsIcon, Grip } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import {
   SidebarProvider,
@@ -26,6 +26,7 @@ import Image from 'next/image';
 const navIconMapping: { [key: string]: React.FC<any> } = {
   Dashboard: LayoutDashboard,
   Projects: FolderKanban,
+  Categories: Grip,
   Volunteers: Users,
   Donations: DollarSign,
   Admins: UserCog,

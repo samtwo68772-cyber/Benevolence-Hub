@@ -10,12 +10,12 @@ export type Project = {
   id: string;
   title: string;
   description: string;
-  imageId: string;
+  imageUrl?: string;
   details: string[];
   status: ProjectStatus;
   startDate: Date;
   peopleHelped: number;
-  category: ProjectCategory;
+  category: string;
 };
 
 export type Volunteer = {
@@ -81,3 +81,9 @@ export type Settings = {
   volunteerIntro: VolunteerIntro;
   socialLinks?: SocialLink[];
 };
+
+export type Category = {
+    id: string;
+    name: string;
+};
+

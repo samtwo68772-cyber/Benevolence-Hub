@@ -1,15 +1,16 @@
 
+
 'use client';
 
 import * as React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Category } from '@/lib/types';
 
 const projectStatuses = ['all', 'Active', 'Completed', 'Planning'];
-const projectCategories = ['all', 'Water', 'Education', 'Medical', 'Community Development', 'Disaster Relief'];
 
-export function ProjectFilter() {
+export function ProjectFilter({ categories }: { categories: Category[] }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -53,8 +54,9 @@ export function ProjectFilter() {
                         <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                        {projectCategories.map((category) => (
-                            <SelectItem key={category} value={category} className="capitalize">{category}</SelectItem>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.name} className="capitalize">{category.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>

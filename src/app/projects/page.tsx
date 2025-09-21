@@ -1,4 +1,5 @@
 
+
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import Image from 'next/image';
@@ -34,22 +35,22 @@ export default async function AllProjectsPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project) => {
-                    const projectImage = PlaceHolderImages.find(img => img.id === project.imageId);
                     return (
                     <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-card">
                         <CardHeader className="p-0 relative">
-                        {projectImage ? (
+                        {project.imageUrl ? (
                             <div className="relative h-56 w-full">
                             <Image
-                                src={projectImage.imageUrl}
-                                alt={projectImage.description}
+                                src={project.imageUrl}
+                                alt={project.title}
                                 fill
                                 className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                data-ai-hint={projectImage.imageHint}
                             />
                             </div>
                         ) : (
-                            <div className='relative h-56 w-full bg-muted' />
+                            <div className='relative h-56 w-full bg-muted flex items-center justify-center'>
+                                <span className='text-muted-foreground'>No Image</span>
+                            </div>
                         )}
                         <Badge className="absolute top-4 right-4" variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
                             {project.status}
