@@ -23,7 +23,7 @@ export default async function Home() {
     <div className="flex min-h-screen flex-col">
       <AppHeader settings={settings}/>
       <main className="flex-1">
-        <HeroSection />
+        <HeroSection settings={settings} />
         <MissionSection settings={settings} />
         <ProjectsSection projects={featuredProjects} />
         <ImpactSection 

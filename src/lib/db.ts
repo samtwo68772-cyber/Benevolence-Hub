@@ -39,6 +39,7 @@ async function readDb(): Promise<DbData> {
                 logo: 'HandHeart', 
                 logoType: 'icon', 
                 volunteerIcon: 'HeartHandshake',
+                hero: { title: 'Compassion in Action', description: 'Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.' },
                 mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions...' },
                 vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity...' },
                 values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency...' }
@@ -57,6 +58,7 @@ async function readDb(): Promise<DbData> {
             logo: 'HandHeart', 
             logoType: 'icon', 
             volunteerIcon: 'HeartHandshake',
+            hero: { title: 'Compassion in Action', description: 'Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.' },
             mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.' },
             vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.' },
             values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.' }
@@ -206,11 +208,15 @@ export async function deleteUser(id: string) {
   
 export async function getSettings() {
     const db = await readDb();
-    const defaultSettings = {
+    const defaultSettings: Settings = {
         appName: 'Benevolence Hub',
         logo: 'HandHeart',
-        logoType: 'icon' as 'icon' | 'image',
+        logoType: 'icon',
         volunteerIcon: 'HeartHandshake',
+        hero: {
+            title: "Compassion in Action",
+            description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
+        },
         mission: {
             title: "Our Mission",
             description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
@@ -230,7 +236,17 @@ export async function getSettings() {
 
 export async function updateSettings(settings: Partial<Settings>) {
     const dbData = await readDb();
-    dbData.settings = { ...dbData.settings, ...settings };
+    // Deep merge for nested objects like mission, vision, etc.
+    const newSettings = {
+        ...dbData.settings,
+        ...settings,
+        hero: { ...dbData.settings?.hero, ...settings.hero },
+        mission: { ...dbData.settings?.mission, ...settings.mission },
+        vision: { ...dbData.settings?.vision, ...settings.vision },
+        values: { ...dbData.settings?.values, ...settings.values },
+    };
+    dbData.settings = newSettings;
     await writeDb(dbData);
     return dbData.settings;
 }
+

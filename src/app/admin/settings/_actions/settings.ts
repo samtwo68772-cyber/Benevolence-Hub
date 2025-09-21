@@ -23,10 +23,6 @@ const passwordSchema = z.object({
     path: ["confirmPassword"],
 });
 
-const settingsSchema = z.object({
-    appName: z.string().min(2, "App name must be at least 2 characters."),
-});
-
 export async function updateProfile(data: z.infer<typeof profileSchema>) {
     const session = await getSession();
     if (!session) {
@@ -103,6 +99,8 @@ export async function updateSettings(formData: FormData) {
     const logoFile = formData.get('logo') as File;
     const volunteerIcon = formData.get('volunteerIcon') as string;
     
+    const heroTitle = formData.get('heroTitle') as string;
+    const heroDescription = formData.get('heroDescription') as string;
     const missionTitle = formData.get('missionTitle') as string;
     const missionDescription = formData.get('missionDescription') as string;
     const visionTitle = formData.get('visionTitle') as string;
@@ -129,6 +127,7 @@ export async function updateSettings(formData: FormData) {
 
     const newSettings: Partial<Settings> = {
         appName: validatedAppName.data,
+        hero: { title: heroTitle, description: heroDescription },
         mission: { title: missionTitle, description: missionDescription },
         vision: { title: visionTitle, description: visionDescription },
         values: { title: valuesTitle, description: valuesDescription },
@@ -149,5 +148,3 @@ export async function updateSettings(formData: FormData) {
     revalidatePath('/');
     return { message: 'Site settings updated successfully.' };
 }
-
-    

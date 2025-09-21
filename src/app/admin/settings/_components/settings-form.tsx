@@ -111,7 +111,19 @@ function SiteAndContentSettingsForm({ settings }: { settings: Settings }) {
                     </div>
 
                     <div className="space-y-4 rounded-md border p-4">
-                        <h4 className="font-semibold">Homepage: Our Mission</h4>
+                        <h4 className="font-semibold">Homepage: Hero Section</h4>
+                        <div className="space-y-2">
+                            <Label htmlFor="heroTitle">Title</Label>
+                            <Input id="heroTitle" name="heroTitle" defaultValue={settings.hero.title} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="heroDescription">Description</Label>
+                            <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
+                        </div>
+                    </div>
+                    
+                    <div className="space-y-4 rounded-md border p-4">
+                        <h4 className="font-semibold">Homepage: Mission Section</h4>
                         <div className="space-y-2">
                             <Label htmlFor="missionTitle">Title</Label>
                             <Input id="missionTitle" name="missionTitle" defaultValue={settings.mission.title} />
@@ -122,7 +134,7 @@ function SiteAndContentSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                     </div>
                     <div className="space-y-4 rounded-md border p-4">
-                        <h4 className="font-semibold">Homepage: Our Vision</h4>
+                        <h4 className="font-semibold">Homepage: Vision Section</h4>
                         <div className="space-y-2">
                             <Label htmlFor="visionTitle">Title</Label>
                             <Input id="visionTitle" name="visionTitle" defaultValue={settings.vision.title} />
@@ -133,7 +145,7 @@ function SiteAndContentSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                     </div>
                     <div className="space-y-4 rounded-md border p-4">
-                        <h4 className="font-semibold">Homepage: Our Values</h4>
+                        <h4 className="font-semibold">Homepage: Values Section</h4>
                         <div className="space-y-2">
                             <Label htmlFor="valuesTitle">Title</Label>
                             <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.values.title} />
@@ -192,10 +204,10 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
     };
     
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
             <SiteAndContentSettingsForm settings={settings} />
 
-            <div className="space-y-6">
+            <div className="lg:col-span-1 space-y-6">
                 <Card className="w-full">
                     <Form {...profileForm}>
                         <form onSubmit={profileForm.handleSubmit(handleProfileSave)}>

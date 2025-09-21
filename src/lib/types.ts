@@ -60,7 +60,9 @@ export type Settings = {
   logo: string;
   logoType: 'icon' | 'image';
   volunteerIcon: string;
+  hero: Goal;
   mission: Goal;
   vision: Goal;
   values: Goal;
 };
+
