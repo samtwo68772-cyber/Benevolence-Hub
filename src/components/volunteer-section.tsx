@@ -90,12 +90,12 @@ export default function VolunteerSection({ settings }: { settings: Settings }) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <VolunteerIcon className="h-16 w-16 text-primary" />
-            <h2 className="font-headline text-4xl md:text-5xl">Become a Volunteer</h2>
+            <h2 className="font-headline text-4xl md:text-5xl">{settings.volunteerIntro?.title}</h2>
             <p className="text-lg text-muted-foreground">
-              Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.
+             {settings.volunteerIntro?.description1}
             </p>
              <p className="text-lg text-muted-foreground">
-              Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started.
+              {settings.volunteerIntro?.description2}
             </p>
           </div>
           <div className="rounded-lg bg-card p-6 sm:p-8 shadow-xl">

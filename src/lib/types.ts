@@ -55,6 +55,12 @@ export type Goal = {
     description: string;
 };
 
+export type VolunteerIntro = {
+    title: string;
+    description1: string;
+    description2: string;
+}
+
 export type Settings = {
   appName: string;
   logo: string;
@@ -66,7 +72,9 @@ export type Settings = {
   mission: Goal;
   vision: Goal;
   values: Goal;
+  volunteerIntro: VolunteerIntro;
 };
+
 
 
 

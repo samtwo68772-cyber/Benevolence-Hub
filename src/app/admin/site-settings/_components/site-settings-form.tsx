@@ -138,6 +138,22 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 <p className="text-sm text-muted-foreground">Upload an image for the mission section. Max 1MB.</p>
                             </div>
                         </div>
+
+                         <div className="space-y-4 rounded-md border p-4">
+                            <h4 className="font-semibold">Homepage: Volunteer Section</h4>
+                            <div className="space-y-2">
+                                <Label htmlFor="volunteerIntroTitle">Title</Label>
+                                <Input id="volunteerIntroTitle" name="volunteerIntroTitle" defaultValue={settings.volunteerIntro?.title} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="volunteerIntroDescription1">Description Paragraph 1</Label>
+                                <Textarea id="volunteerIntroDescription1" name="volunteerIntroDescription1" defaultValue={settings.volunteerIntro?.description1} rows={3} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="volunteerIntroDescription2">Description Paragraph 2</Label>
+                                <Textarea id="volunteerIntroDescription2" name="volunteerIntroDescription2" defaultValue={settings.volunteerIntro?.description2} rows={3} />
+                            </div>
+                        </div>
                         
                         <div className="space-y-4 rounded-md border p-4">
                             <h4 className="font-semibold">Homepage: Content Sections</h4>
@@ -175,4 +191,5 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         </div>
     );
 }
+
 

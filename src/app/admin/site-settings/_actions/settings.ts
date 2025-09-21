@@ -29,6 +29,9 @@ export async function updateSiteSettings(formData: FormData) {
     const visionDescription = formData.get('visionDescription') as string;
     const valuesTitle = formData.get('valuesTitle') as string;
     const valuesDescription = formData.get('valuesDescription') as string;
+    const volunteerIntroTitle = formData.get('volunteerIntroTitle') as string;
+    const volunteerIntroDescription1 = formData.get('volunteerIntroDescription1') as string;
+    const volunteerIntroDescription2 = formData.get('volunteerIntroDescription2') as string;
 
 
     const validatedAppName = z.string().min(2).safeParse(appName);
@@ -62,6 +65,11 @@ export async function updateSiteSettings(formData: FormData) {
         mission: { title: missionTitle, description: missionDescription },
         vision: { title: visionTitle, description: visionDescription },
         values: { title: valuesTitle, description: valuesDescription },
+        volunteerIntro: { 
+            title: volunteerIntroTitle, 
+            description1: volunteerIntroDescription1,
+            description2: volunteerIntroDescription2
+        },
     };
 
     if (logoData) {
@@ -83,4 +91,5 @@ export async function updateSiteSettings(formData: FormData) {
     revalidatePath('/');
     return { message: 'Site settings updated successfully.' };
 }
+
 
