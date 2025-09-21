@@ -44,7 +44,12 @@ async function readDb(): Promise<DbData> {
                 mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions...' },
                 vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity...' },
                 values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency...' },
-                volunteerIntro: { title: 'Become a Volunteer', description1: 'Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.', description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started." }
+                volunteerIntro: { title: 'Become a Volunteer', description1: 'Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.', description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started." },
+                socialLinks: [
+                    { icon: 'Twitter', href: '#' },
+                    { icon: 'Facebook', href: '#' },
+                    { icon: 'Instagram', href: '#' }
+                ]
             } 
         };
     }
@@ -65,7 +70,12 @@ async function readDb(): Promise<DbData> {
             mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.' },
             vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.' },
             values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.' },
-            volunteerIntro: { title: 'Become a Volunteer', description1: 'Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.', description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started." }
+            volunteerIntro: { title: 'Become a Volunteer', description1: 'Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.', description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started." },
+            socialLinks: [
+                { icon: 'Twitter', href: '#' },
+                { icon: 'Facebook', href: '#' },
+                { icon: 'Instagram', href: '#' }
+            ]
         }
     };
   }
@@ -248,7 +258,12 @@ export async function getSettings() {
             { icon: 'Instagram', href: '#' }
         ]
     };
-    return { ...defaultSettings, ...(db.settings || {}) };
+    // Make sure to merge socialLinks separately if they exist
+    const settings = { ...defaultSettings, ...(db.settings || {}) };
+    if (db.settings?.socialLinks) {
+        settings.socialLinks = db.settings.socialLinks;
+    }
+    return settings;
 }
 
 

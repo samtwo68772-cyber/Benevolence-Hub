@@ -34,13 +34,19 @@ const socialIconMap = {
 };
 
 function SocialLinks({ links }: { links: SocialLink[] }) {
+    if (!links || links.length === 0) {
+        return null;
+    }
+
     return (
         <div className="flex items-center gap-4">
         {links.map((social) => {
+            if (!social.href || social.href === '#') return null;
             const Icon = socialIconMap[social.icon];
             return (
-            <Link key={social.icon} href={social.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
+            <Link key={social.icon} href={social.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false} target="_blank" rel="noopener noreferrer">
                 <Icon className="h-6 w-6" />
+                <span className="sr-only">{social.icon}</span>
             </Link>
             )
         })}
