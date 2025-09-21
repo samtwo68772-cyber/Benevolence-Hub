@@ -72,6 +72,7 @@ export type Settings = {
   logoType: 'icon' | 'image';
   volunteerIcon: string;
   hero: Goal;
+  heroImage?: string;
   missionIntro: Goal;
   missionImage?: string;
   mission: Goal;
@@ -80,8 +81,3 @@ export type Settings = {
   volunteerIntro: VolunteerIntro;
   socialLinks?: SocialLink[];
 };
-
-
-
-
-

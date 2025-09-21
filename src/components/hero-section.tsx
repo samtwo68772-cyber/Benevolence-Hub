@@ -7,18 +7,19 @@ import { ArrowDown } from "lucide-react";
 import { Settings } from "@/lib/types";
 
 export default function HeroSection({ settings }: { settings: Settings }) {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-background');
+  const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background');
+  const heroImageSrc = settings.heroImage || defaultHeroImage?.imageUrl;
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center">
-      {heroImage && (
+      {heroImageSrc && (
         <Image
-          src={heroImage.imageUrl}
-          alt={heroImage.description}
+          src={heroImageSrc}
+          alt={defaultHeroImage?.description || 'Hero background image'}
           fill
           className="object-cover"
           priority
-          data-ai-hint={heroImage.imageHint}
+          data-ai-hint={defaultHeroImage?.imageHint}
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />

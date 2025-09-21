@@ -20,6 +20,7 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
+    const heroImageFile = formData.get('heroImage') as File;
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
     const missionImageFile = formData.get('missionImage') as File;
@@ -56,6 +57,14 @@ export async function updateSiteSettings(formData: FormData) {
         logoType = 'image';
     }
 
+    let heroImageData: string | undefined;
+    if (heroImageFile && heroImageFile.size > 0) {
+        if (heroImageFile.size > 2 * 1024 * 1024) { // 2MB limit
+            throw new Error("Hero image must be less than 2MB.");
+        }
+        heroImageData = await fileToDataURI(heroImageFile);
+    }
+
     let missionImageData: string | undefined;
     if (missionImageFile && missionImageFile.size > 0) {
         if (missionImageFile.size > 1024 * 1024) { // 1MB limit
@@ -84,6 +93,10 @@ export async function updateSiteSettings(formData: FormData) {
         newSettings.logoType = logoType;
     }
 
+    if (heroImageData) {
+        newSettings.heroImage = heroImageData;
+    }
+
     if (missionImageData) {
         newSettings.missionImage = missionImageData;
     }
@@ -98,6 +111,3 @@ export async function updateSiteSettings(formData: FormData) {
     revalidatePath('/');
     return { message: 'Site settings updated successfully.' };
 }
-
-
-
