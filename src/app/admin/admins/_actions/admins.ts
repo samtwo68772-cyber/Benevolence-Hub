@@ -16,6 +16,9 @@ const adminSchema = z.object({
 
 const addAdminSchema = adminSchema.extend({
     password: z.string().min(8, "Password must be at least 8 characters."),
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
 });
 
 export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
@@ -54,6 +57,10 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
     }
     
     const { id, password, confirmPassword, ...updateData } = validatedFields.data;
+    
+    if (password && password !== confirmPassword) {
+        throw new Error("Passwords don't match");
+    }
 
     const existingUserByEmail = await getUserByEmail(updateData.email);
 

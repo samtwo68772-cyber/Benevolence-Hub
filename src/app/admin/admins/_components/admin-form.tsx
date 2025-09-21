@@ -13,15 +13,18 @@ import { Button } from '@/components/ui/button';
 const adminFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters.").optional().or(z.literal('')),
+  password: z.string().optional().or(z.literal('')),
   confirmPassword: z.string().optional(),
 }).refine(data => {
     if (data.password) {
+        if (data.password.length < 8) {
+            return false;
+        }
         return data.password === data.confirmPassword;
     }
     return true;
 }, {
-    message: "Passwords don't match",
+    message: "Passwords must be at least 8 characters and match",
     path: ["confirmPassword"],
 });
 
@@ -79,7 +82,7 @@ export const AdminForm: React.FC<AdminFormProps> = ({ admin, onSubmit, onCancel 
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder={admin ? 'Leave blank to keep current password' : ''} {...field} />
+                <Input type="password" placeholder={admin ? 'Leave blank to keep current password' : 'At least 8 characters'} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

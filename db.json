@@ -212,7 +212,7 @@
       "id": "ADM-001",
       "name": "Michael Scott",
       "email": "michael.s@benevolence.com",
-      "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M",
+      "password": "$2a$10$k1i5tJ9v.p4C9wX6Z.G2B.Rz.n/a.n8Z.E.Y8/U/f2aB6E/G5JgWq",
       "role": "ADMIN",
       "joinDate": "2021-01-01T00:00:00.000Z"
     },
@@ -220,7 +220,7 @@
       "id": "ADM-002",
       "name": "Dwight Schrute",
       "email": "dwight.s@benevolence.com",
-      "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M",
+      "password": "$2a$10$k1i5tJ9v.p4C9wX6Z.G2B.Rz.n/a.n8Z.E.Y8/U/f2aB6E/G5JgWq",
       "role": "ADMIN",
       "joinDate": "2021-06-15T00:00:00.000Z"
     },
@@ -228,7 +228,7 @@
       "id": "ADM-003",
       "name": "Pam Beesly",
       "email": "pam.b@benevolence.com",
-      "password": "$2a$10$Y.w3q.N/pD5.EaE7s.M9d.w/rA.Xk.tq3g0V/X.Zd.pD5.EaE7s.M",
+      "password": "$2a$10$k1i5tJ9v.p4C9wX6Z.G2B.Rz.n/a.n8Z.E.Y8/U/f2aB6E/G5JgWq",
       "role": "ADMIN",
       "joinDate": "2022-03-10T00:00:00.000Z"
     }
