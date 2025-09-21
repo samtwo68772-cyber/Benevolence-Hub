@@ -16,8 +16,8 @@ import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
 import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
-import prisma from '@/lib/prisma';
-import { ProjectCategory, ProjectStatus } from '@prisma/client';
+import { db } from '@/lib/db';
+import { ProjectCategory, ProjectStatus } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -30,21 +30,19 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     const statusFilter = searchParams.status as ProjectStatus | undefined;
     const categoryFilter = searchParams.category as ProjectCategory | undefined;
 
-    const whereClause: any = {
-      status: statusFilter === 'all' ? undefined : statusFilter,
-      category: categoryFilter === 'all' ? undefined : categoryFilter?.replace(' ', '_'),
-    };
+    const allProjects = await db.getProjects();
 
-    const projects = await prisma.project.findMany({
-      where: whereClause,
-      orderBy: {
-        startDate: 'desc'
-      },
-      skip: skip,
-      take: ITEMS_PER_PAGE,
+    const filteredProjects = allProjects.filter(project => {
+        const statusMatch = !statusFilter || statusFilter === 'all' || project.status === statusFilter;
+        const categoryMatch = !categoryFilter || categoryFilter === 'all' || project.category === categoryFilter;
+        return statusMatch && categoryMatch;
     });
 
-    const totalProjects = await prisma.project.count({ where: whereClause });
+    const projects = filteredProjects
+      .sort((a, b) => b.startDate.getTime() - a.startDate.getTime())
+      .slice(skip, skip + ITEMS_PER_PAGE);
+
+    const totalProjects = filteredProjects.length;
     const totalPages = Math.ceil(totalProjects / ITEMS_PER_PAGE);
 
   return (

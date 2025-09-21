@@ -2,9 +2,9 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { db } from '@/lib/db';
 
 const adminSchema = z.object({
   id: z.string().optional(),
@@ -25,9 +25,7 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
         throw new Error('Invalid admin data.');
     }
 
-    const existingUser = await prisma.user.findUnique({
-        where: { email: validatedFields.data.email }
-    });
+    const existingUser = await db.getUserByEmail(validatedFields.data.email);
 
     if (existingUser) {
         throw new Error('An account with this email already exists.');
@@ -35,13 +33,10 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
     
     const hashedPassword = await bcrypt.hash(validatedFields.data.password, 10);
 
-    await prisma.user.create({
-        data: {
-            name: validatedFields.data.name,
-            email: validatedFields.data.email,
-            password: hashedPassword,
-            role: 'ADMIN',
-        },
+    await db.createUser({
+        name: validatedFields.data.name,
+        email: validatedFields.data.email,
+        password: hashedPassword,
     });
 
     revalidatePath('/admin/admins');
@@ -60,9 +55,7 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
     
     const { id, password, confirmPassword, ...updateData } = validatedFields.data;
 
-    const existingUserByEmail = await prisma.user.findUnique({
-        where: { email: updateData.email }
-    });
+    const existingUserByEmail = await db.getUserByEmail(updateData.email);
 
     if (existingUserByEmail && existingUserByEmail.id !== id) {
         throw new Error('An account with this email already exists.');
@@ -73,20 +66,15 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
         hashedPassword = await bcrypt.hash(password, 10);
     }
     
-    await prisma.user.update({
-        where: { id },
-        data: {
-            ...updateData,
-            ...(hashedPassword && { password: hashedPassword })
-        },
+    await db.updateUser(id, {
+        ...updateData,
+        ...(hashedPassword && { password: hashedPassword })
     });
 
     revalidatePath('/admin/admins');
 }
 
 export async function deleteAdmin(adminId: string) {
-    await prisma.user.delete({
-        where: { id: adminId },
-    });
+    await db.deleteUser(adminId);
     revalidatePath('/admin/admins');
 }

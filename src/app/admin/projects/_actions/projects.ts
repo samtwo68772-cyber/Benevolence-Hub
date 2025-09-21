@@ -2,9 +2,9 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { ProjectCategory, ProjectStatus } from '@prisma/client';
+import { db } from '@/lib/db';
+import { ProjectCategory, ProjectStatus } from '@/lib/types';
 
 const projectSchema = z.object({
   id: z.string().optional(),
@@ -21,9 +21,9 @@ function assignImageId(category: ProjectCategory): string {
         case 'Water': return 'project-water';
         case 'Education': return 'project-education';
         case 'Medical': return 'project-medical';
-        case 'Community_Development': return 'project-community-development';
-        case 'Disaster_Relief': return 'project-disaster-relief';
-        default: return `project-${category.toLowerCase().replace('_', '-')}`;
+        case 'Community Development': return 'project-community-development';
+        case 'Disaster Relief': return 'project-disaster-relief';
+        default: return `project-${category.toLowerCase().replace(' ', '-')}`;
     }
 }
 
@@ -36,17 +36,12 @@ export async function addProject(data: z.infer<typeof projectSchema>) {
     }
 
     const { category, ...rest } = validatedFields.data;
-    const prismaCategory = category.replace(/ /g, '_') as ProjectCategory;
-
-    const imageId = assignImageId(prismaCategory);
+    const imageId = assignImageId(category);
     
-    await prisma.project.create({
-        data: {
-            ...rest,
-            category: prismaCategory,
-            imageId,
-            peopleHelped: 0, // Default value
-        }
+    await db.createProject({
+        ...rest,
+        category,
+        imageId,
     });
 
     revalidatePath('/admin/projects');
@@ -61,16 +56,12 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
     }
     
     const { id, category, ...updateData } = validatedFields.data;
-    const prismaCategory = category.replace(/ /g, '_') as ProjectCategory;
-    const imageId = assignImageId(prismaCategory);
+    const imageId = assignImageId(category);
     
-    await prisma.project.update({
-        where: { id: id! },
-        data: {
-            ...updateData,
-            category: prismaCategory,
-            imageId,
-        },
+    await db.updateProject(id, {
+        ...updateData,
+        category,
+        imageId,
     });
 
     revalidatePath('/admin/projects');
@@ -79,9 +70,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
 }
 
 export async function deleteProject(projectId: string) {
-    await prisma.project.delete({
-        where: { id: projectId },
-    });
+    await db.deleteProject(projectId);
     revalidatePath('/admin/projects');
     revalidatePath('/');
 }

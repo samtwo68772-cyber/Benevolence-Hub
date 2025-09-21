@@ -2,10 +2,10 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { getSession, createSession, SessionPayload } from '@/lib/session';
+import { db } from '@/lib/db';
 
 const profileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -21,6 +21,11 @@ const passwordSchema = z.object({
     path: ["confirmPassword"],
 });
 
+const settingsSchema = z.object({
+    appName: z.string().min(2, "App name must be at least 2 characters."),
+    logo: z.string().min(2, "Logo name must be at least 2 characters."),
+});
+
 export async function updateProfile(data: z.infer<typeof profileSchema>) {
     const session = await getSession();
     if (!session) {
@@ -34,17 +39,13 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
 
     const { name, email } = validatedFields.data;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await db.getUserByEmail(email);
     if (existingUser && existingUser.id !== session.userId) {
         throw new Error('Email is already in use by another account.');
     }
 
-    await prisma.user.update({
-        where: { id: session.userId },
-        data: { name, email },
-    });
+    await db.updateUser(session.userId, { name, email });
     
-    // Update the session with new user data
     const updatedSession: SessionPayload = {
         userId: session.userId,
         name,
@@ -67,14 +68,13 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
     const validatedFields = passwordSchema.safeParse(data);
     if (!validatedFields.success) {
         const errors = validatedFields.error.flatten().fieldErrors;
-        // Return the first error message
         const firstError = Object.values(errors)[0]?.[0];
         throw new Error(firstError || 'Invalid data.');
     }
 
     const { currentPassword, newPassword } = validatedFields.data;
 
-    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    const user = await db.getUserById(session.userId);
     if (!user || !user.password) {
         throw new Error('User not found.');
     }
@@ -86,10 +86,20 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-    await prisma.user.update({
-        where: { id: session.userId },
-        data: { password: hashedNewPassword },
-    });
+    await db.updateUser(session.userId, { password: hashedNewPassword });
 
     return { message: 'Password updated successfully.' };
+}
+
+export async function updateSettings(data: z.infer<typeof settingsSchema>) {
+    const validatedFields = settingsSchema.safeParse(data);
+    if (!validatedFields.success) {
+        throw new Error('Invalid settings data.');
+    }
+
+    await db.updateSettings(validatedFields.data);
+
+    revalidatePath('/admin/settings');
+    revalidatePath('/');
+    return { message: 'Site settings updated successfully.' };
 }

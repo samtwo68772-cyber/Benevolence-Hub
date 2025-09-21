@@ -13,11 +13,11 @@ import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { format } from 'date-fns';
 import { DonationFilter } from './_components/donation-filter';
 import { PaginationControls } from '@/components/ui/pagination';
-import { DonationType } from '@prisma/client';
+import { DonationType, Project } from '@/lib/types';
 
 const ITEMS_PER_PAGE = 7;
 
@@ -28,37 +28,35 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
     const typeFilter = searchParams.type as string | undefined;
     const projectFilter = searchParams.project as string | undefined;
 
-    const whereClause: any = {
-        type: typeFilter && typeFilter !== 'all' ? (typeFilter === 'One-time' ? 'ONE_TIME' : 'MONTHLY') as DonationType : undefined,
-        project: {
-            title: projectFilter && projectFilter !== 'all' ? projectFilter : undefined
-        },
-    };
+    const allProjects = await db.getProjects();
+    const allDonations = await db.getDonations();
 
-    const projects = await prisma.project.findMany({ select: { title: true } });
-    const projectNames = ['General Fund', ...projects.map(p => p.title)];
+    const projectNames = ['General Fund', ...allProjects.map(p => p.title)];
 
-    const donations = await prisma.donation.findMany({
-        where: whereClause,
-        include: {
-            project: true
-        },
-        orderBy: {
-            date: 'desc'
-        },
-        skip: skip,
-        take: ITEMS_PER_PAGE,
+    const filteredDonations = allDonations.filter(donation => {
+        const donationProject = allProjects.find(p => p.id === donation.projectId);
+        donation.project = donationProject;
+
+        const typeMatch = !typeFilter || typeFilter === 'all' || 
+            (typeFilter === 'One-time' && donation.type === 'ONE_TIME') ||
+            (typeFilter === 'Monthly' && donation.type === 'MONTHLY');
+        
+        const projectMatch = !projectFilter || projectFilter === 'all' || 
+            (projectFilter === 'General Fund' && !donation.projectId) ||
+            (donationProject && donationProject.title === projectFilter);
+        
+        return typeMatch && projectMatch;
     });
 
-    const totalDonations = await prisma.donation.count({ where: whereClause });
+    const donations = filteredDonations
+        .sort((a, b) => b.date.getTime() - a.date.getTime())
+        .slice(skip, skip + ITEMS_PER_PAGE);
+
+    const totalDonations = filteredDonations.length;
     const totalPages = Math.ceil(totalDonations / ITEMS_PER_PAGE);
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
-        {/* <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0"> */}
-            {/* <h1 className="text-2xl font-semibold">Donations</h1> */}
-        {/* </div> */}
-
         <Card className="w-full">
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
                 <DonationFilter projectNames={projectNames} />

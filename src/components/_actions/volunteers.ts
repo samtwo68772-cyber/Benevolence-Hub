@@ -2,8 +2,8 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { db } from '@/lib/db';
 
 const volunteerSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -21,15 +21,13 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
         throw new Error('Invalid volunteer data.');
     }
     
-    await prisma.volunteer.create({
-        data: {
-            name: validatedFields.data.name,
-            email: validatedFields.data.email,
-            phone: validatedFields.data.phone,
-            skills: validatedFields.data.skills,
-            availability: validatedFields.data.availability,
-            interests: validatedFields.data.interests,
-        }
+    await db.createVolunteer({
+        name: validatedFields.data.name,
+        email: validatedFields.data.email,
+        phone: validatedFields.data.phone,
+        skills: validatedFields.data.skills,
+        availability: validatedFields.data.availability,
+        interests: validatedFields.data.interests,
     });
 
     revalidatePath('/admin/volunteers');

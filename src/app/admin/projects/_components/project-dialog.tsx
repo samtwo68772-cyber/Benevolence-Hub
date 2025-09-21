@@ -2,8 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { ProjectForm } from './project-form';
 import { useToast } from '@/hooks/use-toast';
 import { Project } from '@/lib/types';
@@ -16,19 +15,15 @@ type ProjectDialogProps = {
 
 export function ProjectDialog({ children, project, onSave }: ProjectDialogProps) {
   const [open, setOpen] = React.useState(false);
-  const formRef = React.useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
-  const handleSave = async () => {
-    if (formRef.current) {
-      formRef.current.requestSubmit();
+  const handleFormSubmit = async (values: any) => {
+    const data = {
+        ...values,
+        startDate: values.startDate.toISOString(),
     }
-  };
-  
-  const handleFormSubmit = async (formData: FormData) => {
-    const data = Object.fromEntries(formData.entries());
     if (project?.id) {
-        (data as any).id = project.id;
+        data.id = project.id;
     }
     
     try {
@@ -57,11 +52,7 @@ export function ProjectDialog({ children, project, onSave }: ProjectDialogProps)
             {project ? 'Update the details for this project.' : 'Fill in the form to create a new project.'}
           </DialogDescription>
         </DialogHeader>
-        <ProjectForm ref={formRef} project={project} onSubmit={handleFormSubmit} />
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave}>Save</Button>
-        </DialogFooter>
+        <ProjectForm project={project} onSubmit={handleFormSubmit} onCancel={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   );

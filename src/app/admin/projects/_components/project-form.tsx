@@ -15,7 +15,7 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Project } from '@prisma/client';
+import { Project } from '@/lib/types';
 
 const projectFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
@@ -28,10 +28,11 @@ const projectFormSchema = z.object({
 
 type ProjectFormProps = {
   project?: Project;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (values: z.infer<typeof projectFormSchema>) => void;
+  onCancel: () => void;
 };
 
-export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>(({ project, onSubmit }, ref) => {
+export const ProjectForm: React.FC<ProjectFormProps> = ({ project, onSubmit, onCancel }) => {
   const form = useForm<z.infer<typeof projectFormSchema>>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
@@ -40,27 +41,13 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
       details: project?.details.join('\n') || '',
       startDate: project ? new Date(project.startDate) : new Date(),
       status: project?.status || 'Planning',
-      category: project?.category.replace('_', ' ') as any || 'Community Development',
+      category: project?.category.replace('_', ' ') as any || 'Community Development'
     },
   });
 
-  const handleFormSubmit = (values: z.infer<typeof projectFormSchema>) => {
-    const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) => {
-      if (key === 'startDate') {
-        formData.append(key, (value as Date).toISOString());
-      } else if (key === 'details') {
-          formData.append(key, value as string);
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
-      }
-    });
-    onSubmit(formData);
-  };
-  
   return (
     <Form {...form}>
-      <form ref={ref} onSubmit={form.handleSubmit(handleFormSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={form.control}
           name="title"
@@ -187,9 +174,11 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
             </FormItem>
           )}
         />
+        <div className="md:col-span-2 flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+            <Button type="submit">Save</Button>
+        </div>
       </form>
     </Form>
   );
-});
-
-ProjectForm.displayName = 'ProjectForm';
+};

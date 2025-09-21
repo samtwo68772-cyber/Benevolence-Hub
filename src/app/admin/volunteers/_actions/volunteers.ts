@@ -1,20 +1,15 @@
 
 'use server';
 
-import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { db } from '@/lib/db';
 
 export async function updateVolunteerStatus(volunteerId: string, status: 'Approved' | 'Rejected') {
-  await prisma.volunteer.update({
-    where: { id: volunteerId },
-    data: { status },
-  });
+  await db.updateVolunteer(volunteerId, { status });
   revalidatePath('/admin/volunteers');
 }
 
 export async function deleteVolunteer(volunteerId: string) {
-  await prisma.volunteer.delete({
-    where: { id: volunteerId },
-  });
+  await db.deleteVolunteer(volunteerId);
   revalidatePath('/admin/volunteers');
 }

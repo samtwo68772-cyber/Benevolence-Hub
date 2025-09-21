@@ -6,32 +6,34 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export default async function Home() {
-  const projects = await prisma.project.findMany();
-  const allVolunteers = await prisma.volunteer.findMany();
+  const projects = await db.getProjects();
+  const allVolunteers = await db.getVolunteers();
   const approvedVolunteers = allVolunteers.filter(v => v.status === 'Approved');
+  const allDonations = await db.getDonations();
   
-  const totalDonations = await prisma.donation.aggregate({_sum: { amount: true}});
+  const totalDonations = allDonations.reduce((sum, d) => sum + d.amount, 0);
   
-  const featuredProjects = await prisma.project.findMany({ orderBy: { startDate: 'desc' }, take: 3 });
+  const featuredProjects = [...projects].sort((a, b) => b.startDate.getTime() - a.startDate.getTime()).slice(0, 3);
+  const settings = await db.getSettings();
 
   return (
     <div className="flex min-h-screen flex-col">
-      <AppHeader />
+      <AppHeader settings={settings}/>
       <main className="flex-1">
         <HeroSection />
         <MissionSection />
         <ProjectsSection projects={featuredProjects} />
         <ImpactSection 
             projects={projects} 
-            volunteers={approvedVolunteers}
-            totalDonations={totalDonations._sum.amount || 0}
+            volunteers={allVolunteers}
+            totalDonations={totalDonations}
         />
         <VolunteerSection />
       </main>
-      <AppFooter />
+      <AppFooter settings={settings}/>
     </div>
   );
 }

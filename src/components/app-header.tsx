@@ -4,7 +4,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HandHeart, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import * as LucideIcons from 'lucide-react';
+import type { Settings } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -19,13 +21,14 @@ const navLinks = [
   { href: "#volunteer", label: "Volunteer" },
 ];
 
-export default function AppHeader() {
+export default function AppHeader({ settings }: { settings: Settings }) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
   const pathname = usePathname();
   const isMobile = useIsMobile();
 
   const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
+  const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -49,9 +52,9 @@ export default function AppHeader() {
     >
       <div className="flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
-          <HandHeart className="h-7 w-7 text-primary" />
+          <LogoIcon className="h-7 w-7 text-primary" />
           <span className="font-headline text-2xl font-bold tracking-wide text-foreground">
-            Benevolence Hub
+            {settings.appName}
           </span>
         </Link>
         <div className="hidden items-center gap-6 lg:flex">
@@ -86,7 +89,7 @@ export default function AppHeader() {
               <div className="flex h-full flex-col p-6">
                 <div className="mb-8 flex items-center justify-start">
                    <Link href="/" className="flex items-center gap-2" prefetch={false} onClick={() => setIsMenuOpen(false)}>
-                      <HandHeart className="h-7 w-7 text-primary" />
+                      <LogoIcon className="h-7 w-7 text-primary" />
                     </Link>
                 </div>
                 <nav className="flex flex-1 flex-col items-start gap-6">

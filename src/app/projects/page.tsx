@@ -7,17 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
-import prisma from '@/lib/prisma';
 import { Badge } from '@/components/ui/badge';
+import { db } from '@/lib/db';
 
 export default async function AllProjectsPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: { startDate: 'desc' }
-  });
+  const projects = (await db.getProjects()).sort((a, b) => b.startDate.getTime() - a.startDate.getTime());
+  const settings = await db.getSettings();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <AppHeader />
+      <AppHeader settings={settings} />
       <main className="flex-1">
         <section className="section-padding">
           <div className="container mx-auto">
@@ -81,7 +80,7 @@ export default async function AllProjectsPage() {
           </div>
         </section>
       </main>
-      <AppFooter />
+      <AppFooter settings={settings} />
     </div>
   );
 }

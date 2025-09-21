@@ -7,13 +7,12 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
-import prisma from '@/lib/prisma';
 import { Badge } from '@/components/ui/badge';
+import { db } from '@/lib/db';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = await prisma.project.findUnique({
-    where: { id: params.id },
-  });
+  const project = await db.getProjectById(params.id);
+  const settings = await db.getSettings();
   
   if (!project) {
     notFound();
@@ -23,7 +22,7 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
 
   return (
     <div className="flex min-h-screen flex-col bg-card">
-      <AppHeader />
+      <AppHeader settings={settings} />
       <main className="flex-1">
         <section className="relative h-64 md:h-96 w-full text-white">
             {projectImage ? (
@@ -82,7 +81,7 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
         </section>
 
       </main>
-      <AppFooter />
+      <AppFooter settings={settings} />
     </div>
   );
 }
