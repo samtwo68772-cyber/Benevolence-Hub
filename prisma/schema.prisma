@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
+  provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -17,7 +17,7 @@ model Project {
   description  String
   imageUrl     String?
   details      String[]
-  status       String
+  status       String    // e.g., "Active", "Completed", "Planning"
   startDate    DateTime
   peopleHelped Int
   category     Category? @relation(fields: [categoryId], references: [id])
@@ -26,9 +26,9 @@ model Project {
 }
 
 model Category {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  projects  Project[]
+  id       String    @id @default(cuid())
+  name     String    @unique
+  projects Project[]
   donations Donation[]
 }
 
@@ -41,20 +41,20 @@ model Volunteer {
   skills       String
   interests    String[]
   availability String[]
-  status       String
+  status       String   // e.g., "Pending", "Approved", "Rejected"
 }
 
 model Donation {
-  id         String    @id @default(cuid())
-  donorName  String
-  email      String
-  amount     Float
-  date       DateTime  @default(now())
-  type       String
-  project    Project?  @relation(fields: [projectId], references: [id])
-  projectId  String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  id          String   @id @default(cuid())
+  donorName   String
+  email       String
+  amount      Float
+  date        DateTime @default(now())
+  type        String   // "ONE_TIME" or "MONTHLY"
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
 }
 
 model User {
@@ -62,13 +62,13 @@ model User {
   name     String
   email    String   @unique
   password String
-  role     String
+  role     String   // e.g., "ADMIN"
   joinDate DateTime @default(now())
 }
 
 model Settings {
   id                        String   @id @default(cuid())
-  appName                   String
+  appName                   String?
   logo                      String?
   logoType                  String?
   volunteerIcon             String?
@@ -87,5 +87,7 @@ model Settings {
   volunteerIntroTitle       String?
   volunteerIntroDescription1 String?
   volunteerIntroDescription2 String?
-  socialLinks               Json?
+  socialLinksTwitter        String?
+  socialLinksFacebook       String?
+  socialLinksInstagram      String?
 }

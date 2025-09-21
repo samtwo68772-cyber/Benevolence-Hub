@@ -113,7 +113,7 @@ async function main() {
           update: {},
           create: {
               id: donation.id,
-              donorName: donation.donorName,
+              donorName: donation.donorName || donation.name,
               email: donation.email,
               amount: donation.amount,
               date: new Date(donation.date),
@@ -172,3 +172,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
