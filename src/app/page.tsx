@@ -34,7 +34,7 @@ export default async function Home() {
             totalDonations={totalDonations}
             categories={categories}
         />
-        <VolunteerSection settings={settings} />
+        <VolunteerSection settings={settings} categories={categories} />
       </main>
       <AppFooter settings={settings}/>
     </div>

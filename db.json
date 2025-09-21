@@ -277,5 +277,31 @@
         "href": "#"
       }
     ]
-  }
+  },
+  "categories": [
+    {
+      "id": "now",
+      "name": "now"
+    },
+    {
+      "id": "test",
+      "name": "test"
+    },
+    {
+      "id": "sdfd",
+      "name": "sdfd"
+    },
+    {
+      "id": "dsfdsf",
+      "name": "dsfdsf"
+    },
+    {
+      "id": "fgdfgfg",
+      "name": "fgdfgfg"
+    },
+    {
+      "id": "fgdfgfg",
+      "name": "fgdfgfg"
+    }
+  ]
 }

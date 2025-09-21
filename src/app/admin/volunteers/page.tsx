@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { getVolunteers } from '@/lib/db';
+import { getVolunteers, getCategories } from '@/lib/db';
 import { VolunteerList } from './_components/volunteer-list';
 import { VolunteerStatus } from '@/lib/types';
 import { PaginationControls } from '@/components/ui/pagination';
@@ -15,6 +15,7 @@ export default async function AdminVolunteersPage({ searchParams }: { searchPara
   const interestFilter = searchParams.interest && searchParams.interest !== 'all' ? searchParams.interest : undefined;
   
   const allVolunteers = await getVolunteers();
+  const allCategories = await getCategories();
 
   const filteredVolunteers = allVolunteers.filter(volunteer => {
     const statusMatch = !statusFilter || volunteer.status === statusFilter;
@@ -31,7 +32,7 @@ export default async function AdminVolunteersPage({ searchParams }: { searchPara
 
   return (
     <div className="flex flex-col h-full w-full max-w-full overflow-x-auto">
-        <VolunteerList initialVolunteers={volunteers} />
+        <VolunteerList initialVolunteers={volunteers} categories={allCategories} />
          {totalPages > 1 && (
             <div className="p-4 border-t bg-card w-full">
                 <PaginationControls

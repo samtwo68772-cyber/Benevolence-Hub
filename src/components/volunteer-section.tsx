@@ -23,7 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "./ui/badge"
 import { addVolunteer } from "./_actions/volunteers"
-import { Settings } from "@/lib/types"
+import { Settings, Category } from "@/lib/types"
 import * as LucideIcons from 'lucide-react';
 
 
@@ -32,8 +32,6 @@ const availabilityItems = [
     { id: "weekends", label: "Weekends" },
     { id: "evenings", label: "Evenings" },
 ]
-
-const interestItems = ["Education", "Medical", "Community Development", "Disaster Relief", "General Support"]
 
 const volunteerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -50,7 +48,7 @@ const volunteerSchema = z.object({
 
 type VolunteerFormValues = z.infer<typeof volunteerSchema>
 
-export default function VolunteerSection({ settings }: { settings: Settings }) {
+export default function VolunteerSection({ settings, categories }: { settings: Settings, categories: Category[] }) {
     const { toast } = useToast()
 
     const form = useForm<VolunteerFormValues>({
@@ -206,8 +204,8 @@ export default function VolunteerSection({ settings }: { settings: Settings }) {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {interestItems.map(item => (
-                                    <SelectItem key={item} value={item}>{item}</SelectItem>
+                                {categories.map(item => (
+                                    <SelectItem key={item.id} value={item.name}>{item.name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

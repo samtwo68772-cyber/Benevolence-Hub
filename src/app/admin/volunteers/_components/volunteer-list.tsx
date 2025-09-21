@@ -29,9 +29,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { VolunteerFilter } from './volunteer-filter';
 import { deleteVolunteer, updateVolunteerStatus } from '../_actions/volunteers';
 import { format } from 'date-fns';
-import { Volunteer } from '@/lib/types';
+import { Volunteer, Category } from '@/lib/types';
 
-export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunteer[] }) {
+export function VolunteerList({ initialVolunteers, categories }: { initialVolunteers: Volunteer[], categories: Category[] }) {
     const { toast } = useToast();
     const [volunteers, setVolunteers] = React.useState<Volunteer[]>(initialVolunteers);
     const [optimisticStatus, setOptimisticStatus] = React.useState<{[key: string]: 'Approved' | 'Rejected' | 'Pending'}>({});
@@ -86,7 +86,7 @@ export function VolunteerList({ initialVolunteers }: { initialVolunteers: Volunt
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6">
        <Card>
             <CardContent className="p-4 grid sm:grid-cols-2 gap-4">
-                <VolunteerFilter />
+                <VolunteerFilter categories={categories} />
             </CardContent>
        </Card>
 

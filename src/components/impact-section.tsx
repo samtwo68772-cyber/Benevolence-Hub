@@ -105,13 +105,16 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
 
   const volunteerStatusChartData = Object.values(volunteerStatusData);
 
-  const volunteerInterestsData = volunteers.flatMap(v => v.interests).reduce((acc, interest) => {
-    if (!acc[interest]) {
-        acc[interest] = { interest: interest, count: 0 };
-    }
-    acc[interest].count++;
+  const volunteerInterestsData = categories.reduce((acc, category) => {
+    acc[category.name] = { interest: category.name, count: 0 };
     return acc;
-  }, {} as Record<string, {interest: string, count: number}>);
+    }, {} as Record<string, { interest: string; count: number }>);
+
+  volunteers.flatMap(v => v.interests).forEach(interest => {
+    if (volunteerInterestsData[interest]) {
+        volunteerInterestsData[interest].count++;
+    }
+  });
 
   const volunteerInterestsChartData = Object.values(volunteerInterestsData);
 

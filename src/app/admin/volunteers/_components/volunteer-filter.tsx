@@ -5,11 +5,11 @@ import * as React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Category } from '@/lib/types';
 
 const statusItems = ['all', 'Pending', 'Approved', 'Rejected'];
-export const interestItems = ['all', 'Education', 'Medical', 'Community Development', 'Disaster Relief', 'General Support'];
 
-export function VolunteerFilter() {
+export function VolunteerFilter({ categories }: { categories: Category[] }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -53,8 +53,9 @@ export function VolunteerFilter() {
                         <SelectValue placeholder="Select interest" />
                     </SelectTrigger>
                     <SelectContent>
-                        {interestItems.map((interest) => (
-                            <SelectItem key={interest} value={interest} className="capitalize">{interest}</SelectItem>
+                        <SelectItem value="all">All Interests</SelectItem>
+                        {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.name}>{category.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
