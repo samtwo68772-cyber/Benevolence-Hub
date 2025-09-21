@@ -17,6 +17,7 @@ import { SessionPayload } from '@/lib/session';
 import { Settings } from '@/lib/types';
 import * as LucideIcons from 'lucide-react';
 import { useFormStatus } from 'react-dom';
+import { Label } from '@/components/ui/label';
 
 const profileFormSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -255,4 +256,3 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
         </div>
     );
 }
-
