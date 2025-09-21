@@ -40,6 +40,7 @@ async function readDb(): Promise<DbData> {
                 logoType: 'icon', 
                 volunteerIcon: 'HeartHandshake',
                 hero: { title: 'Compassion in Action', description: 'Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.' },
+                missionIntro: { title: 'Empowering Change, One Life at a Time', description: 'At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future.'},
                 mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions...' },
                 vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity...' },
                 values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency...' }
@@ -59,6 +60,7 @@ async function readDb(): Promise<DbData> {
             logoType: 'icon', 
             volunteerIcon: 'HeartHandshake',
             hero: { title: 'Compassion in Action', description: 'Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.' },
+            missionIntro: { title: 'Empowering Change, One Life at a Time', description: 'At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future.'},
             mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.' },
             vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.' },
             values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.' }
@@ -217,6 +219,10 @@ export async function getSettings() {
             title: "Compassion in Action",
             description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
         },
+        missionIntro: {
+            title: "Empowering Change, One Life at a Time",
+            description: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."
+        },
         mission: {
             title: "Our Mission",
             description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
@@ -241,6 +247,7 @@ export async function updateSettings(settings: Partial<Settings>) {
         ...dbData.settings,
         ...settings,
         hero: { ...dbData.settings?.hero, ...settings.hero },
+        missionIntro: { ...dbData.settings?.missionIntro, ...settings.missionIntro },
         mission: { ...dbData.settings?.mission, ...settings.mission },
         vision: { ...dbData.settings?.vision, ...settings.vision },
         values: { ...dbData.settings?.values, ...settings.values },

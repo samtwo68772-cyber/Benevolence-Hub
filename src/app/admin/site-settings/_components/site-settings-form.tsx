@@ -102,6 +102,18 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
                             </div>
                         </div>
+
+                        <div className="space-y-4 rounded-md border p-4">
+                            <h4 className="font-semibold">Homepage: Mission Intro</h4>
+                            <div className="space-y-2">
+                                <Label htmlFor="missionIntroTitle">Title</Label>
+                                <Input id="missionIntroTitle" name="missionIntroTitle" defaultValue={settings.missionIntro.title} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="missionIntroDescription">Description</Label>
+                                <Textarea id="missionIntroDescription" name="missionIntroDescription" defaultValue={settings.missionIntro.description} rows={3} />
+                            </div>
+                        </div>
                         
                         <div className="space-y-4 rounded-md border p-4">
                             <h4 className="font-semibold">Homepage: Content Sections</h4>

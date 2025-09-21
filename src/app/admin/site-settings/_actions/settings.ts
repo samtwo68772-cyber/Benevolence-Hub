@@ -19,6 +19,8 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
+    const missionIntroTitle = formData.get('missionIntroTitle') as string;
+    const missionIntroDescription = formData.get('missionIntroDescription') as string;
     const missionTitle = formData.get('missionTitle') as string;
     const missionDescription = formData.get('missionDescription') as string;
     const visionTitle = formData.get('visionTitle') as string;
@@ -46,6 +48,7 @@ export async function updateSiteSettings(formData: FormData) {
     const newSettings: Partial<Settings> = {
         appName: validatedAppName.data,
         hero: { title: heroTitle, description: heroDescription },
+        missionIntro: { title: missionIntroTitle, description: missionIntroDescription },
         mission: { title: missionTitle, description: missionDescription },
         vision: { title: visionTitle, description: visionDescription },
         values: { title: valuesTitle, description: valuesDescription },

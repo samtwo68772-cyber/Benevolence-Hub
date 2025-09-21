@@ -30,10 +30,10 @@ export default function MissionSection({ settings }: { settings: Settings }) {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <h2 className="font-headline text-4xl md:text-5xl text-primary">
-              Empowering Change, One Life at a Time
+              {settings.missionIntro?.title || "Empowering Change, One Life at a Time"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future.
+              {settings.missionIntro?.description || "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."}
             </p>
             <div className="space-y-6">
               {goals.map((goal, index) => (
