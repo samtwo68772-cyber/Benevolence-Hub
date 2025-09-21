@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { z } from 'zod';
@@ -20,7 +19,6 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
-    const heroImageFiles = formData.getAll('heroImages') as File[];
     const heroImagesMultiple = formData.getAll('heroImagesMultiple') as File[];
     
     // Collect existing hero images from form data
@@ -72,16 +70,6 @@ export async function updateSiteSettings(formData: FormData) {
     
     // Process new multiple hero images
     for (const file of heroImagesMultiple) {
-        if (file.size > 0) {
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                throw new Error(`Hero image "${file.name}" must be less than 2MB.`);
-            }
-            heroImagesData.push(await fileToDataURI(file));
-        }
-    }
-    
-    // Process legacy single hero image (for backward compatibility)
-    for (const file of heroImageFiles) {
         if (file.size > 0) {
             if (file.size > 2 * 1024 * 1024) { // 2MB limit
                 throw new Error(`Hero image "${file.name}" must be less than 2MB.`);

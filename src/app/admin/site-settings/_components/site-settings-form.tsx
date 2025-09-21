@@ -256,7 +256,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit">Save All Settings</Button>
+                        <SettingsSubmitButton />
                     </CardFooter>
                 </form>
             </Card>
