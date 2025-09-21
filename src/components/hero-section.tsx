@@ -1,27 +1,56 @@
 
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { ArrowDown } from "lucide-react";
-import { Settings } from "@/lib/types";
+'use client';
+
+import * as React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { ArrowDown } from 'lucide-react';
+import { Settings } from '@/lib/types';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
+import Fade from 'embla-carousel-fade';
+
+const slideshowImages = PlaceHolderImages.filter(img => 
+    img.id === 'hero-background' || 
+    img.id === 'mission-image' || 
+    img.id === 'project-community-development'
+);
 
 export default function HeroSection({ settings }: { settings: Settings }) {
-  const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background');
-  const heroImageSrc = settings.heroImage || defaultHeroImage?.imageUrl;
+  const plugin = React.useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: false })
+  );
+  
+  const fadePlugin = React.useRef(
+    Fade()
+  );
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center">
-      {heroImageSrc && (
-        <Image
-          src={heroImageSrc}
-          alt={defaultHeroImage?.description || 'Hero background image'}
-          fill
-          className="object-cover"
-          priority
-          data-ai-hint={defaultHeroImage?.imageHint}
-        />
-      )}
+        <Carousel
+            plugins={[plugin.current, fadePlugin.current]}
+            className="absolute inset-0 w-full h-full"
+            opts={{
+                loop: true,
+            }}
+        >
+            <CarouselContent className="m-0 h-full">
+                {slideshowImages.map((image, index) => (
+                <CarouselItem key={index} className="p-0 h-full">
+                    <Image
+                        src={image.imageUrl}
+                        alt={image.description}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                        data-ai-hint={image.imageHint}
+                    />
+                </CarouselItem>
+                ))}
+            </CarouselContent>
+        </Carousel>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
         <h1 className="font-headline text-4xl sm:text-6xl md:text-7xl leading-tight drop-shadow-2xl">

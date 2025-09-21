@@ -155,8 +155,23 @@
         "test"
       ],
       "id": "vol-1758452219690",
-      "status": "Pending",
+      "status": "Approved",
       "signupDate": "2025-09-21T10:56:59.690Z"
+    },
+    {
+      "name": "SGT-Devops",
+      "email": "sam.etete.0712@gmail.com",
+      "phone": "0973095314",
+      "skills": "gfh fd dfrt gertertertert erterter",
+      "availability": [
+        "weekends"
+      ],
+      "interests": [
+        "now"
+      ],
+      "id": "vol-1758452821351",
+      "status": "Approved",
+      "signupDate": "2025-09-21T11:07:01.351Z"
     }
   ],
   "donations": [
@@ -229,6 +244,24 @@
       "categoryId": "now",
       "id": "don-1758452496596",
       "date": "2025-09-21T11:01:36.596Z"
+    },
+    {
+      "donorName": "Test",
+      "email": "samtwo68772@gmail.com",
+      "amount": 50,
+      "type": "ONE_TIME",
+      "categoryId": "now",
+      "id": "don-1758452779346",
+      "date": "2025-09-21T11:06:19.346Z"
+    },
+    {
+      "donorName": "Samuel Getachew",
+      "email": "SamuelGetachew@temesgen2023.onmicrosoft.com",
+      "amount": 50,
+      "type": "ONE_TIME",
+      "categoryId": "now",
+      "id": "don-1758452948413",
+      "date": "2025-09-21T11:09:08.413Z"
     }
   ],
   "users": [
