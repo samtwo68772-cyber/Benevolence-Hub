@@ -2,10 +2,22 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-background",
+      "id": "hero-background-1",
       "description": "A volunteer giving food to a child in a sunny field.",
       "imageUrl": "https://picsum.photos/seed/hero-bg/1920/1080",
       "imageHint": "volunteer child"
+    },
+    {
+      "id": "hero-background-2",
+      "description": "A group of diverse volunteers smiling and working together.",
+      "imageUrl": "https://picsum.photos/seed/hero-bg-2/1920/1080",
+      "imageHint": "volunteers smiling"
+    },
+    {
+      "id": "hero-background-3",
+      "description": "A doctor providing medical care to an elderly person in a village.",
+      "imageUrl": "https://picsum.photos/seed/hero-bg-3/1920/1080",
+      "imageHint": "medical care"
     },
     {
       "id": "project-water",
