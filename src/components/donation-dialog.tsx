@@ -14,7 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog"
 import {
   Form,
@@ -31,6 +30,9 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import React from "react"
 import { addDonation } from "./_actions/donations"
+import { Category } from "@/lib/types"
+import { getCategories } from "@/lib/db"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 
 const donationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -39,6 +41,7 @@ const donationSchema = z.object({
   customAmount: z.string().optional(),
   isRecurring: z.boolean().default(false),
   projectId: z.string().optional(),
+  categoryId: z.string().optional(),
 }).refine(data => {
     if (data.amount === 'custom') {
         return data.customAmount && !isNaN(parseFloat(data.customAmount)) && parseFloat(data.customAmount) > 0;
@@ -56,6 +59,15 @@ const presetAmounts = ["25", "50", "100", "250"];
 export function DonationDialog({ projectId }: { projectId?: string }) {
   const { toast } = useToast()
   const [open, setOpen] = React.useState(false);
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  
+  React.useEffect(() => {
+    async function fetchCategories() {
+        const cats = await getCategories();
+        setCategories(cats);
+    }
+    fetchCategories();
+  }, [])
   
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),
@@ -66,6 +78,7 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
       customAmount: "",
       isRecurring: false,
       projectId: projectId,
+      categoryId: undefined,
     },
   })
 
@@ -78,6 +91,7 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
         amount: parseFloat(finalAmount || '0'),
         type: values.isRecurring ? 'MONTHLY' : 'ONE_TIME',
         projectId: values.projectId,
+        categoryId: values.categoryId
     });
 
     toast({
@@ -211,6 +225,30 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
                   </FormControl>
                 </FormItem>
               )}
+            />
+
+            <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Category</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!projectId}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a category for your donation" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            <SelectItem value="general">General Fund</SelectItem>
+                            {categories.map((item, index) => (
+                                <SelectItem key={`${item.id}-${index}`} value={item.id}>{item.name}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
             
             <Button type="submit" className="w-full text-lg h-12 bg-accent text-accent-foreground hover:bg-accent/90">

@@ -318,4 +318,3 @@ export async function updateSettings(settings: Partial<Settings>) {
     await writeDb(dbData);
     return dbData.settings;
 }
-

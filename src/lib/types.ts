@@ -38,6 +38,7 @@ export type Donation = {
   date: Date;
   type: DonationType;
   projectId: string | null;
+  categoryId?: string | null;
   project?: Project | null;
 };
 
@@ -86,4 +87,3 @@ export type Category = {
     id: string;
     name: string;
 };
-
