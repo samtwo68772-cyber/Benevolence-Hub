@@ -3,7 +3,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UserCog, Cog } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Users, DollarSign, LogOut, Home, UserCog, Cog, Settings as SettingsIcon } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import {
   SidebarProvider,
@@ -29,7 +29,8 @@ const navIconMapping: { [key: string]: React.FC<any> } = {
   Volunteers: Users,
   Donations: DollarSign,
   Admins: UserCog,
-  Settings: Cog,
+  'Site Settings': SettingsIcon,
+  Account: Cog,
 };
 
 function AdminNav({ navItems }: { navItems: { href: string; label: string }[] }) {
@@ -148,4 +149,3 @@ export default function AdminLayoutContent({
     </SidebarProvider>
   );
 }
-

@@ -2,11 +2,9 @@
 import { getSession } from '@/lib/session';
 import { SettingsForm } from './_components/settings-form';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { getSettings } from '@/lib/db';
 
 export default async function AdminSettingsPage() {
     const session = await getSession();
-    const settings = await getSettings();
 
     if (!session) {
         return (
@@ -21,5 +19,5 @@ export default async function AdminSettingsPage() {
         )
     }
 
-    return <SettingsForm session={session} settings={settings} />;
+    return <SettingsForm session={session} />;
 }
