@@ -38,12 +38,12 @@ function SettingsSubmitButton() {
     const { pending } = useFormStatus();
     return (
         <Button type="submit" disabled={pending}>
-            {pending ? 'Saving...' : 'Save Settings'}
+            {pending ? 'Saving...' : 'Save All Settings'}
         </Button>
     )
 }
 
-function SiteSettingsForm({ settings }: { settings: Settings }) {
+function SiteAndContentSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
     const formRef = React.useRef<HTMLFormElement>(null);
@@ -83,61 +83,35 @@ function SiteSettingsForm({ settings }: { settings: Settings }) {
         <Card className="w-full lg:col-span-2">
             <form action={handleSettingsSave} ref={formRef}>
                 <CardHeader>
-                    <CardTitle>Site Settings</CardTitle>
-                    <CardDescription>Update your site name, logo, and other global settings.</CardDescription>
+                    <CardTitle>Site & Content Settings</CardTitle>
+                    <CardDescription>Update your site name, logo, homepage content, and other global settings.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="appName">App Name</Label>
-                        <Input id="appName" name="appName" defaultValue={settings.appName} />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="logo">Logo</Label>
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 flex items-center justify-center">
-                               <LogoPreview />
-                            </div>
-                            <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={handleLogoChange} />
-                        </div>
-                         <p className="text-sm text-muted-foreground">Upload a new logo. Recommended size: 128x128px. Max 1MB.</p>
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="volunteerIcon">Volunteer Section Icon</Label>
-                        <Input id="volunteerIcon" name="volunteerIcon" defaultValue={settings.volunteerIcon} />
-                        <p className="text-sm text-muted-foreground">Enter any icon name from the <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" className="underline">Lucide icon library</a>.</p>
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <SettingsSubmitButton />
-                </CardFooter>
-            </form>
-        </Card>
-    );
-}
-
-function GoalsSettingsForm({ settings }: { settings: Settings }) {
-    const { toast } = useToast();
-    const formRef = React.useRef<HTMLFormElement>(null);
-    
-    async function handleSettingsSave(formData: FormData) {
-        try {
-            const result = await updateSettings(formData);
-            toast({ title: "Settings Updated", description: result.message });
-        } catch (error) {
-            toast({ variant: "destructive", title: "Error", description: (error as Error).message });
-        }
-    };
-
-    return (
-        <Card className="w-full lg:col-span-2">
-            <form action={handleSettingsSave} ref={formRef}>
-                <CardHeader>
-                    <CardTitle>Goals Section</CardTitle>
-                    <CardDescription>Update the content for the "Our Mission, Vision, and Values" section on the homepage.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-8">
                     <div className="space-y-4 rounded-md border p-4">
-                        <h4 className="font-semibold">Our Mission</h4>
+                         <h4 className="font-semibold">General</h4>
+                        <div className="space-y-2">
+                            <Label htmlFor="appName">App Name</Label>
+                            <Input id="appName" name="appName" defaultValue={settings.appName} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="logo">Logo</Label>
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 flex items-center justify-center">
+                                <LogoPreview />
+                                </div>
+                                <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={handleLogoChange} />
+                            </div>
+                            <p className="text-sm text-muted-foreground">Upload a new logo. Recommended size: 128x128px. Max 1MB.</p>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="volunteerIcon">Volunteer Section Icon</Label>
+                            <Input id="volunteerIcon" name="volunteerIcon" defaultValue={settings.volunteerIcon} />
+                            <p className="text-sm text-muted-foreground">Enter any icon name from the <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" className="underline">Lucide icon library</a>.</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4 rounded-md border p-4">
+                        <h4 className="font-semibold">Homepage: Our Mission</h4>
                         <div className="space-y-2">
                             <Label htmlFor="missionTitle">Title</Label>
                             <Input id="missionTitle" name="missionTitle" defaultValue={settings.mission.title} />
@@ -148,7 +122,7 @@ function GoalsSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                     </div>
                     <div className="space-y-4 rounded-md border p-4">
-                        <h4 className="font-semibold">Our Vision</h4>
+                        <h4 className="font-semibold">Homepage: Our Vision</h4>
                         <div className="space-y-2">
                             <Label htmlFor="visionTitle">Title</Label>
                             <Input id="visionTitle" name="visionTitle" defaultValue={settings.vision.title} />
@@ -159,7 +133,7 @@ function GoalsSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                     </div>
                     <div className="space-y-4 rounded-md border p-4">
-                        <h4 className="font-semibold">Our Values</h4>
+                        <h4 className="font-semibold">Homepage: Our Values</h4>
                         <div className="space-y-2">
                             <Label htmlFor="valuesTitle">Title</Label>
                             <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.values.title} />
@@ -219,110 +193,110 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
     
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
-            <SiteSettingsForm settings={settings} />
-            
-            <GoalsSettingsForm settings={settings} />
+            <SiteAndContentSettingsForm settings={settings} />
 
-            <Card className="w-full">
-                 <Form {...profileForm}>
-                    <form onSubmit={profileForm.handleSubmit(handleProfileSave)}>
-                        <CardHeader>
-                            <CardTitle>Profile Information</CardTitle>
-                            <CardDescription>Update your personal details.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <FormField
-                                control={profileForm.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={profileForm.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit" disabled={profileForm.formState.isSubmitting}>
-                                {profileForm.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
-                            </Button>
-                        </CardFooter>
-                    </form>
-                </Form>
-            </Card>
+            <div className="space-y-6">
+                <Card className="w-full">
+                    <Form {...profileForm}>
+                        <form onSubmit={profileForm.handleSubmit(handleProfileSave)}>
+                            <CardHeader>
+                                <CardTitle>Profile Information</CardTitle>
+                                <CardDescription>Update your personal details.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FormField
+                                    control={profileForm.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={profileForm.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input type="email" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </CardContent>
+                            <CardFooter>
+                                <Button type="submit" disabled={profileForm.formState.isSubmitting}>
+                                    {profileForm.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+                                </Button>
+                            </CardFooter>
+                        </form>
+                    </Form>
+                </Card>
 
-            <Card className="w-full">
-                 <Form {...passwordForm}>
-                    <form onSubmit={passwordForm.handleSubmit(handlePasswordSave)}>
-                        <CardHeader>
-                            <CardTitle>Change Password</CardTitle>
-                            <CardDescription>Update your login password.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                             <FormField
-                                control={passwordForm.control}
-                                name="currentPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Current Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <FormField
-                                control={passwordForm.control}
-                                name="newPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>New Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={passwordForm.control}
-                                name="confirmPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Confirm New Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit" disabled={passwordForm.formState.isSubmitting}>
-                                 {passwordForm.formState.isSubmitting ? 'Updating...' : 'Update Password'}
-                            </Button>
-                        </CardFooter>
-                    </form>
-                </Form>
-            </Card>
+                <Card className="w-full">
+                    <Form {...passwordForm}>
+                        <form onSubmit={passwordForm.handleSubmit(handlePasswordSave)}>
+                            <CardHeader>
+                                <CardTitle>Change Password</CardTitle>
+                                <CardDescription>Update your login password.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <FormField
+                                    control={passwordForm.control}
+                                    name="currentPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Current Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={passwordForm.control}
+                                    name="newPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>New Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={passwordForm.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Confirm New Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </CardContent>
+                            <CardFooter>
+                                <Button type="submit" disabled={passwordForm.formState.isSubmitting}>
+                                    {passwordForm.formState.isSubmitting ? 'Updating...' : 'Update Password'}
+                                </Button>
+                            </CardFooter>
+                        </form>
+                    </Form>
+                </Card>
+            </div>
         </div>
     );
 }
