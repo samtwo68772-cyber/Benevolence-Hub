@@ -8,11 +8,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
 import { Badge } from '@/components/ui/badge';
-import { db } from '@/lib/db';
+import { getProjectById, getSettings } from '@/lib/db';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = await db.getProjectById(params.id);
-  const settings = await db.getSettings();
+  const project = await getProjectById(params.id);
+  const settings = await getSettings();
   
   if (!project) {
     notFound();

@@ -6,18 +6,18 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-import { db } from '@/lib/db';
+import { getProjects, getVolunteers, getDonations, getSettings } from '@/lib/db';
 
 export default async function Home() {
-  const projects = await db.getProjects();
-  const allVolunteers = await db.getVolunteers();
+  const projects = await getProjects();
+  const allVolunteers = await getVolunteers();
   const approvedVolunteers = allVolunteers.filter(v => v.status === 'Approved');
-  const allDonations = await db.getDonations();
+  const allDonations = await getDonations();
   
   const totalDonations = allDonations.reduce((sum, d) => sum + d.amount, 0);
   
-  const featuredProjects = [...projects].sort((a, b) => b.startDate.getTime() - a.startDate.getTime()).slice(0, 3);
-  const settings = await db.getSettings();
+  const featuredProjects = [...projects].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()).slice(0, 3);
+  const settings = await getSettings();
 
   return (
     <div className="flex min-h-screen flex-col">

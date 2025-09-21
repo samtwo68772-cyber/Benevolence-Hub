@@ -2,7 +2,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { db } from '@/lib/db';
+import { getUserByEmail } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { createSession } from '@/lib/session';
 
@@ -18,7 +18,7 @@ export async function authenticate(
         return 'Please provide both email and password.';
     }
 
-    const user = await db.getUserByEmail(email);
+    const user = await getUserByEmail(email);
 
     if (!user || user.role !== 'ADMIN' || !user.password) {
       return 'Invalid credentials.';

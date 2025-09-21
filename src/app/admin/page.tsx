@@ -2,13 +2,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, FolderKanban, Users, UserCog } from 'lucide-react';
 import Link from 'next/link';
-import { db } from '@/lib/db';
+import { getProjects, getVolunteers, getUsers, getDonations } from '@/lib/db';
 
 export default async function AdminDashboardPage() {
-    const projects = await db.getProjects();
-    const volunteers = await db.getVolunteers();
-    const users = await db.getUsers();
-    const donations = await db.getDonations();
+    const projects = await getProjects();
+    const volunteers = await getVolunteers();
+    const users = await getUsers();
+    const donations = await getDonations();
 
     const projectCount = projects.length;
     const volunteerCount = volunteers.length;

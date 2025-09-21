@@ -1,5 +1,5 @@
 
-import { db } from '@/lib/db';
+import { getSettings } from '@/lib/db';
 import AdminLayoutContent from './admin-layout-content';
 
 const navItems = [
@@ -12,7 +12,7 @@ const navItems = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const settings = await db.getSettings();
+  const settings = await getSettings();
 
   return (
     <AdminLayoutContent settings={settings} navItems={navItems}>

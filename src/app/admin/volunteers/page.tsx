@@ -1,20 +1,20 @@
 
 import * as React from 'react';
-import { db } from '@/lib/db';
+import { getVolunteers } from '@/lib/db';
 import { VolunteerList } from './_components/volunteer-list';
 import { VolunteerStatus } from '@/lib/types';
 import { PaginationControls } from '@/components/ui/pagination';
 
 const ITEMS_PER_PAGE = 7;
 
-export default async function AdminVolunteersPage({ searchParams }: { page?: string, status?: VolunteerStatus, interest?: string }) {
+export default async function AdminVolunteersPage({ searchParams }: { searchParams: { page?: string, status?: VolunteerStatus, interest?: string }}) {
   const page = Number(searchParams.page || '1');
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
   const statusFilter = searchParams.status && searchParams.status !== 'all' ? searchParams.status : undefined;
   const interestFilter = searchParams.interest && searchParams.interest !== 'all' ? searchParams.interest : undefined;
   
-  const allVolunteers = await db.getVolunteers();
+  const allVolunteers = await getVolunteers();
 
   const filteredVolunteers = allVolunteers.filter(volunteer => {
     const statusMatch = !statusFilter || volunteer.status === statusFilter;
@@ -23,7 +23,7 @@ export default async function AdminVolunteersPage({ searchParams }: { page?: str
   });
 
   const volunteers = filteredVolunteers
-    .sort((a, b) => b.signupDate.getTime() - a.signupDate.getTime())
+    .sort((a, b) => new Date(b.signupDate).getTime() - new Date(a.signupDate).getTime())
     .slice(skip, skip + ITEMS_PER_PAGE);
 
   const totalVolunteers = filteredVolunteers.length;

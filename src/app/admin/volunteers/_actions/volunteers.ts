@@ -2,14 +2,14 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { db } from '@/lib/db';
+import { updateVolunteer as dbUpdateVolunteer, deleteVolunteer as dbDeleteVolunteer } from '@/lib/db';
 
 export async function updateVolunteerStatus(volunteerId: string, status: 'Approved' | 'Rejected') {
-  await db.updateVolunteer(volunteerId, { status });
+  await dbUpdateVolunteer(volunteerId, { status });
   revalidatePath('/admin/volunteers');
 }
 
 export async function deleteVolunteer(volunteerId: string) {
-  await db.deleteVolunteer(volunteerId);
+  await dbDeleteVolunteer(volunteerId);
   revalidatePath('/admin/volunteers');
 }

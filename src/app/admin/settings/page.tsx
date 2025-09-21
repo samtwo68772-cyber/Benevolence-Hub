@@ -2,11 +2,11 @@
 import { getSession } from '@/lib/session';
 import { SettingsForm } from './_components/settings-form';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { db } from '@/lib/db';
+import { getSettings } from '@/lib/db';
 
 export default async function AdminSettingsPage() {
     const session = await getSession();
-    const settings = await db.getSettings();
+    const settings = await getSettings();
 
     if (!session) {
         return (

@@ -13,7 +13,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { db } from '@/lib/db';
+import { getProjects, getDonations } from '@/lib/db';
 import { format } from 'date-fns';
 import { DonationFilter } from './_components/donation-filter';
 import { PaginationControls } from '@/components/ui/pagination';
@@ -28,8 +28,8 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
     const typeFilter = searchParams.type as string | undefined;
     const projectFilter = searchParams.project as string | undefined;
 
-    const allProjects = await db.getProjects();
-    const allDonations = await db.getDonations();
+    const allProjects = await getProjects();
+    const allDonations = await getDonations();
 
     const projectNames = ['General Fund', ...allProjects.map(p => p.title)];
 
@@ -49,7 +49,7 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
     });
 
     const donations = filteredDonations
-        .sort((a, b) => b.date.getTime() - a.date.getTime())
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(skip, skip + ITEMS_PER_PAGE);
 
     const totalDonations = filteredDonations.length;
@@ -88,7 +88,7 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
                                 </Badge>
                             </TableCell>
                             <TableCell className='hidden md:table-cell'>{donation.project?.title || 'General Fund'}</TableCell>
-                            <TableCell className='hidden lg:table-cell'>{format(donation.date, 'yyyy-MM-dd')}</TableCell>
+                            <TableCell className='hidden lg:table-cell'>{format(new Date(donation.date), 'yyyy-MM-dd')}</TableCell>
                             <TableCell className="text-right">
                                 <Button variant="ghost" size="icon">
                                     <MoreHorizontal className="h-4 w-4" />

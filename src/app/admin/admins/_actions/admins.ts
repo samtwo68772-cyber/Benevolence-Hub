@@ -4,7 +4,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { db } from '@/lib/db';
+import { getUserByEmail, createUser, updateUser, deleteUser } from '@/lib/db';
 
 const adminSchema = z.object({
   id: z.string().optional(),
@@ -25,7 +25,7 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
         throw new Error('Invalid admin data.');
     }
 
-    const existingUser = await db.getUserByEmail(validatedFields.data.email);
+    const existingUser = await getUserByEmail(validatedFields.data.email);
 
     if (existingUser) {
         throw new Error('An account with this email already exists.');
@@ -33,7 +33,7 @@ export async function addAdmin(data: z.infer<typeof addAdminSchema>) {
     
     const hashedPassword = await bcrypt.hash(validatedFields.data.password, 10);
 
-    await db.createUser({
+    await createUser({
         name: validatedFields.data.name,
         email: validatedFields.data.email,
         password: hashedPassword,
@@ -55,7 +55,7 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
     
     const { id, password, confirmPassword, ...updateData } = validatedFields.data;
 
-    const existingUserByEmail = await db.getUserByEmail(updateData.email);
+    const existingUserByEmail = await getUserByEmail(updateData.email);
 
     if (existingUserByEmail && existingUserByEmail.id !== id) {
         throw new Error('An account with this email already exists.');
@@ -66,7 +66,7 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
         hashedPassword = await bcrypt.hash(password, 10);
     }
     
-    await db.updateUser(id, {
+    await updateUser(id, {
         ...updateData,
         ...(hashedPassword && { password: hashedPassword })
     });
@@ -75,6 +75,6 @@ export async function updateAdmin(data: z.infer<typeof adminSchema>) {
 }
 
 export async function deleteAdmin(adminId: string) {
-    await db.deleteUser(adminId);
+    await deleteUser(adminId);
     revalidatePath('/admin/admins');
 }

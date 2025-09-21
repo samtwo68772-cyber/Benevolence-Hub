@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { getSession, createSession, SessionPayload } from '@/lib/session';
-import { db } from '@/lib/db';
+import { getUserByEmail, updateUser, getUserById, updateSettings as dbUpdateSettings } from '@/lib/db';
 
 const profileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -39,12 +39,12 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
 
     const { name, email } = validatedFields.data;
 
-    const existingUser = await db.getUserByEmail(email);
+    const existingUser = await getUserByEmail(email);
     if (existingUser && existingUser.id !== session.userId) {
         throw new Error('Email is already in use by another account.');
     }
 
-    await db.updateUser(session.userId, { name, email });
+    await updateUser(session.userId, { name, email });
     
     const updatedSession: SessionPayload = {
         userId: session.userId,
@@ -74,7 +74,7 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const { currentPassword, newPassword } = validatedFields.data;
 
-    const user = await db.getUserById(session.userId);
+    const user = await getUserById(session.userId);
     if (!user || !user.password) {
         throw new Error('User not found.');
     }
@@ -86,7 +86,7 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-    await db.updateUser(session.userId, { password: hashedNewPassword });
+    await updateUser(session.userId, { password: hashedNewPassword });
 
     return { message: 'Password updated successfully.' };
 }
@@ -97,7 +97,7 @@ export async function updateSettings(data: z.infer<typeof settingsSchema>) {
         throw new Error('Invalid settings data.');
     }
 
-    await db.updateSettings(validatedFields.data);
+    await dbUpdateSettings(validatedFields.data);
 
     revalidatePath('/admin/settings');
     revalidatePath('/');

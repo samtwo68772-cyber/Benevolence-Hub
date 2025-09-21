@@ -8,11 +8,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { db } from '@/lib/db';
+import { getProjects, getSettings } from '@/lib/db';
 
 export default async function AllProjectsPage() {
-  const projects = (await db.getProjects()).sort((a, b) => b.startDate.getTime() - a.startDate.getTime());
-  const settings = await db.getSettings();
+  const projects = (await getProjects()).sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+  const settings = await getSettings();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

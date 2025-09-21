@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/lib/db';
+import { createVolunteer } from '@/lib/db';
 
 const volunteerSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -21,7 +21,7 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
         throw new Error('Invalid volunteer data.');
     }
     
-    await db.createVolunteer({
+    await createVolunteer({
         name: validatedFields.data.name,
         email: validatedFields.data.email,
         phone: validatedFields.data.phone,

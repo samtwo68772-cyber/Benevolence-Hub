@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
 import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
-import { db } from '@/lib/db';
+import { getProjects } from '@/lib/db';
 import { ProjectCategory, ProjectStatus } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
@@ -30,7 +30,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     const statusFilter = searchParams.status as ProjectStatus | undefined;
     const categoryFilter = searchParams.category as ProjectCategory | undefined;
 
-    const allProjects = await db.getProjects();
+    const allProjects = await getProjects();
 
     const filteredProjects = allProjects.filter(project => {
         const statusMatch = !statusFilter || statusFilter === 'all' || project.status === statusFilter;
@@ -39,7 +39,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     });
 
     const projects = filteredProjects
-      .sort((a, b) => b.startDate.getTime() - a.startDate.getTime())
+      .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
       .slice(skip, skip + ITEMS_PER_PAGE);
 
     const totalProjects = filteredProjects.length;
@@ -85,7 +85,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
                   <TableCell className='hidden md:table-cell'>
                       <Badge variant="outline">{project.category.replace('_', ' ')}</Badge>
                   </TableCell>
-                   <TableCell className='hidden lg:table-cell'>{format(project.startDate, 'yyyy-MM-dd')}</TableCell>
+                   <TableCell className='hidden lg:table-cell'>{format(new Date(project.startDate), 'yyyy-MM-dd')}</TableCell>
                   <TableCell className="text-right">
                       <ProjectActions project={project} />
                   </TableCell>

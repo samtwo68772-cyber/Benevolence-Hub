@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/lib/db';
+import { createDonation } from '@/lib/db';
 import { DonationType } from '@/lib/types';
 
 const donationSchema = z.object({
@@ -21,7 +21,7 @@ export async function addDonation(data: z.infer<typeof donationSchema>) {
         throw new Error('Invalid donation data.');
     }
     
-    await db.createDonation(validatedFields.data);
+    await createDonation(validatedFields.data);
 
     revalidatePath('/admin/donations');
 }

@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { AdminDialog } from './_components/admin-dialog';
 import { addAdmin } from './_actions/admins';
-import { db } from '@/lib/db';
+import { getUsers } from '@/lib/db';
 import { AdminActions } from './_components/admin-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -25,10 +25,10 @@ export default async function AdminAdminsPage({ searchParams }: { searchParams: 
     const page = Number(searchParams.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
 
-    const allAdmins = (await db.getUsers()).filter(u => u.role === 'ADMIN');
+    const allAdmins = (await getUsers()).filter(u => u.role === 'ADMIN');
     
     const admins = allAdmins
-        .sort((a, b) => b.joinDate.getTime() - a.joinDate.getTime())
+        .sort((a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime())
         .slice(skip, skip + ITEMS_PER_PAGE);
     
     const totalAdmins = allAdmins.length;
@@ -73,7 +73,7 @@ export default async function AdminAdminsPage({ searchParams }: { searchParams: 
                         {admin.role}
                       </Badge>
                     </TableCell>
-                    <TableCell className='hidden md:table-cell'>{format(admin.joinDate, 'yyyy-MM-dd')}</TableCell>
+                    <TableCell className='hidden md:table-cell'>{format(new Date(admin.joinDate), 'yyyy-MM-dd')}</TableCell>
                     <TableCell className="text-right">
                         <AdminActions admin={admin} />
                     </TableCell>
