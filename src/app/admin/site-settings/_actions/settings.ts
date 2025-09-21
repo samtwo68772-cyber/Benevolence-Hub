@@ -33,12 +33,9 @@ export async function updateSiteSettings(formData: FormData) {
     const volunteerIntroDescription1 = formData.get('volunteerIntroDescription1') as string;
     const volunteerIntroDescription2 = formData.get('volunteerIntroDescription2') as string;
 
-    const socialLinks = [
-        { icon: 'Twitter', href: formData.get('socialTwitter') as string },
-        { icon: 'Facebook', href: formData.get('socialFacebook') as string },
-        { icon: 'Instagram', href: formData.get('socialInstagram') as string },
-    ];
-
+    const socialTwitter = formData.get('socialTwitter') as string;
+    const socialFacebook = formData.get('socialFacebook') as string;
+    const socialInstagram = formData.get('socialInstagram') as string;
 
     const validatedAppName = z.string().min(2).safeParse(appName);
     if(!validatedAppName.success) {
@@ -63,11 +60,16 @@ export async function updateSiteSettings(formData: FormData) {
         }
         missionImageData = await fileToDataURI(missionImageFile);
     }
+    
+    const heroImagesString = formData.get('heroImages') as string;
+    const heroImages = heroImagesString ? heroImagesString.split(',').map(s => s.trim()) : [];
 
-    const newSettings: Partial<Settings> = {
+
+    const newSettings: Partial<Omit<Settings, 'id' | 'socialLinks' | 'hero' | 'missionIntro' | 'mission' | 'vision' | 'values' | 'volunteerIntro'>> = {
         appName: validatedAppName.data,
         heroTitle,
         heroDescription,
+        heroImages,
         missionIntroTitle,
         missionIntroDescription,
         missionTitle,
@@ -79,7 +81,9 @@ export async function updateSiteSettings(formData: FormData) {
         volunteerIntroTitle,
         volunteerIntroDescription1,
         volunteerIntroDescription2,
-        socialLinks,
+        socialLinksTwitter: socialTwitter,
+        socialLinksFacebook: socialFacebook,
+        socialLinksInstagram: socialInstagram,
     };
 
     if (logoData) {
@@ -95,7 +99,7 @@ export async function updateSiteSettings(formData: FormData) {
         newSettings.volunteerIcon = volunteerIcon;
     }
 
-    await dbUpdateSettings(newSettings);
+    await dbUpdateSettings(newSettings as any);
 
     revalidatePath('/admin/site-settings');
     revalidatePath('/');

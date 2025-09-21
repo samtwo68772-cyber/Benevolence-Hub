@@ -73,8 +73,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
       }
       return null;
     }
-
-
+    
     return (
         <div className="grid h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
             <Card className="w-full">
@@ -116,6 +115,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="heroImages">Hero Background Images</Label>
+                                <Textarea id="heroImages" name="heroImages" defaultValue={settings.heroImages?.join(', ')} rows={3} />
+                                <p className="text-sm text-muted-foreground">Enter a comma-separated list of image IDs from placeholder-images.json.</p>
                             </div>
                         </div>
 
@@ -189,15 +193,15 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Footer: Social Links</h4>
                              <div className="space-y-2">
                                 <Label htmlFor="socialTwitter">Twitter URL</Label>
-                                <Input id="socialTwitter" name="socialTwitter" defaultValue={settings.socialLinks?.find(s => s.icon === 'Twitter')?.href} />
+                                <Input id="socialTwitter" name="socialTwitter" defaultValue={settings.socialLinksTwitter} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="socialFacebook">Facebook URL</Label>
-                                <Input id="socialFacebook" name="socialFacebook" defaultValue={settings.socialLinks?.find(s => s.icon === 'Facebook')?.href} />
+                                <Input id="socialFacebook" name="socialFacebook" defaultValue={settings.socialLinksFacebook} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="socialInstagram">Instagram URL</Label>
-                                <Input id="socialInstagram" name="socialInstagram" defaultValue={settings.socialLinks?.find(s => s.icon === 'Instagram')?.href} />
+                                <Input id="socialInstagram" name="socialInstagram" defaultValue={settings.socialLinksInstagram} />
                             </div>
                         </div>
                     </CardContent>

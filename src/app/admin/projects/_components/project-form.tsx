@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import * as React from 'react';
@@ -53,7 +52,7 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
         
         <div className="md:col-span-2 space-y-2">
             <Label htmlFor="details">Key Achievements (one per line)</Label>
-            <Textarea id="details" name="details" defaultValue={project?.details.join('\n') || ''} required rows={5} />
+            <Textarea id="details" name="details" defaultValue={project?.details?.join('\n') || ''} required rows={5} />
         </div>
         
         <div className="md:col-span-2 space-y-2">

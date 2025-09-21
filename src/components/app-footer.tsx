@@ -27,13 +27,13 @@ function Logo({ settings }: { settings: Settings }) {
     return <LogoIcon className="h-7 w-7 text-primary" />;
 }
 
-const socialIconMap = {
+const socialIconMap: { [key: string]: React.ElementType } = {
     Twitter,
     Facebook,
     Instagram,
 };
 
-function SocialLinks({ links }: { links: SocialLink[] }) {
+function SocialLinks({ settings }: { settings: Settings }) {
     const formatUrl = (url: string) => {
         if (!url) return '#';
         if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -41,15 +41,20 @@ function SocialLinks({ links }: { links: SocialLink[] }) {
         }
         return `https://${url}`;
     };
+
+    const links: {Icon: React.ElementType, href: string}[] = [
+        { Icon: Twitter, href: settings.socialLinksTwitter || '#' },
+        { Icon: Facebook, href: settings.socialLinksFacebook || '#' },
+        { Icon: Instagram, href: settings.socialLinksInstagram || '#' },
+    ];
     
     return (
         <div className="flex items-center gap-4">
-        {links.map((social) => {
-            const Icon = socialIconMap[social.icon];
-            if (!social.href || social.href === '#') return null;
+        {links.map(({ Icon, href }, index) => {
+            if (!href || href === '#') return null;
 
             return (
-            <Link key={social.icon} href={formatUrl(social.href)} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false} target="_blank" rel="noopener noreferrer">
+            <Link key={index} href={formatUrl(href)} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false} target="_blank" rel="noopener noreferrer">
                 <Icon className="h-6 w-6" />
             </Link>
             )
@@ -62,8 +67,6 @@ export default function AppFooter({ settings }: { settings: Settings }) {
   const pathname = usePathname();
   const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
   
-  const socialLinks = settings.socialLinks || [];
-
   return (
     <footer className="bg-card border-t">
       <div className="container mx-auto section-padding !py-12">
@@ -93,7 +96,7 @@ export default function AppFooter({ settings }: { settings: Settings }) {
           )}
            <div>
             <h3 className="font-headline text-lg font-semibold mb-4">Connect With Us</h3>
-            <SocialLinks links={socialLinks} />
+            <SocialLinks settings={settings} />
           </div>
         </div>
         <div className="mt-12 border-t pt-8 text-center text-muted-foreground">

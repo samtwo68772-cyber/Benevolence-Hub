@@ -10,42 +10,42 @@ generator client {
 }
 
 model Project {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
   description  String
   imageUrl     String?
-  details      String[]
+  details      String // Stored as a newline-separated string
   status       String
   startDate    DateTime
-  peopleHelped Int
-  category     Category?     @relation(fields: [categoryId], references: [id])
-  categoryId   String?
+  peopleHelped Int       @default(0)
   donations    Donation[]
+  category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   String?
 }
 
 model Volunteer {
-  id           String        @id @default(cuid())
+  id           String   @id @default(cuid())
   name         String
-  email        String        @unique
+  email        String   @unique
   phone        String?
-  signupDate   DateTime      @default(now())
+  signupDate   DateTime @default(now())
   skills       String
-  interests    String[]
-  availability String[]
-  status       String        @default("Pending")
+  interests    String // Stored as a comma-separated string
+  availability String // Stored as a comma-separated string
+  status       String   @default("Pending")
 }
 
 model Donation {
-  id          String        @id @default(cuid())
-  donorName   String
-  email       String
-  amount      Float
-  date        DateTime      @default(now())
-  type        String
-  project     Project?      @relation(fields: [projectId], references: [id])
-  projectId   String?
-  category    Category?     @relation(fields: [categoryId], references: [id])
-  categoryId  String?
+  id        String   @id @default(cuid())
+  donorName String
+  email     String
+  amount    Float
+  date      DateTime @default(now())
+  type      String
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+  category  Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 }
 
 model User {
@@ -57,6 +57,13 @@ model User {
   joinDate DateTime @default(now())
 }
 
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  projects Project[]
+  donations Donation[]
+}
+
 model Settings {
   id                         String  @id @default(cuid())
   appName                    String?
@@ -65,7 +72,7 @@ model Settings {
   volunteerIcon              String?
   heroTitle                  String?
   heroDescription            String?
-  heroImages                 String[]
+  heroImages                 String? // Stored as a comma-separated string
   missionIntroTitle          String?
   missionIntroDescription    String?
   missionImage               String?
@@ -81,11 +88,4 @@ model Settings {
   socialLinksTwitter         String?
   socialLinksFacebook        String?
   socialLinksInstagram       String?
-}
-
-model Category {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  projects  Project[]
-  donations Donation[]
 }

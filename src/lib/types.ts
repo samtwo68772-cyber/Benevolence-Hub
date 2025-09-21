@@ -1,5 +1,4 @@
 
-
 export type ProjectStatus = 'Active' | 'Completed' | 'Planning';
 export type VolunteerStatus = 'Pending' | 'Approved' | 'Rejected';
 export type DonationType = 'ONE_TIME' | 'MONTHLY';
@@ -82,6 +81,9 @@ export type Settings = {
   values: Goal;
   volunteerIntro: VolunteerIntro;
   socialLinks?: SocialLink[];
+  socialLinksTwitter?: string;
+  socialLinksFacebook?: string;
+  socialLinksInstagram?: string;
 };
 
 export type Category = {

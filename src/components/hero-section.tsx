@@ -14,12 +14,13 @@ import Autoplay from 'embla-carousel-autoplay';
 import Fade from 'embla-carousel-fade';
 
 export default function HeroSection({ settings }: { settings: Settings }) {
-  const slideshowImages = [
-    'hero-background', 
-    'project-water', 
-    'project-education', 
-    'project-medical'
-  ].map(id => PlaceHolderImages.find(img => img.id === id)).filter(Boolean) as typeof PlaceHolderImages;
+  const slideshowImageIds = settings.heroImages && settings.heroImages.length > 0
+    ? settings.heroImages
+    : ['hero-background', 'project-water', 'project-education', 'project-medical'];
+
+  const slideshowImages = slideshowImageIds
+    .map(id => PlaceHolderImages.find(img => img.id === id))
+    .filter(Boolean) as typeof PlaceHolderImages;
 
   const [emblaRef] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 5000, stopOnInteraction: false }),
