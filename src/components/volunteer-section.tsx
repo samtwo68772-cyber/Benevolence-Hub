@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { HeartHandshake, XCircle } from "lucide-react"
+import { XCircle } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "./ui/badge"
@@ -80,7 +80,7 @@ export default function VolunteerSection({ settings, categories }: { settings: S
         form.reset()
     }
 
-    const VolunteerIcon = LucideIcons[settings.volunteerIcon as keyof typeof LucideIcons] || HeartHandshake;
+    const VolunteerIcon = LucideIcons[settings.volunteerIcon as keyof typeof LucideIcons] || LucideIcons.HeartHandshake;
 
   return (
     <section id="volunteer" className="section-padding">
