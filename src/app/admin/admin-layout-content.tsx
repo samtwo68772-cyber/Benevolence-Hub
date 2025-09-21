@@ -138,13 +138,13 @@ export default function AdminLayoutContent({
              </form>
           </SidebarFooter>
         </Sidebar>
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col overflow-hidden">
             <header className="flex h-14 items-center gap-4 border-b bg-card px-4 sm:px-6">
                 <SidebarTrigger className="md:hidden" />
                 <h1 className="flex-1 text-lg sm:text-xl font-semibold">{getPageTitle()}</h1>
                 <ThemeToggle />
             </header>
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 overflow-auto">{children}</main>
         </div>
       </div>
     </SidebarProvider>

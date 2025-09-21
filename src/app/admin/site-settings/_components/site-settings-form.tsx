@@ -94,9 +94,9 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
 
 
     return (
-         <div className="grid h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+        <div className="grid h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
             <Card className="w-full">
-                <form action={handleSettingsSave} ref={formRef}>
+                <form action={handleSettingsSave} ref={formRef} encType="multipart/form-data">
                     <CardHeader>
                         <CardTitle>Site & Content Settings</CardTitle>
                         <CardDescription>Update your site name, logo, homepage content, and other global settings.</CardDescription>
@@ -136,10 +136,15 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="heroImages">Background Images</Label>
+                                <Label htmlFor="heroImagesMultiple">Homepage Background Slideshow Images</Label>
                                 <div className="flex flex-wrap items-center gap-4">
                                     {heroImagePreviews.map((src, index) => (
                                         <div key={index} className="relative w-40 h-auto">
+                                            <input 
+                                                type="hidden" 
+                                                name={`existingHeroImages[${index}]`} 
+                                                value={src} 
+                                            />
                                             <Image src={src} alt={`Hero image preview ${index + 1}`} width={160} height={90} className="rounded-md object-cover" />
                                             <Button
                                                 type="button"
@@ -148,8 +153,20 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                                 className="absolute top-1 right-1 h-6 w-6"
                                                 onClick={() => setHeroImagePreviews(heroImagePreviews.filter((_, i) => i !== index))}
                                             >
-                                                <X className="h-4 w-4" />
+                                                <X className="h-3 w-3" />
                                             </Button>
+                                        </div>
+                                    ))}
+                                    <Input 
+                                        id="heroImagesMultiple" 
+                                        name="heroImagesMultiple" 
+                                        type="file" 
+                                        accept="image/png, image/jpeg" 
+                                        onChange={(e) => handleMultipleImageChange(e, setHeroImagePreviews)}
+                                        multiple
+                                    />
+                                </div>
+                                <p className="text-sm text-muted-foreground">Upload multiple images for the homepage background slideshow. Recommended size: 1920x1080px. Max 2MB each.</p>
                                         </div>
                                     ))}
                                     <Input id="heroImages" name="heroImages" type="file" accept="image/png, image/jpeg" multiple onChange={(e) => handleMultipleImageChange(e, setHeroImagePreviews)} />

@@ -21,6 +21,16 @@ export async function updateSiteSettings(formData: FormData) {
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
     const heroImageFiles = formData.getAll('heroImages') as File[];
+    const heroImagesMultiple = formData.getAll('heroImagesMultiple') as File[];
+    
+    // Collect existing hero images from form data
+    const existingHeroImages: string[] = [];
+    for (const [key, value] of formData.entries()) {
+        if (key.startsWith('existingHeroImages[')) {
+            existingHeroImages.push(value as string);
+        }
+    }
+    
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
     const missionImageFile = formData.get('missionImage') as File;
@@ -57,13 +67,26 @@ export async function updateSiteSettings(formData: FormData) {
         logoType = 'image';
     }
 
-    const heroImageUrls: string[] = [];
+    // Process both existing and new hero images
+    const heroImagesData: string[] = [...existingHeroImages];
+    
+    // Process new multiple hero images
+    for (const file of heroImagesMultiple) {
+        if (file.size > 0) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                throw new Error(`Hero image "${file.name}" must be less than 2MB.`);
+            }
+            heroImagesData.push(await fileToDataURI(file));
+        }
+    }
+    
+    // Process legacy single hero image (for backward compatibility)
     for (const file of heroImageFiles) {
         if (file.size > 0) {
             if (file.size > 2 * 1024 * 1024) { // 2MB limit
                 throw new Error(`Hero image "${file.name}" must be less than 2MB.`);
             }
-            heroImageUrls.push(await fileToDataURI(file));
+            heroImagesData.push(await fileToDataURI(file));
         }
     }
 
@@ -95,8 +118,8 @@ export async function updateSiteSettings(formData: FormData) {
         newSettings.logoType = logoType;
     }
 
-    if (heroImageUrls.length > 0) {
-        newSettings.heroImages = heroImageUrls;
+    if (heroImagesData.length > 0) {
+        newSettings.heroImages = heroImagesData;
     }
 
     if (missionImageData) {

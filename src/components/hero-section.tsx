@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowDown } from 'lucide-react';
 import { Settings } from '@/lib/types';
+import { usePathname } from 'next/navigation';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import Fade from 'embla-carousel-fade';
@@ -19,6 +20,9 @@ const defaultSlideshowImages = PlaceHolderImages.filter(img =>
 );
 
 export default function HeroSection({ settings }: { settings: Settings }) {
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+  
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: false })
   );
@@ -30,30 +34,43 @@ export default function HeroSection({ settings }: { settings: Settings }) {
   const slideshowImages = (settings.heroImages && settings.heroImages.length > 0)
     ? settings.heroImages.map((url, index) => ({ imageUrl: url, description: `Hero image ${index + 1}` }))
     : defaultSlideshowImages;
+    
+  // Use first image for non-homepage
+  const heroImage = slideshowImages[0] || defaultSlideshowImages[0];
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center">
-        <Carousel
-            plugins={[plugin.current, fadePlugin.current]}
-            className="absolute inset-0 w-full h-full"
-            opts={{
-                loop: true,
-            }}
-        >
-            <CarouselContent className="m-0 h-full">
-                {slideshowImages.map((image, index) => (
-                <CarouselItem key={index} className="p-0 h-full">
-                    <Image
-                        src={image.imageUrl}
-                        alt={image.description}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                    />
-                </CarouselItem>
-                ))}
-            </CarouselContent>
-        </Carousel>
+        {isHomePage ? (
+          <Carousel
+              plugins={[plugin.current, fadePlugin.current]}
+              className="absolute inset-0 w-full h-full"
+              opts={{
+                  loop: true,
+              }}
+          >
+              <CarouselContent className="m-0 h-full">
+                  {slideshowImages.map((image, index) => (
+                  <CarouselItem key={index} className="p-0 h-full">
+                      <Image
+                          src={image.imageUrl}
+                          alt={image.description}
+                          fill
+                          className="object-cover"
+                          priority={index === 0}
+                      />
+                  </CarouselItem>
+                  ))}
+              </CarouselContent>
+          </Carousel>
+        ) : (
+          <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            fill
+            className="object-cover"
+            priority
+          />
+        )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
         <h1 className="font-headline text-4xl sm:text-6xl md:text-7xl leading-tight drop-shadow-2xl">
