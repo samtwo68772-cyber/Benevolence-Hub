@@ -1,4 +1,5 @@
 
+
 import * as React from 'react';
 import {
   Table,
@@ -17,7 +18,7 @@ import { getProjects, getDonations, getCategories } from '@/lib/db';
 import { format } from 'date-fns';
 import { DonationFilter } from './_components/donation-filter';
 import { PaginationControls } from '@/components/ui/pagination';
-import { DonationType, Project } from '@/lib/types';
+import { Donation, Project } from '@/lib/types';
 
 const ITEMS_PER_PAGE = 7;
 
@@ -36,7 +37,9 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
 
     const filteredDonations = allDonations.filter(donation => {
         const donationProject = allProjects.find(p => p.id === donation.projectId);
-        donation.project = donationProject;
+        if (donationProject) {
+            (donation as any).project = donationProject;
+        }
 
         const typeMatch = !typeFilter || typeFilter === 'all' || 
             (typeFilter === 'One-time' && donation.type === 'ONE_TIME') ||
@@ -81,17 +84,17 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
                         </TableHeader>
                         <TableBody>
                         {donations.map((donation) => {
-                            const category = allCategories.find(c => c.id === donation.categoryId);
+                            const category = allCategories.find(c => c.id === (donation as any).categoryId);
                             return (
                                 <TableRow key={donation.id}>
                                 <TableCell className="font-medium">{donation.donorName}</TableCell>
-                                <TableCell>${donation.amount.toFixed(2)}</TableCell>
+                                <TableCell>${(donation.amount as any).toFixed(2)}</TableCell>
                                 <TableCell className='hidden sm:table-cell'>
                                     <Badge variant={donation.type === 'MONTHLY' ? 'outline' : 'default'}>
                                         {donation.type === 'ONE_TIME' ? 'One-time' : 'Monthly'}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className='hidden md:table-cell'>{donation.project?.title || 'General Fund'}</TableCell>
+                                <TableCell className='hidden md:table-cell'>{(donation as any).project?.title || 'General Fund'}</TableCell>
                                 <TableCell className='hidden lg:table-cell'>{category?.name || 'N/A'}</TableCell>
                                 <TableCell className='hidden lg:table-cell'>{format(new Date(donation.date), 'yyyy-MM-dd')}</TableCell>
                                 <TableCell className="text-right">

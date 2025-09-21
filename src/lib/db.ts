@@ -1,320 +1,227 @@
 
 'use server';
 
-import fs from 'fs/promises';
-import path from 'path';
+import prisma from './prisma';
 import { Project, Volunteer, Donation, User, Settings, Category } from './types';
 
-const dbPath = path.join(process.cwd(), 'db.json');
+// We are now using Prisma, so we don't need to read/write from a JSON file.
+// The functions below are updated to use Prisma Client.
 
-type DbData = {
-  projects: Project[];
-  volunteers: Volunteer[];
-  donations: Donation[];
-  users: User[];
-  settings: Settings;
-  categories: Category[];
+// We will store settings in a separate mechanism or a dedicated table if needed.
+// For now, we return a default object.
+const defaultSettings: Settings = {
+    appName: 'Benevolence Hub',
+    logo: 'HandHeart',
+    logoType: 'icon',
+    volunteerIcon: 'HeartHandshake',
+    hero: {
+        title: "Compassion in Action",
+        description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
+    },
+    missionIntro: {
+        title: "Empowering Change, One Life at a Time",
+        description: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."
+    },
+    mission: {
+        title: "Our Mission",
+        description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
+    },
+    vision: {
+        title: "Our Vision",
+        description: "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship."
+    },
+    values: {
+        title: "Our Values",
+        description: "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact."
+    },
+    volunteerIntro: {
+        title: "Become a Volunteer",
+        description1: "Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.",
+        description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started."
+    },
+     socialLinks: [
+        { icon: 'Twitter', href: '#' },
+        { icon: 'Facebook', href: '#' },
+        { icon: 'Instagram', href: '#' }
+    ]
 };
-
-async function readDb(): Promise<DbData> {
-  try {
-    const data = await fs.readFile(dbPath, 'utf-8');
-    const jsonData = JSON.parse(data);
-    // Dates are stored as strings in JSON, so we need to convert them back to Date objects
-    if (jsonData.projects) jsonData.projects.forEach((p: Project) => p.startDate = new Date(p.startDate));
-    if (jsonData.volunteers) jsonData.volunteers.forEach((v: Volunteer) => v.signupDate = new Date(v.signupDate));
-    if (jsonData.donations) jsonData.donations.forEach((d: Donation) => d.date = new Date(d.date));
-    if (jsonData.users) jsonData.users.forEach((u: User) => u.joinDate = new Date(u.joinDate));
-    return jsonData;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-        // If the file doesn't exist, return a default structure
-        return { 
-            projects: [], 
-            volunteers: [], 
-            donations: [], 
-            users: [], 
-            categories: [
-                { id: 'water', name: 'Water' },
-                { id: 'education', name: 'Education' },
-                { id: 'medical', name: 'Medical' },
-                { id: 'community-development', name: 'Community Development' },
-                { id: 'disaster-relief', name: 'Disaster Relief' },
-            ],
-            settings: { 
-                appName: 'Benevolence Hub', 
-                logo: 'HandHeart', 
-                logoType: 'icon', 
-                volunteerIcon: 'HeartHandshake',
-                hero: { title: 'Compassion in Action', description: 'Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.' },
-                missionIntro: { title: 'Empowering Change, One Life at a Time', description: 'At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future.'},
-                mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions...' },
-                vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity...' },
-                values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency...' },
-                volunteerIntro: { title: 'Become a Volunteer', description1: 'Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.', description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started." }
-            } 
-        };
-    }
-    console.error("Could not read db.json", error);
-    // For other errors, return a default structure
-     return { 
-        projects: [], 
-        volunteers: [], 
-        donations: [], 
-        users: [], 
-        categories: [],
-        settings: { 
-            appName: 'Benevolence Hub', 
-            logo: 'HandHeart', 
-            logoType: 'icon', 
-            volunteerIcon: 'HeartHandshake',
-            hero: { title: 'Compassion in Action', description: 'Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.' },
-            missionIntro: { title: 'Empowering Change, One Life at a Time', description: 'At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future.'},
-            mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.' },
-            vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.' },
-            values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.' },
-            volunteerIntro: { title: 'Become a Volunteer', description1: 'Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.', description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started." }
-        }
-    };
-  }
-}
-
-async function writeDb(data: DbData) {
-  await fs.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
-}
 
 // Categories
 export async function getCategories(): Promise<Category[]> {
-    const db = await readDb();
-    return db.categories || [];
+    return await prisma.category.findMany();
 }
 
 export async function createCategory(name: string): Promise<Category> {
-    const db = await readDb();
-    const newCategory: Category = {
-        id: name.toLowerCase().replace(/\s+/g, '-'),
-        name: name,
-    };
-    db.categories = [...(db.categories || []), newCategory];
-    await writeDb(db);
-    return newCategory;
+    return await prisma.category.create({
+        data: { name }
+    });
 }
 
 export async function updateCategory(id: string, name: string): Promise<Category> {
-    const db = await readDb();
-    const index = db.categories.findIndex(c => c.id === id);
-    if (index === -1) throw new Error('Category not found');
-    db.categories[index].name = name;
-    await writeDb(db);
-    return db.categories[index];
+    return await prisma.category.update({
+        where: { id },
+        data: { name },
+    });
 }
 
 export async function deleteCategory(id: string): Promise<void> {
-    const db = await readDb();
-    db.categories = db.categories.filter(c => c.id !== id);
-    // Optional: Also update projects that use this category
-    db.projects.forEach(p => {
-        if (p.category === id) {
-            p.category = 'Uncategorized'; // Or some other default
+    await prisma.project.updateMany({
+        where: { categoryId: id },
+        data: { categoryId: null }
+    });
+    await prisma.category.delete({ where: { id } });
+}
+
+// Projects
+export async function getProjects(): Promise<Project[]> {
+    const projects = await prisma.project.findMany({ include: { category: true } });
+    return projects.map(p => ({ ...p, category: p.category?.name || 'Uncategorized' }));
+}
+
+export async function getProjectById(id: string): Promise<Project | null> {
+    const project = await prisma.project.findUnique({ where: { id }, include: { category: true } });
+    if (!project) return null;
+    return { ...project, category: project.category?.name || 'Uncategorized' };
+}
+
+export async function createProject(project: Omit<Project, 'id' | 'peopleHelped' | 'category'> & { category: string, imageUrl?: string }) {
+    return await prisma.project.create({
+        data: {
+            title: project.title,
+            description: project.description,
+            imageUrl: project.imageUrl,
+            details: project.details,
+            status: project.status,
+            startDate: project.startDate,
+            peopleHelped: 0,
+            category: {
+                connectOrCreate: {
+                    where: { name: project.category },
+                    create: { name: project.category }
+                }
+            }
         }
     });
-    await writeDb(db);
 }
 
-
-export async function getProjects() {
-    const db = await readDb();
-    return db.projects || [];
+export async function updateProject(id: string, data: Partial<Omit<Project, 'id' | 'category'>> & { category?: string, imageUrl?: string }) {
+    const { category, ...projectData } = data;
+    return await prisma.project.update({
+        where: { id },
+        data: {
+            ...projectData,
+            ...(category && {
+                category: {
+                    connectOrCreate: {
+                        where: { name: category },
+                        create: { name: category }
+                    }
+                }
+            })
+        },
+    });
 }
 
-export async function getProjectById(id: string) {
-    const db = await readDb();
-    return (db.projects || []).find(p => p.id === id);
+export async function deleteProject(id: string): Promise<void> {
+    await prisma.donation.updateMany({
+        where: { projectId: id },
+        data: { projectId: null }
+    });
+    await prisma.project.delete({ where: { id } });
 }
 
-export async function createProject(project: Omit<Project, 'id' | 'peopleHelped'>) {
-    const db = await readDb();
-    const newProject: Project = {
-        ...project,
-        id: `proj-${Date.now()}`,
-        peopleHelped: 0,
-    };
-    db.projects = [...(db.projects || []), newProject];
-    await writeDb(db);
-    return newProject;
-}
-
-export async function updateProject(id: string, data: Partial<Omit<Project, 'id'>>) {
-    const db = await readDb();
-    if (!db.projects) db.projects = [];
-    const index = db.projects.findIndex(p => p.id === id);
-    if (index === -1) throw new Error('Project not found');
-    db.projects[index] = { ...db.projects[index], ...data };
-    await writeDb(db);
-    return db.projects[index];
-}
-
-export async function deleteProject(id: string) {
-    const db = await readDb();
-    const initialLength = (db.projects || []).length;
-    db.projects = (db.projects || []).filter(p => p.id !== id);
-    if (db.projects.length === initialLength) throw new Error('Project not found');
-    await writeDb(db);
-}
-
-export async function getVolunteers() {
-    const db = await readDb();
-    return db.volunteers || [];
+// Volunteers
+export async function getVolunteers(): Promise<Volunteer[]> {
+    return await prisma.volunteer.findMany();
 }
 
 export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status' | 'signupDate'>) {
-    const db = await readDb();
-    const newVolunteer: Volunteer = {
-        ...volunteer,
-        id: `vol-${Date.now()}`,
-        status: 'Pending',
-        signupDate: new Date(),
-    };
-    db.volunteers = [...(db.volunteers || []), newVolunteer];
-    await writeDb(db);
-    return newVolunteer;
+    return await prisma.volunteer.create({
+        data: {
+            ...volunteer,
+            status: 'Pending',
+        }
+    });
 }
 
 export async function updateVolunteer(id: string, data: Partial<Omit<Volunteer, 'id'>>) {
-    const db = await readDb();
-    if (!db.volunteers) db.volunteers = [];
-    const index = db.volunteers.findIndex(v => v.id === id);
-    if (index === -1) throw new Error('Volunteer not found');
-    db.volunteers[index] = { ...db.volunteers[index], ...data };
-    await writeDb(db);
-    return db.volunteers[index];
+    return await prisma.volunteer.update({
+        where: { id },
+        data: data,
+    });
 }
 
-export async function deleteVolunteer(id: string) {
-    const db = await readDb();
-    db.volunteers = (db.volunteers || []).filter(v => v.id !== id);
-    await writeDb(db);
+export async function deleteVolunteer(id: string): Promise<void> {
+    await prisma.volunteer.delete({ where: { id } });
 }
 
-export async function getDonations() {
-    const db = await readDb();
-    return db.donations || [];
+// Donations
+export async function getDonations(): Promise<Donation[]> {
+    return await prisma.donation.findMany({ include: { project: true } });
 }
 
 export async function createDonation(donation: Omit<Donation, 'id' | 'date'>) {
-    const db = await readDb();
-    const newDonation: Donation = {
-        ...donation,
-        id: `don-${Date.now()}`,
-        date: new Date(),
-    };
-    db.donations = [...(db.donations || []), newDonation];
-    await writeDb(db);
-    return newDonation;
+    return await prisma.donation.create({
+        data: {
+            donorName: donation.donorName,
+            email: donation.email,
+            amount: donation.amount,
+            type: donation.type,
+            ...(donation.projectId && { project: { connect: { id: donation.projectId } } }),
+            ...(donation.categoryId && { category: { connect: { id: donation.categoryId }}})
+        }
+    });
 }
 
-export async function getUsers() {
-    const db = await readDb();
-    return db.users || [];
+// Users
+export async function getUsers(): Promise<User[]> {
+    return await prisma.user.findMany();
 }
 
-export async function getUserByEmail(email: string) {
-    const db = await readDb();
-    return (db.users || []).find(u => u.email === email);
+export async function getUserByEmail(email: string): Promise<User | null> {
+    return await prisma.user.findUnique({ where: { email } });
 }
 
-export async function getUserById(id: string) {
-    const db = await readDb();
-    return (db.users || []).find(u => u.id === id);
+export async function getUserById(id: string): Promise<User | null> {
+    return await prisma.user.findUnique({ where: { id } });
 }
 
 export async function createUser(user: Omit<User, 'id' | 'joinDate' | 'role'>) {
-    const db = await readDb();
-    const newUser: User = {
-        ...user,
-        id: `user-${Date.now()}`,
-        joinDate: new Date(),
-        role: 'ADMIN',
-    };
-    db.users = [...(db.users || []), newUser];
-    await writeDb(db);
-    return newUser;
+    return await prisma.user.create({
+        data: {
+            ...user,
+            role: 'ADMIN',
+        }
+    });
 }
 
 export async function updateUser(id: string, data: Partial<Omit<User, 'id'>>) {
-    const db = await readDb();
-    if (!db.users) db.users = [];
-    const index = db.users.findIndex(u => u.id === id);
-    if (index === -1) throw new Error('User not found');
-    db.users[index] = { ...db.users[index], ...data };
-    await writeDb(db);
-    return db.users[index];
+    return await prisma.user.update({
+        where: { id },
+        data,
+    });
 }
 
-export async function deleteUser(id: string) {
-    const db = await readDb();
-    db.users = (db.users || []).filter(u => u.id !== id);
-    await writeDb(db);
+export async function deleteUser(id: string): Promise<void> {
+    await prisma.user.delete({ where: { id } });
 }
   
-export async function getSettings() {
-    const db = await readDb();
-    const defaultSettings: Settings = {
-        appName: 'Benevolence Hub',
-        logo: 'HandHeart',
-        logoType: 'icon',
-        volunteerIcon: 'HeartHandshake',
-        hero: {
-            title: "Compassion in Action",
-            description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
-        },
-        missionIntro: {
-            title: "Empowering Change, One Life at a Time",
-            description: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."
-        },
-        mission: {
-            title: "Our Mission",
-            description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
-        },
-        vision: {
-            title: "Our Vision",
-            description: "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship."
-        },
-        values: {
-            title: "Our Values",
-            description: "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact."
-        },
-        volunteerIntro: {
-            title: "Become a Volunteer",
-            description1: "Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.",
-            description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started."
-        },
-        socialLinks: [
-            { icon: 'Twitter', href: '#' },
-            { icon: 'Facebook', href: '#' },
-            { icon: 'Instagram', href: '#' }
-        ]
-    };
-    return { ...defaultSettings, ...(db.settings || {}) };
+// Settings
+export async function getSettings(): Promise<Settings> {
+    const dbSettings = await prisma.settings.findFirst();
+    return { ...defaultSettings, ...dbSettings } as Settings;
 }
 
-
 export async function updateSettings(settings: Partial<Settings>) {
-    const dbData = await readDb();
-    // Deep merge for nested objects like mission, vision, etc.
-    const newSettings = {
-        ...dbData.settings,
-        ...settings,
-        hero: { ...dbData.settings?.hero, ...settings.hero },
-        missionIntro: { ...dbData.settings?.missionIntro, ...settings.missionIntro },
-        mission: { ...dbData.settings?.mission, ...settings.mission },
-        vision: { ...dbData.settings?.vision, ...settings.vision },
-        values: { ...dbData.settings?.values, ...settings.values },
-        volunteerIntro: { ...dbData.settings?.volunteerIntro, ...settings.volunteerIntro },
-        socialLinks: settings.socialLinks || dbData.settings?.socialLinks,
-        heroImages: settings.heroImages === undefined ? dbData.settings.heroImages : settings.heroImages
-    };
-    dbData.settings = newSettings;
-    await writeDb(dbData);
-    return dbData.settings;
+    const currentSettings = await prisma.settings.findFirst();
+    if (currentSettings) {
+        return await prisma.settings.update({
+            where: { id: currentSettings.id },
+            data: settings,
+        });
+    } else {
+        return await prisma.settings.create({
+            data: settings as any, // Cast to any to satisfy Prisma create type
+        });
+    }
 }

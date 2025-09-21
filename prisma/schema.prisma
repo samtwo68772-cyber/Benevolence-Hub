@@ -6,20 +6,27 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl"]
 }
 
 model Project {
-  id           String          @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
-  description  String
-  imageId      String
+  description  String        @db.Text
+  imageUrl     String?
   details      String[]
-  status       ProjectStatus   @default(PLANNING)
-  startDate    DateTime        @default(now())
-  peopleHelped Int             @default(0)
-  category     ProjectCategory
+  status       String // Active, Completed, Planning
+  startDate    DateTime
+  peopleHelped Int
+  category     Category?     @relation(fields: [categoryId], references: [id])
+  categoryId   String?
   donations    Donation[]
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  projects Project[]
+  donations Donation[]
 }
 
 model Volunteer {
@@ -28,21 +35,23 @@ model Volunteer {
   email        String   @unique
   phone        String?
   signupDate   DateTime @default(now())
-  skills       String
+  skills       String   @db.Text
   interests    String[]
   availability String[]
-  status       VolunteerStatus @default(PENDING)
+  status       String // Pending, Approved, Rejected
 }
 
 model Donation {
-  id        String       @id @default(cuid())
+  id        String   @id @default(cuid())
   donorName String
   email     String
   amount    Float
-  date      DateTime     @default(now())
-  type      DonationType
-  project   Project?     @relation(fields: [projectId], references: [id])
+  date      DateTime @default(now())
+  type      String // ONE_TIME, MONTHLY
+  project   Project? @relation(fields: [projectId], references: [id])
   projectId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 }
 
 model User {
@@ -50,35 +59,32 @@ model User {
   name     String
   email    String   @unique
   password String
-  role     Role     @default(ADMIN)
+  role     String // ADMIN
   joinDate DateTime @default(now())
 }
 
-enum ProjectStatus {
-  PLANNING
-  ACTIVE
-  COMPLETED
-}
-
-enum ProjectCategory {
-  WATER
-  EDUCATION
-  MEDICAL
-  COMMUNITY_DEVELOPMENT
-  DISASTER_RELIEF
-}
-
-enum VolunteerStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum DonationType {
-  ONE_TIME
-  MONTHLY
-}
-
-enum Role {
-  ADMIN
+model Settings {
+  id                      String    @id @default(cuid())
+  appName                 String?
+  logo                    String?
+  logoType                String?
+  volunteerIcon           String?
+  heroTitle               String?
+  heroDescription         String?
+  heroImages              String[]
+  missionIntroTitle       String?
+  missionIntroDescription String?
+  missionImage            String?
+  missionTitle            String?
+  missionDescription      String?
+  visionTitle             String?
+  visionDescription       String?
+  valuesTitle             String?
+  valuesDescription       String?
+  volunteerIntroTitle     String?
+  volunteerIntroDescription1 String?
+  volunteerIntroDescription2 String?
+  socialLinksTwitter      String?
+  socialLinksFacebook     String?
+  socialLinksInstagram    String?
 }

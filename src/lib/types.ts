@@ -1,7 +1,6 @@
 
 
 export type ProjectStatus = 'Active' | 'Completed' | 'Planning';
-export type ProjectCategory = 'Water' | 'Education' | 'Medical' | 'Community Development' | 'Disaster Relief';
 export type VolunteerStatus = 'Pending' | 'Approved' | 'Rejected';
 export type DonationType = 'ONE_TIME' | 'MONTHLY';
 export type Role = 'ADMIN';
@@ -10,12 +9,13 @@ export type Project = {
   id: string;
   title: string;
   description: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   details: string[];
   status: ProjectStatus;
   startDate: Date;
   peopleHelped: number;
-  category: string;
+  category: string | null;
+  categoryId?: string | null;
 };
 
 export type Volunteer = {
@@ -39,14 +39,14 @@ export type Donation = {
   type: DonationType;
   projectId: string | null;
   categoryId?: string | null;
-  project?: Project | null;
+  project?: Partial<Project> | null;
 };
 
 export type User = {
   id: string;
   name: string;
   email: string;
-  password?: string;
+  password?: string | null;
   role: Role;
   joinDate: Date;
 };
@@ -68,6 +68,7 @@ export type SocialLink = {
 };
 
 export type Settings = {
+  id?: string;
   appName: string;
   logo: string;
   logoType: 'icon' | 'image';
@@ -75,7 +76,7 @@ export type Settings = {
   hero: Goal;
   heroImages?: string[];
   missionIntro: Goal;
-  missionImage?: string;
+  missionImage?: string | null;
   mission: Goal;
   vision: Goal;
   values: Goal;

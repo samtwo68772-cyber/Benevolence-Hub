@@ -66,8 +66,10 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
         const cats = await getCategories();
         setCategories(cats);
     }
-    fetchCategories();
-  }, [])
+    if (open) {
+        fetchCategories();
+    }
+  }, [open])
   
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),

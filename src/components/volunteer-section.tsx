@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -25,7 +26,8 @@ import { Badge } from "./ui/badge"
 import { addVolunteer } from "./_actions/volunteers"
 import { Settings, Category } from "@/lib/types"
 import * as LucideIcons from 'lucide-react';
-
+import React from "react"
+import { getCategories } from "@/lib/db"
 
 const availabilityItems = [
     { id: "weekdays", label: "Weekdays" },
@@ -48,8 +50,17 @@ const volunteerSchema = z.object({
 
 type VolunteerFormValues = z.infer<typeof volunteerSchema>
 
-export default function VolunteerSection({ settings, categories }: { settings: Settings, categories: Category[] }) {
+export default function VolunteerSection({ settings, categories: initialCategories }: { settings: Settings, categories: Category[] }) {
     const { toast } = useToast()
+    const [categories, setCategories] = React.useState<Category[]>(initialCategories)
+
+     React.useEffect(() => {
+        async function fetchCategories() {
+            const cats = await getCategories();
+            setCategories(cats);
+        }
+        fetchCategories();
+    }, [])
 
     const form = useForm<VolunteerFormValues>({
         resolver: zodResolver(volunteerSchema),

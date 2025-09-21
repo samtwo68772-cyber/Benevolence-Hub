@@ -79,7 +79,7 @@ export default function ImpactSection({ projects, donations, volunteers, approve
 
   const engagementByCategory = categories.map(category => {
     const categoryDonations = donations
-      .filter(d => d.categoryId === category.id)
+      .filter(d => (d as any).categoryId === category.id)
       .reduce((sum, d) => sum + d.amount, 0);
 
     const categoryVolunteers = volunteers.filter(v => 
