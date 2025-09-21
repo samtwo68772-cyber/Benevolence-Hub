@@ -257,3 +257,4 @@ export async function updateSettings(settings: Partial<Settings>) {
     return dbData.settings;
 }
 
+

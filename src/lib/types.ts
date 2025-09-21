@@ -62,9 +62,11 @@ export type Settings = {
   volunteerIcon: string;
   hero: Goal;
   missionIntro: Goal;
+  missionImage?: string;
   mission: Goal;
   vision: Goal;
   values: Goal;
 };
+
 
 

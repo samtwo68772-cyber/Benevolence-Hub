@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -13,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { updateSiteSettings } from '../_actions/settings';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 function SettingsSubmitButton() {
     const { pending } = useFormStatus();
@@ -26,14 +28,18 @@ function SettingsSubmitButton() {
 export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
+    
+    const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
+    const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
+    
     const formRef = React.useRef<HTMLFormElement>(null);
 
-    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
         const file = e.target.files?.[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setLogoPreview(reader.result as string);
+                setter(reader.result as string);
             };
             reader.readAsDataURL(file);
         }
@@ -50,7 +56,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
 
     const LogoPreview = () => {
         if (logoPreview) {
-          return <Image src={logoPreview} alt="Logo preview" width={40} height={40} className="rounded-md" />;
+          return <Image src={logoPreview} alt="Logo preview" width={40} height={40} className="rounded-md object-contain" />;
         }
         if (settings.logoType === 'icon') {
             const Icon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
@@ -58,6 +64,14 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         }
         return null;
     }
+
+    const MissionImagePreview = () => {
+      if (missionImagePreview) {
+        return <Image src={missionImagePreview} alt="Mission section image preview" width={160} height={90} className="rounded-md object-cover" />;
+      }
+      return null;
+    }
+
 
     return (
          <div className="grid h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
@@ -80,7 +94,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                     <div className="w-12 h-12 flex items-center justify-center">
                                     <LogoPreview />
                                     </div>
-                                    <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={handleLogoChange} />
+                                    <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={(e) => handleImageChange(e, setLogoPreview)} />
                                 </div>
                                 <p className="text-sm text-muted-foreground">Upload a new logo. Recommended size: 128x128px. Max 1MB.</p>
                             </div>
@@ -112,6 +126,16 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <div className="space-y-2">
                                 <Label htmlFor="missionIntroDescription">Description</Label>
                                 <Textarea id="missionIntroDescription" name="missionIntroDescription" defaultValue={settings.missionIntro.description} rows={3} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="missionImage">Image</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-40 h-auto flex items-center justify-center">
+                                        <MissionImagePreview />
+                                    </div>
+                                    <Input id="missionImage" name="missionImage" type="file" accept="image/png, image/jpeg" onChange={(e) => handleImageChange(e, setMissionImagePreview)} />
+                                </div>
+                                <p className="text-sm text-muted-foreground">Upload an image for the mission section. Max 1MB.</p>
                             </div>
                         </div>
                         
@@ -151,3 +175,4 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         </div>
     );
 }
+

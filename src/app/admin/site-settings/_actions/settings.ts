@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from 'zod';
@@ -21,6 +22,7 @@ export async function updateSiteSettings(formData: FormData) {
     const heroDescription = formData.get('heroDescription') as string;
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
+    const missionImageFile = formData.get('missionImage') as File;
     const missionTitle = formData.get('missionTitle') as string;
     const missionDescription = formData.get('missionDescription') as string;
     const visionTitle = formData.get('visionTitle') as string;
@@ -45,6 +47,14 @@ export async function updateSiteSettings(formData: FormData) {
         logoType = 'image';
     }
 
+    let missionImageData: string | undefined;
+    if (missionImageFile && missionImageFile.size > 0) {
+        if (missionImageFile.size > 1024 * 1024) { // 1MB limit
+            throw new Error("Mission image must be less than 1MB.");
+        }
+        missionImageData = await fileToDataURI(missionImageFile);
+    }
+
     const newSettings: Partial<Settings> = {
         appName: validatedAppName.data,
         hero: { title: heroTitle, description: heroDescription },
@@ -58,6 +68,10 @@ export async function updateSiteSettings(formData: FormData) {
         newSettings.logo = logoData;
         newSettings.logoType = logoType;
     }
+
+    if (missionImageData) {
+        newSettings.missionImage = missionImageData;
+    }
     
     if (volunteerIcon) {
         newSettings.volunteerIcon = volunteerIcon;
@@ -69,3 +83,4 @@ export async function updateSiteSettings(formData: FormData) {
     revalidatePath('/');
     return { message: 'Site settings updated successfully.' };
 }
+
