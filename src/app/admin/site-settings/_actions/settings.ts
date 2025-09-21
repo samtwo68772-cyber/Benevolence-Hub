@@ -4,7 +4,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { updateSettings as dbUpdateSettings } from '@/lib/db';
-import { Settings, SocialLink } from '@/lib/types';
+import { Settings } from '@/lib/types';
 
 async function fileToDataURI(file: File) {
     const buffer = await file.arrayBuffer();
@@ -33,7 +33,7 @@ export async function updateSiteSettings(formData: FormData) {
     const volunteerIntroDescription1 = formData.get('volunteerIntroDescription1') as string;
     const volunteerIntroDescription2 = formData.get('volunteerIntroDescription2') as string;
 
-    const socialLinks: SocialLink[] = [
+    const socialLinks = [
         { icon: 'Twitter', href: formData.get('socialTwitter') as string },
         { icon: 'Facebook', href: formData.get('socialFacebook') as string },
         { icon: 'Instagram', href: formData.get('socialInstagram') as string },
@@ -66,16 +66,19 @@ export async function updateSiteSettings(formData: FormData) {
 
     const newSettings: Partial<Settings> = {
         appName: validatedAppName.data,
-        hero: { title: heroTitle, description: heroDescription },
-        missionIntro: { title: missionIntroTitle, description: missionIntroDescription },
-        mission: { title: missionTitle, description: missionDescription },
-        vision: { title: visionTitle, description: visionDescription },
-        values: { title: valuesTitle, description: valuesDescription },
-        volunteerIntro: { 
-            title: volunteerIntroTitle, 
-            description1: volunteerIntroDescription1,
-            description2: volunteerIntroDescription2
-        },
+        heroTitle,
+        heroDescription,
+        missionIntroTitle,
+        missionIntroDescription,
+        missionTitle,
+        missionDescription,
+        visionTitle,
+        visionDescription,
+        valuesTitle,
+        valuesDescription,
+        volunteerIntroTitle,
+        volunteerIntroDescription1,
+        volunteerIntroDescription2,
         socialLinks,
     };
 

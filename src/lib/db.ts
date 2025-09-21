@@ -69,6 +69,10 @@ export async function deleteCategory(id: string): Promise<void> {
         where: { categoryId: id },
         data: { categoryId: null }
     });
+    await prisma.donation.updateMany({
+        where: { categoryId: id },
+        data: { categoryId: null }
+    });
     await prisma.category.delete({ where: { id } });
 }
 
@@ -209,19 +213,56 @@ export async function deleteUser(id: string): Promise<void> {
 // Settings
 export async function getSettings(): Promise<Settings> {
     const dbSettings = await prisma.settings.findFirst();
-    return { ...defaultSettings, ...dbSettings } as Settings;
+    if (!dbSettings) return defaultSettings;
+
+    return {
+        id: dbSettings.id,
+        appName: dbSettings.appName || defaultSettings.appName,
+        logo: dbSettings.logo || defaultSettings.logo,
+        logoType: (dbSettings.logoType as 'icon' | 'image') || defaultSettings.logoType,
+        volunteerIcon: dbSettings.volunteerIcon || defaultSettings.volunteerIcon,
+        hero: {
+            title: dbSettings.heroTitle || defaultSettings.hero.title,
+            description: dbSettings.heroDescription || defaultSettings.hero.description,
+        },
+        heroImages: dbSettings.heroImages || defaultSettings.heroImages,
+        missionIntro: {
+            title: dbSettings.missionIntroTitle || defaultSettings.missionIntro.title,
+            description: dbSettings.missionIntroDescription || defaultSettings.missionIntro.description,
+        },
+        missionImage: dbSettings.missionImage,
+        mission: {
+            title: dbSettings.missionTitle || defaultSettings.mission.title,
+            description: dbSettings.missionDescription || defaultSettings.mission.description,
+        },
+        vision: {
+            title: dbSettings.visionTitle || defaultSettings.vision.title,
+            description: dbSettings.visionDescription || defaultSettings.vision.description,
+        },
+        values: {
+            title: dbSettings.valuesTitle || defaultSettings.values.title,
+            description: dbSettings.valuesDescription || defaultSettings.values.description,
+        },
+        volunteerIntro: {
+            title: dbSettings.volunteerIntroTitle || defaultSettings.volunteerIntro.title,
+            description1: dbSettings.volunteerIntroDescription1 || defaultSettings.volunteerIntro.description1,
+            description2: dbSettings.volunteerIntroDescription2 || defaultSettings.volunteerIntro.description2,
+        },
+        socialLinks: (dbSettings.socialLinks as any) || defaultSettings.socialLinks,
+    };
 }
+
 
 export async function updateSettings(settings: Partial<Settings>) {
     const currentSettings = await prisma.settings.findFirst();
     if (currentSettings) {
         return await prisma.settings.update({
             where: { id: currentSettings.id },
-            data: settings,
+            data: settings as any,
         });
     } else {
-        return await prisma.settings.create({
-            data: settings as any, // Cast to any to satisfy Prisma create type
+         return await prisma.settings.create({
+            data: settings as any, 
         });
     }
 }

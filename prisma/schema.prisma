@@ -7,12 +7,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Project {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
   description  String
   imageUrl     String?
@@ -20,9 +20,16 @@ model Project {
   status       String
   startDate    DateTime
   peopleHelped Int
-  category     Category?     @relation(fields: [categoryId], references: [id])
+  category     Category? @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  projects  Project[]
+  donations Donation[]
 }
 
 model Volunteer {
@@ -38,16 +45,16 @@ model Volunteer {
 }
 
 model Donation {
-  id          String    @id @default(cuid())
-  donorName   String
-  email       String
-  amount      Float
-  date        DateTime  @default(now())
-  type        String
-  project     Project?  @relation(fields: [projectId], references: [id])
-  projectId   String?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String?
+  id         String    @id @default(cuid())
+  donorName  String
+  email      String
+  amount     Float
+  date       DateTime  @default(now())
+  type       String
+  project    Project?  @relation(fields: [projectId], references: [id])
+  projectId  String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 }
 
 model User {
@@ -60,32 +67,25 @@ model User {
 }
 
 model Settings {
-  id                         String   @id @default(cuid())
-  appName                    String
-  logo                       String
-  logoType                   String
-  volunteerIcon              String
-  heroTitle                  String
-  heroDescription            String
-  heroImages                 String[]
-  missionIntroTitle          String
-  missionIntroDescription    String
-  missionImage               String?
-  missionTitle               String
-  missionDescription         String
-  visionTitle                String
-  visionDescription          String
-  valuesTitle                String
-  valuesDescription          String
-  volunteerIntroTitle        String
-  volunteerIntroDescription1 String
-  volunteerIntroDescription2 String
-  socialLinks                Json[]
-}
-
-model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  projects Project[]
-  donations Donation[]
+  id                        String   @id @default(cuid())
+  appName                   String
+  logo                      String?
+  logoType                  String?
+  volunteerIcon             String?
+  heroTitle                 String?
+  heroDescription           String?
+  heroImages                String[]
+  missionIntroTitle         String?
+  missionIntroDescription   String?
+  missionImage              String?
+  missionTitle              String?
+  missionDescription        String?
+  visionTitle               String?
+  visionDescription         String?
+  valuesTitle               String?
+  valuesDescription         String?
+  volunteerIntroTitle       String?
+  volunteerIntroDescription1 String?
+  volunteerIntroDescription2 String?
+  socialLinks               Json?
 }
