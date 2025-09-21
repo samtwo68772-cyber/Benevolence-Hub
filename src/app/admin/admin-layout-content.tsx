@@ -114,7 +114,7 @@ export default function AdminLayoutContent({
                 </div>
             </div>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="flex-1">
             <AdminNav navItems={navItems} />
           </SidebarContent>
           <SidebarFooter>
