@@ -61,6 +61,11 @@ export type VolunteerIntro = {
     description2: string;
 }
 
+export type SocialLink = {
+    icon: 'Twitter' | 'Facebook' | 'Instagram';
+    href: string;
+};
+
 export type Settings = {
   appName: string;
   logo: string;
@@ -73,7 +78,9 @@ export type Settings = {
   vision: Goal;
   values: Goal;
   volunteerIntro: VolunteerIntro;
+  socialLinks?: SocialLink[];
 };
+
 
 
 

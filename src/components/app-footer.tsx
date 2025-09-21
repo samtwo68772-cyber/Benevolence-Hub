@@ -6,14 +6,9 @@ import { Twitter, Facebook, Instagram } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 import * as LucideIcons from 'lucide-react';
-import type { Settings } from "@/lib/types";
+import type { Settings, SocialLink } from "@/lib/types";
 import Image from "next/image";
 
-const socialLinks = [
-  { icon: Twitter, href: "#" },
-  { icon: Facebook, href: "#" },
-  { icon: Instagram, href: "#" },
-]
 
 const footerLinks = [
   { href: "#mission", label: "Our Mission" },
@@ -32,9 +27,32 @@ function Logo({ settings }: { settings: Settings }) {
     return <LogoIcon className="h-7 w-7 text-primary" />;
 }
 
+const socialIconMap = {
+    Twitter,
+    Facebook,
+    Instagram,
+};
+
+function SocialLinks({ links }: { links: SocialLink[] }) {
+    return (
+        <div className="flex items-center gap-4">
+        {links.map((social) => {
+            const Icon = socialIconMap[social.icon];
+            return (
+            <Link key={social.icon} href={social.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
+                <Icon className="h-6 w-6" />
+            </Link>
+            )
+        })}
+        </div>
+    )
+}
+
 export default function AppFooter({ settings }: { settings: Settings }) {
   const pathname = usePathname();
   const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
+  
+  const socialLinks = settings.socialLinks || [];
 
   return (
     <footer className="bg-card border-t">
@@ -65,13 +83,7 @@ export default function AppFooter({ settings }: { settings: Settings }) {
           )}
            <div>
             <h3 className="font-headline text-lg font-semibold mb-4">Connect With Us</h3>
-            <div className="flex items-center gap-4">
-              {socialLinks.map((social, index) => (
-                <Link key={index} href={social.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
-                  <social.icon className="h-6 w-6" />
-                </Link>
-              ))}
-            </div>
+            <SocialLinks links={socialLinks} />
           </div>
         </div>
         <div className="mt-12 border-t pt-8 text-center text-muted-foreground">

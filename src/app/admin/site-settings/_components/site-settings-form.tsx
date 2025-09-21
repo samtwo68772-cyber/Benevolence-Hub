@@ -182,6 +182,22 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 <Textarea id="valuesDescription" name="valuesDescription" defaultValue={settings.values.description} rows={3} />
                             </div>
                         </div>
+
+                        <div className="space-y-4 rounded-md border p-4">
+                            <h4 className="font-semibold">Footer: Social Links</h4>
+                             <div className="space-y-2">
+                                <Label htmlFor="socialTwitter">Twitter URL</Label>
+                                <Input id="socialTwitter" name="socialTwitter" defaultValue={settings.socialLinks?.find(s => s.icon === 'Twitter')?.href} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="socialFacebook">Facebook URL</Label>
+                                <Input id="socialFacebook" name="socialFacebook" defaultValue={settings.socialLinks?.find(s => s.icon === 'Facebook')?.href} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="socialInstagram">Instagram URL</Label>
+                                <Input id="socialInstagram" name="socialInstagram" defaultValue={settings.socialLinks?.find(s => s.icon === 'Instagram')?.href} />
+                            </div>
+                        </div>
                     </CardContent>
                     <CardFooter>
                         <SettingsSubmitButton />
@@ -191,5 +207,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         </div>
     );
 }
+
 
 

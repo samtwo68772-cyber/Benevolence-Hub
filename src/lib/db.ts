@@ -241,7 +241,12 @@ export async function getSettings() {
             title: "Become a Volunteer",
             description1: "Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.",
             description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started."
-        }
+        },
+        socialLinks: [
+            { icon: 'Twitter', href: '#' },
+            { icon: 'Facebook', href: '#' },
+            { icon: 'Instagram', href: '#' }
+        ]
     };
     return { ...defaultSettings, ...(db.settings || {}) };
 }
@@ -259,11 +264,13 @@ export async function updateSettings(settings: Partial<Settings>) {
         vision: { ...dbData.settings?.vision, ...settings.vision },
         values: { ...dbData.settings?.values, ...settings.values },
         volunteerIntro: { ...dbData.settings?.volunteerIntro, ...settings.volunteerIntro },
+        socialLinks: settings.socialLinks || dbData.settings?.socialLinks,
     };
     dbData.settings = newSettings;
     await writeDb(dbData);
     return dbData.settings;
 }
+
 
 
 
