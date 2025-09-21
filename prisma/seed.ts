@@ -103,7 +103,11 @@ async function main() {
 
   // Seed Donations
   for (const donation of dbData.donations) {
-      const category = await prisma.category.findUnique({ where: { name: donation.categoryId } });
+      let category = null;
+      if (donation.categoryId) {
+        category = await prisma.category.findUnique({ where: { name: donation.categoryId } });
+      }
+
       await prisma.donation.upsert({
           where: { id: donation.id },
           update: {},
