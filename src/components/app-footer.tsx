@@ -34,12 +34,22 @@ const socialIconMap = {
 };
 
 function SocialLinks({ links }: { links: SocialLink[] }) {
+    const formatUrl = (url: string) => {
+        if (!url) return '#';
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            return url;
+        }
+        return `https://${url}`;
+    };
+    
     return (
         <div className="flex items-center gap-4">
         {links.map((social) => {
             const Icon = socialIconMap[social.icon];
+            if (!social.href || social.href === '#') return null;
+
             return (
-            <Link key={social.icon} href={social.href} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
+            <Link key={social.icon} href={formatUrl(social.href)} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false} target="_blank" rel="noopener noreferrer">
                 <Icon className="h-6 w-6" />
             </Link>
             )
