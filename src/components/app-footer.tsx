@@ -81,4 +81,3 @@ export default function AppFooter({ settings }: { settings: Settings }) {
     </footer>
   )
 }
-
