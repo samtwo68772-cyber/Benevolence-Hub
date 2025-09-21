@@ -2,13 +2,11 @@
 'use server';
 
 import prisma from './prisma';
-import { Project, Volunteer, Donation, User, Settings, Category } from './types';
+import { Project, Volunteer, Donation, User, Settings, Category, SocialLink } from './types';
 
 // We are now using Prisma, so we don't need to read/write from a JSON file.
 // The functions below are updated to use Prisma Client.
 
-// We will store settings in a separate mechanism or a dedicated table if needed.
-// For now, we return a default object.
 const defaultSettings: Settings = {
     appName: 'Benevolence Hub',
     logo: 'HandHeart',
@@ -225,7 +223,7 @@ export async function getSettings(): Promise<Settings> {
             title: dbSettings.heroTitle || defaultSettings.hero.title,
             description: dbSettings.heroDescription || defaultSettings.hero.description,
         },
-        heroImages: dbSettings.heroImages || defaultSettings.heroImages,
+        heroImages: (dbSettings.heroImages as string[] | undefined) || defaultSettings.heroImages,
         missionIntro: {
             title: dbSettings.missionIntroTitle || defaultSettings.missionIntro.title,
             description: dbSettings.missionIntroDescription || defaultSettings.missionIntro.description,
@@ -248,7 +246,11 @@ export async function getSettings(): Promise<Settings> {
             description1: dbSettings.volunteerIntroDescription1 || defaultSettings.volunteerIntro.description1,
             description2: dbSettings.volunteerIntroDescription2 || defaultSettings.volunteerIntro.description2,
         },
-        socialLinks: (dbSettings.socialLinks as any) || defaultSettings.socialLinks,
+        socialLinks: [
+            { icon: 'Twitter', href: dbSettings.socialLinksTwitter || '#' },
+            { icon: 'Facebook', href: dbSettings.socialLinksFacebook || '#' },
+            { icon: 'Instagram', href: dbSettings.socialLinksInstagram || '#' },
+        ] as SocialLink[],
     };
 }
 

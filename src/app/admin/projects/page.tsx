@@ -22,6 +22,8 @@ import { ProjectCategory, ProjectStatus, Category } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
+export const dynamic = 'force-dynamic';
+
 const ITEMS_PER_PAGE = 7;
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {

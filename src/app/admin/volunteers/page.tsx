@@ -5,6 +5,8 @@ import { VolunteerList } from './_components/volunteer-list';
 import { VolunteerStatus } from '@/lib/types';
 import { PaginationControls } from '@/components/ui/pagination';
 
+export const dynamic = 'force-dynamic';
+
 const ITEMS_PER_PAGE = 7;
 
 export default async function AdminVolunteersPage({ searchParams }: { searchParams: { page?: string, status?: VolunteerStatus, interest?: string }}) {
