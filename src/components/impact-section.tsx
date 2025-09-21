@@ -64,12 +64,12 @@ const volunteerInterestsConfig = {
 type ImpactSectionProps = {
     projects: Project[];
     volunteers: Volunteer[];
+    approvedVolunteersCount: number;
     totalDonations: number;
 }
 
-export default function ImpactSection({ projects, volunteers, totalDonations }: ImpactSectionProps) {
+export default function ImpactSection({ projects, volunteers, approvedVolunteersCount, totalDonations }: ImpactSectionProps) {
   const totalProjects = projects.length;
-  const totalVolunteers = volunteers.length;
 
   const projectByCategory = projects.reduce((acc, project) => {
     if (!acc[project.category]) {
@@ -115,7 +115,7 @@ export default function ImpactSection({ projects, volunteers, totalDonations }: 
   const stats = [
     { icon: HandHeart, value: totalProjects, label: 'Total Projects' },
     { icon: DollarSign, value: `$${totalDonations.toLocaleString()}`, label: 'Total Donations' },
-    { icon: Users, value: totalVolunteers, label: 'Total Volunteers' },
+    { icon: Users, value: approvedVolunteersCount, label: 'Volunteers' },
   ];
 
   return (

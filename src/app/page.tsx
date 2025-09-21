@@ -11,7 +11,7 @@ import { getProjects, getVolunteers, getDonations, getSettings } from '@/lib/db'
 export default async function Home() {
   const projects = await getProjects();
   const allVolunteers = await getVolunteers();
-  const approvedVolunteers = allVolunteers.filter(v => v.status === 'Approved');
+  const approvedVolunteersCount = allVolunteers.filter(v => v.status === 'Approved').length;
   const allDonations = await getDonations();
   
   const totalDonations = allDonations.reduce((sum, d) => sum + d.amount, 0);
@@ -29,6 +29,7 @@ export default async function Home() {
         <ImpactSection 
             projects={projects} 
             volunteers={allVolunteers}
+            approvedVolunteersCount={approvedVolunteersCount}
             totalDonations={totalDonations}
         />
         <VolunteerSection />
