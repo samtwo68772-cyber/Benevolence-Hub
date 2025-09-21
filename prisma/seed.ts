@@ -1,6 +1,5 @@
 
 import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcryptjs'
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -37,11 +36,12 @@ async function main() {
 
   for (const name of uniqueCategoryNames) {
     if (typeof name === 'string' && name.trim() !== '') {
-        await prisma.category.upsert({
-            where: { name: name },
-            update: {},
-            create: { name: name }
-        });
+        const existingCategory = await prisma.category.findUnique({ where: { name: name } });
+        if (!existingCategory) {
+            await prisma.category.create({
+                data: { name: name }
+            });
+        }
     }
   }
 
@@ -65,12 +65,27 @@ async function main() {
     })
   }
   
-  // Seed Volunteers
-  for (const volunteer of dbData.volunteers) {
+  // Seed Volunteers - ensuring unique emails
+  const uniqueVolunteers = dbData.volunteers.reduce((acc: any[], current: any) => {
+    if (!acc.find((item) => item.email === current.email)) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
+
+  for (const volunteer of uniqueVolunteers) {
       if (volunteer.id && volunteer.name && volunteer.email) {
             await prisma.volunteer.upsert({
-            where: { id: volunteer.id },
-            update: {},
+            where: { email: volunteer.email },
+            update: {
+                name: volunteer.name,
+                phone: volunteer.phone,
+                signupDate: new Date(volunteer.signupDate),
+                skills: volunteer.skills,
+                interests: volunteer.interests,
+                availability: volunteer.availability,
+                status: volunteer.status || 'Pending',
+            },
             create: {
                 id: volunteer.id,
                 name: volunteer.name,
