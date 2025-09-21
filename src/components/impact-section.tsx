@@ -209,8 +209,8 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
                         innerRadius={60}
                         strokeWidth={5}
                         >
-                         {pieChartData.map((entry) => (
-                            <Cell key={`cell-${entry.name}`} fill={`var(--color-${entry.name})`} />
+                         {pieChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={`var(--color-${entry.name})`} />
                         ))}
                         </Pie>
                     </PieChart>
@@ -248,8 +248,8 @@ export default function ImpactSection({ projects, volunteers, approvedVolunteers
                             innerRadius={60}
                             strokeWidth={5}
                             >
-                            {volunteerStatusChartData.map((entry) => (
-                                <Cell key={`cell-${entry.name}`} fill={`var(--color-${entry.name})`} />
+                            {volunteerStatusChartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={`var(--color-${entry.name})`} />
                             ))}
                             </Pie>
                         </PieChart>

@@ -204,8 +204,8 @@ export default function VolunteerSection({ settings, categories }: { settings: S
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {categories.map(item => (
-                                    <SelectItem key={item.id} value={item.name}>{item.name}</SelectItem>
+                                {categories.map((item, index) => (
+                                    <SelectItem key={`${item.id}-${index}`} value={item.name}>{item.name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

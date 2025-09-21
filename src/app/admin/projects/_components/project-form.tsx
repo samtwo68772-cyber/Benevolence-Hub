@@ -95,8 +95,8 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
                     <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map(cat => (
-                      <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
+                  {categories.map((cat, index) => (
+                      <SelectItem key={`${cat.id}-${index}`} value={cat.name}>{cat.name}</SelectItem>
                   ))}
                 </SelectContent>
             </Select>
