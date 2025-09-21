@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { updateSiteSettings } from '../_actions/settings';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { X } from 'lucide-react';
 
 function SettingsSubmitButton() {
     const { pending } = useFormStatus();
@@ -28,9 +27,6 @@ function SettingsSubmitButton() {
 export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
-    
-    const [heroImagePreviews, setHeroImagePreviews] = React.useState<string[]>(settings.heroImages || []);
-    
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
     
@@ -44,23 +40,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                 setter(reader.result as string);
             };
             reader.readAsDataURL(file);
-        }
-    };
-
-    const handleMultipleImageChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string[]>>) => {
-        const files = e.target.files;
-        if (files) {
-            const newPreviews: string[] = [];
-            Array.from(files).forEach(file => {
-                 const reader = new FileReader();
-                reader.onloadend = () => {
-                    newPreviews.push(reader.result as string);
-                    if (newPreviews.length === files.length) {
-                        setter(prev => [...prev, ...newPreviews]);
-                    }
-                };
-                reader.readAsDataURL(file);
-            })
         }
     };
     
@@ -137,39 +116,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="heroImagesMultiple">Homepage Background Slideshow Images</Label>
-                                <div className="flex flex-wrap items-center gap-4">
-                                    {heroImagePreviews.map((src, index) => (
-                                        <div key={index} className="relative w-40 h-auto">
-                                            <input 
-                                                type="hidden" 
-                                                name={`existingHeroImages[${index}]`} 
-                                                value={src} 
-                                            />
-                                            <Image src={src} alt={`Hero image preview ${index + 1}`} width={160} height={90} className="rounded-md object-cover" />
-                                            <Button
-                                                type="button"
-                                                variant="destructive"
-                                                size="icon"
-                                                className="absolute top-1 right-1 h-6 w-6"
-                                                onClick={() => setHeroImagePreviews(heroImagePreviews.filter((_, i) => i !== index))}
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    <Input 
-                                        id="heroImagesMultiple" 
-                                        name="heroImagesMultiple" 
-                                        type="file" 
-                                        accept="image/png, image/jpeg" 
-                                        onChange={(e) => handleMultipleImageChange(e, setHeroImagePreviews)}
-                                        multiple
-                                    />
-                                </div>
-                                <p className="text-sm text-muted-foreground">Upload multiple images for the homepage background slideshow. Recommended size: 1920x1080px. Max 2MB each.</p>
                             </div>
                         </div>
 

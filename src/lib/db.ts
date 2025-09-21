@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import fs from 'fs/promises';
@@ -313,6 +312,7 @@ export async function updateSettings(settings: Partial<Settings>) {
         values: { ...dbData.settings?.values, ...settings.values },
         volunteerIntro: { ...dbData.settings?.volunteerIntro, ...settings.volunteerIntro },
         socialLinks: settings.socialLinks || dbData.settings?.socialLinks,
+        heroImages: settings.heroImages === undefined ? dbData.settings.heroImages : settings.heroImages
     };
     dbData.settings = newSettings;
     await writeDb(dbData);

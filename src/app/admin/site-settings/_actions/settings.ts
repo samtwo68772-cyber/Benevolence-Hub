@@ -19,15 +19,6 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
-    const heroImagesMultiple = formData.getAll('heroImagesMultiple') as File[];
-    
-    // Collect existing hero images from form data
-    const existingHeroImages: string[] = [];
-    for (const [key, value] of formData.entries()) {
-        if (key.startsWith('existingHeroImages[')) {
-            existingHeroImages.push(value as string);
-        }
-    }
     
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
@@ -65,19 +56,6 @@ export async function updateSiteSettings(formData: FormData) {
         logoType = 'image';
     }
 
-    // Process both existing and new hero images
-    const heroImagesData: string[] = [...existingHeroImages];
-    
-    // Process new multiple hero images
-    for (const file of heroImagesMultiple) {
-        if (file.size > 0) {
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                throw new Error(`Hero image "${file.name}" must be less than 2MB.`);
-            }
-            heroImagesData.push(await fileToDataURI(file));
-        }
-    }
-
     let missionImageData: string | undefined;
     if (missionImageFile && missionImageFile.size > 0) {
         if (missionImageFile.size > 1024 * 1024) { // 1MB limit
@@ -104,10 +82,6 @@ export async function updateSiteSettings(formData: FormData) {
     if (logoData) {
         newSettings.logo = logoData;
         newSettings.logoType = logoType;
-    }
-
-    if (heroImagesData.length > 0) {
-        newSettings.heroImages = heroImagesData;
     }
 
     if (missionImageData) {
