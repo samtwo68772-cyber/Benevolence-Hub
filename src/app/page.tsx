@@ -32,7 +32,7 @@ export default async function Home() {
             approvedVolunteersCount={approvedVolunteersCount}
             totalDonations={totalDonations}
         />
-        <VolunteerSection />
+        <VolunteerSection settings={settings} />
       </main>
       <AppFooter settings={settings}/>
     </div>

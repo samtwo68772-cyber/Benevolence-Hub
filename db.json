@@ -45,7 +45,7 @@
         "Conducted vaccination campaigns for 25,000 children."
       ],
       "status": "Completed",
-      "startDate": "2020-05-10T00:00:00.000Z",
+      "startDate": "2020-5-10T00:00:00.000Z",
       "peopleHelped": 50000,
       "category": "Medical"
     }
@@ -236,6 +236,8 @@
   ],
   "settings": {
     "appName": "Benevolence Hub",
-    "logo": "HandHeart"
+    "logo": "HandHeart",
+    "logoType": "icon",
+    "volunteerIcon": "HeartHandshake"
   }
 }

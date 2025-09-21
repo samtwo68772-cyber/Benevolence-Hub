@@ -100,6 +100,11 @@ function SiteSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                          <p className="text-sm text-muted-foreground">Upload a new logo. Recommended size: 128x128px. Max 1MB.</p>
                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="volunteerIcon">Volunteer Section Icon</Label>
+                        <Input id="volunteerIcon" name="volunteerIcon" defaultValue={settings.volunteerIcon} />
+                        <p className="text-sm text-muted-foreground">Enter any icon name from the <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" className="underline">Lucide icon library</a>.</p>
+                    </div>
                 </CardContent>
                 <CardFooter>
                     <SettingsSubmitButton />

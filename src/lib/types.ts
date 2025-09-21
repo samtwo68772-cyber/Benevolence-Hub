@@ -54,5 +54,5 @@ export type Settings = {
   appName: string;
   logo: string;
   logoType: 'icon' | 'image';
+  volunteerIcon: string;
 };
-

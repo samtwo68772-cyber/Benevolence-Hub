@@ -23,6 +23,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "./ui/badge"
 import { addVolunteer } from "./_actions/volunteers"
+import { Settings } from "@/lib/types"
+import * as LucideIcons from 'lucide-react';
 
 
 const availabilityItems = [
@@ -48,7 +50,7 @@ const volunteerSchema = z.object({
 
 type VolunteerFormValues = z.infer<typeof volunteerSchema>
 
-export default function VolunteerSection() {
+export default function VolunteerSection({ settings }: { settings: Settings }) {
     const { toast } = useToast()
 
     const form = useForm<VolunteerFormValues>({
@@ -80,12 +82,14 @@ export default function VolunteerSection() {
         form.reset()
     }
 
+    const VolunteerIcon = LucideIcons[settings.volunteerIcon as keyof typeof LucideIcons] || HeartHandshake;
+
   return (
     <section id="volunteer" className="section-padding">
       <div className="container mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <HeartHandshake className="h-16 w-16 text-primary" />
+            <VolunteerIcon className="h-16 w-16 text-primary" />
             <h2 className="font-headline text-4xl md:text-5xl">Become a Volunteer</h2>
             <p className="text-lg text-muted-foreground">
               Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.

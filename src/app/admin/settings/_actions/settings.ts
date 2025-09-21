@@ -100,6 +100,8 @@ async function fileToDataURI(file: File) {
 export async function updateSettings(formData: FormData) {
     const appName = formData.get('appName') as string;
     const logoFile = formData.get('logo') as File;
+    const volunteerIcon = formData.get('volunteerIcon') as string;
+
 
     const validatedAppName = z.string().min(2).safeParse(appName);
     if(!validatedAppName.success) {
@@ -117,13 +119,17 @@ export async function updateSettings(formData: FormData) {
         logoType = 'image';
     }
 
-    const newSettings: { appName: string; logo?: string; logoType?: 'icon' | 'image' } = {
+    const newSettings: { appName: string; logo?: string; logoType?: 'icon' | 'image', volunteerIcon?: string } = {
         appName: validatedAppName.data
     };
 
     if (logoData) {
         newSettings.logo = logoData;
         newSettings.logoType = logoType;
+    }
+    
+    if (volunteerIcon) {
+        newSettings.volunteerIcon = volunteerIcon;
     }
 
     await dbUpdateSettings(newSettings);
@@ -132,4 +138,3 @@ export async function updateSettings(formData: FormData) {
     revalidatePath('/');
     return { message: 'Site settings updated successfully.' };
 }
-
