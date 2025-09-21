@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import * as React from 'react';
@@ -167,11 +166,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                     />
                                 </div>
                                 <p className="text-sm text-muted-foreground">Upload multiple images for the homepage background slideshow. Recommended size: 1920x1080px. Max 2MB each.</p>
-                                        </div>
-                                    ))}
-                                    <Input id="heroImages" name="heroImages" type="file" accept="image/png, image/jpeg" multiple onChange={(e) => handleMultipleImageChange(e, setHeroImagePreviews)} />
-                                </div>
-                                <p className="text-sm text-muted-foreground">Upload images for the hero section background. Max 2MB per image.</p>
                             </div>
                         </div>
 
