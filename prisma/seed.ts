@@ -146,7 +146,9 @@ async function main() {
     volunteerIntroTitle: settings.volunteerIntro.title,
     volunteerIntroDescription1: settings.volunteerIntro.description1,
     volunteerIntroDescription2: settings.volunteerIntro.description2,
-    socialLinks: settings.socialLinks,
+    socialLinksTwitter: settings.socialLinks?.find((s:any) => s.icon === 'Twitter')?.href || '#',
+    socialLinksFacebook: settings.socialLinks?.find((s:any) => s.icon === 'Facebook')?.href || '#',
+    socialLinksInstagram: settings.socialLinks?.find((s:any) => s.icon === 'Instagram')?.href || '#',
   };
 
   const existingSettings = await prisma.settings.findFirst();
