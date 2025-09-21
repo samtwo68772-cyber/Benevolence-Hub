@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import fs from 'fs/promises';
@@ -28,11 +29,11 @@ async function readDb(): Promise<DbData> {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         // If the file doesn't exist, return a default structure
-        return { projects: [], volunteers: [], donations: [], users: [], settings: { appName: 'Benevolence Hub', logo: 'HandHeart' } };
+        return { projects: [], volunteers: [], donations: [], users: [], settings: { appName: 'Benevolence Hub', logo: 'HandHeart', logoType: 'icon' } };
     }
     console.error("Could not read db.json", error);
     // For other errors, return a default structure
-    return { projects: [], volunteers: [], donations: [], users: [], settings: { appName: 'Benevolence Hub', logo: 'HandHeart' } };
+    return { projects: [], volunteers: [], donations: [], users: [], settings: { appName: 'Benevolence Hub', logo: 'HandHeart', logoType: 'icon' } };
   }
 }
 
@@ -177,7 +178,7 @@ export async function deleteUser(id: string) {
   
 export async function getSettings() {
     const db = await readDb();
-    return db.settings || { appName: 'Benevolence Hub', logo: 'HandHeart' };
+    return db.settings || { appName: 'Benevolence Hub', logo: 'HandHeart', logoType: 'icon' };
 }
 
 export async function updateSettings(settings: Partial<Settings>) {
@@ -186,3 +187,4 @@ export async function updateSettings(settings: Partial<Settings>) {
     await writeDb(dbData);
     return dbData.settings;
 }
+

@@ -1,4 +1,5 @@
 
+
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { logout } from '@/lib/session';
 import { Settings } from '@/lib/types';
+import Image from 'next/image';
 
 const navIconMapping: { [key: string]: React.FC<any> } = {
   Dashboard: LayoutDashboard,
@@ -64,6 +66,15 @@ function AdminNav({ navItems }: { navItems: { href: string; label: string }[] })
   );
 }
 
+function AdminLogo({ settings }: { settings: Settings }) {
+    if (settings.logoType === 'image' && settings.logo) {
+      return <Image src={settings.logo} alt={settings.appName} width={28} height={28} className="w-7 h-7" />;
+    }
+  
+    const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+    return <LogoIcon className="w-7 h-7 text-primary" />;
+}
+
 export default function AdminLayoutContent({
   children,
   settings,
@@ -78,8 +89,6 @@ export default function AdminLayoutContent({
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
-  
-  const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
 
   const getPageTitle = () => {
     if (pathname === '/admin') {
@@ -96,7 +105,7 @@ export default function AdminLayoutContent({
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
-                    <LogoIcon className="w-7 h-7 text-primary" />
+                    <AdminLogo settings={settings} />
                     <span className="font-headline text-lg group-data-[collapsible=icon]:hidden">
                         {settings.appName} Admin
                     </span>
@@ -139,3 +148,4 @@ export default function AdminLayoutContent({
     </SidebarProvider>
   );
 }
+

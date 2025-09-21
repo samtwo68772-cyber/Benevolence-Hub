@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import * as React from "react";
@@ -13,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { DonationDialog } from "./donation-dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ThemeToggle } from "./theme-toggle";
+import Image from "next/image";
 
 const navLinks = [
   { href: "#mission", label: "Our Mission" },
@@ -21,6 +23,15 @@ const navLinks = [
   { href: "#volunteer", label: "Volunteer" },
 ];
 
+function Logo({ settings }: { settings: Settings }) {
+    if (settings.logoType === 'image' && settings.logo) {
+      return <Image src={settings.logo} alt={settings.appName} width={28} height={28} className="h-7 w-7" />;
+    }
+  
+    const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+    return <LogoIcon className="h-7 w-7 text-primary" />;
+}
+
 export default function AppHeader({ settings }: { settings: Settings }) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -28,7 +39,6 @@ export default function AppHeader({ settings }: { settings: Settings }) {
   const isMobile = useIsMobile();
 
   const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
-  const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +62,7 @@ export default function AppHeader({ settings }: { settings: Settings }) {
     >
       <div className="flex h-16 sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
-          <LogoIcon className="h-7 w-7 text-primary" />
+          <Logo settings={settings} />
           <span className="font-headline text-2xl font-bold tracking-wide text-foreground">
             {settings.appName}
           </span>
@@ -89,7 +99,7 @@ export default function AppHeader({ settings }: { settings: Settings }) {
               <div className="flex h-full flex-col p-6">
                 <div className="mb-8 flex items-center justify-start">
                    <Link href="/" className="flex items-center gap-2" prefetch={false} onClick={() => setIsMenuOpen(false)}>
-                      <LogoIcon className="h-7 w-7 text-primary" />
+                      <Logo settings={settings} />
                     </Link>
                 </div>
                 <nav className="flex flex-1 flex-col items-start gap-6">
@@ -113,3 +123,4 @@ export default function AppHeader({ settings }: { settings: Settings }) {
     </header>
   );
 }
+

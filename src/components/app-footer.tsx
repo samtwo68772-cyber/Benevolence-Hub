@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Twitter, Facebook, Instagram } from "lucide-react"
@@ -6,6 +7,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation";
 import * as LucideIcons from 'lucide-react';
 import type { Settings } from "@/lib/types";
+import Image from "next/image";
 
 const socialLinks = [
   { icon: Twitter, href: "#" },
@@ -21,11 +23,18 @@ const footerLinks = [
   { href: "/admin/login", label: "Admin" },
 ]
 
+function Logo({ settings }: { settings: Settings }) {
+    if (settings.logoType === 'image' && settings.logo) {
+      return <Image src={settings.logo} alt={settings.appName} width={28} height={28} className="h-7 w-7" />;
+    }
+  
+    const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+    return <LogoIcon className="h-7 w-7 text-primary" />;
+}
+
 export default function AppFooter({ settings }: { settings: Settings }) {
   const pathname = usePathname();
   const isProjectPage = pathname.startsWith('/project') || pathname === '/projects';
-  
-  const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
 
   return (
     <footer className="bg-card border-t">
@@ -33,7 +42,7 @@ export default function AppFooter({ settings }: { settings: Settings }) {
         <div className="grid gap-12 md:grid-cols-3">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2" prefetch={false}>
-              <LogoIcon className="h-7 w-7 text-primary" />
+              <Logo settings={settings} />
               <span className="font-headline text-2xl font-bold tracking-wide">
                 {settings.appName}
               </span>
@@ -72,3 +81,4 @@ export default function AppFooter({ settings }: { settings: Settings }) {
     </footer>
   )
 }
+

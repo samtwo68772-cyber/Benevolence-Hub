@@ -1,4 +1,5 @@
 
+
 export type ProjectStatus = 'Active' | 'Completed' | 'Planning';
 export type ProjectCategory = 'Water' | 'Education' | 'Medical' | 'Community Development' | 'Disaster Relief';
 export type VolunteerStatus = 'Pending' | 'Approved' | 'Rejected';
@@ -52,4 +53,6 @@ export type User = {
 export type Settings = {
   appName: string;
   logo: string;
+  logoType: 'icon' | 'image';
 };
+

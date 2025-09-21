@@ -1,7 +1,9 @@
 
+
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { updateProfile, changePassword, updateSettings } from '../_actions/settings';
 import { SessionPayload } from '@/lib/session';
 import { Settings } from '@/lib/types';
+import * as LucideIcons from 'lucide-react';
+import { useFormStatus } from 'react-dom';
 
 const profileFormSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -28,10 +32,82 @@ const passwordFormSchema = z.object({
     path: ["confirmPassword"],
 });
 
-const settingsFormSchema = z.object({
-    appName: z.string().min(2, "App name must be at least 2 characters."),
-    logo: z.string().min(2, "Logo name must be at least 2 characters."),
-});
+function SettingsSubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" disabled={pending}>
+            {pending ? 'Saving...' : 'Save Site Settings'}
+        </Button>
+    )
+}
+
+function SiteSettingsForm({ settings }: { settings: Settings }) {
+    const { toast } = useToast();
+    const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
+    const formRef = React.useRef<HTMLFormElement>(null);
+
+    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setLogoPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    async function handleSettingsSave(formData: FormData) {
+        try {
+            const result = await updateSettings(formData);
+            toast({ title: "Settings Updated", description: result.message });
+        } catch (error) {
+            toast({ variant: "destructive", title: "Error", description: (error as Error).message });
+        }
+    };
+
+    const LogoPreview = () => {
+        if (logoPreview) {
+          return <Image src={logoPreview} alt="Logo preview" width={40} height={40} className="rounded-md" />;
+        }
+        if (settings.logoType === 'icon') {
+            const Icon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+            return <Icon className="w-10 h-10 text-primary" />;
+        }
+        return null;
+    }
+
+    return (
+        <Card className="w-full lg:col-span-2">
+            <form action={handleSettingsSave} ref={formRef}>
+                <CardHeader>
+                    <CardTitle>Site Settings</CardTitle>
+                    <CardDescription>Update your site name and logo.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="appName">App Name</Label>
+                        <Input id="appName" name="appName" defaultValue={settings.appName} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="logo">Logo</Label>
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 flex items-center justify-center">
+                               <LogoPreview />
+                            </div>
+                            <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={handleLogoChange} />
+                        </div>
+                         <p className="text-sm text-muted-foreground">Upload a new logo. Recommended size: 128x128px. Max 1MB.</p>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <SettingsSubmitButton />
+                </CardFooter>
+            </form>
+        </Card>
+    );
+}
+
 
 export function SettingsForm({ session, settings }: { session: SessionPayload, settings: Settings }) {
     const { toast } = useToast();
@@ -50,14 +126,6 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
             currentPassword: '',
             newPassword: '',
             confirmPassword: '',
-        },
-    });
-
-    const settingsForm = useForm<z.infer<typeof settingsFormSchema>>({
-        resolver: zodResolver(settingsFormSchema),
-        defaultValues: {
-            appName: settings?.appName || 'Benevolence Hub',
-            logo: settings?.logo || 'HandHeart',
         },
     });
 
@@ -80,60 +148,9 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
         }
     };
     
-    const handleSettingsSave = async (values: z.infer<typeof settingsFormSchema>) => {
-        try {
-            const result = await updateSettings(values);
-            toast({ title: "Settings Updated", description: result.message });
-        } catch (error) {
-            toast({ variant: "destructive", title: "Error", description: (error as Error).message });
-        }
-    };
-
     return (
-        <div className="flex flex-col h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
-            <Card className="w-full">
-                 <Form {...settingsForm}>
-                    <form onSubmit={settingsForm.handleSubmit(handleSettingsSave)}>
-                        <CardHeader>
-                            <CardTitle>Site Settings</CardTitle>
-                            <CardDescription>Update your site name and logo.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <FormField
-                                control={settingsForm.control}
-                                name="appName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>App Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={settingsForm.control}
-                                name="logo"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Logo</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </CardContent>
-                        <CardFooter>
-                            <Button type="submit" disabled={settingsForm.formState.isSubmitting}>
-                                {settingsForm.formState.isSubmitting ? 'Saving...' : 'Save Site Settings'}
-                            </Button>
-                        </CardFooter>
-                    </form>
-                </Form>
-            </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
+            <SiteSettingsForm settings={settings} />
 
             <Card className="w-full">
                  <Form {...profileForm}>
@@ -238,3 +255,4 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
         </div>
     );
 }
+

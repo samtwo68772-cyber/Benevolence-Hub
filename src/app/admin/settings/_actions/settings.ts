@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from 'zod';
@@ -23,7 +24,6 @@ const passwordSchema = z.object({
 
 const settingsSchema = z.object({
     appName: z.string().min(2, "App name must be at least 2 characters."),
-    logo: z.string().min(2, "Logo name must be at least 2 characters."),
 });
 
 export async function updateProfile(data: z.infer<typeof profileSchema>) {
@@ -91,15 +91,45 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
     return { message: 'Password updated successfully.' };
 }
 
-export async function updateSettings(data: z.infer<typeof settingsSchema>) {
-    const validatedFields = settingsSchema.safeParse(data);
-    if (!validatedFields.success) {
-        throw new Error('Invalid settings data.');
+async function fileToDataURI(file: File) {
+    const buffer = await file.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:${file.type};base64,${base64}`;
+}
+
+export async function updateSettings(formData: FormData) {
+    const appName = formData.get('appName') as string;
+    const logoFile = formData.get('logo') as File;
+
+    const validatedAppName = z.string().min(2).safeParse(appName);
+    if(!validatedAppName.success) {
+        throw new Error("App name must be at least 2 characters.");
     }
 
-    await dbUpdateSettings(validatedFields.data);
+    let logoData: string | undefined;
+    let logoType: 'icon' | 'image' = 'icon';
+
+    if (logoFile && logoFile.size > 0) {
+        if (logoFile.size > 1024 * 1024) { // 1MB limit
+            throw new Error("Logo image must be less than 1MB.");
+        }
+        logoData = await fileToDataURI(logoFile);
+        logoType = 'image';
+    }
+
+    const newSettings: { appName: string; logo?: string; logoType?: 'icon' | 'image' } = {
+        appName: validatedAppName.data
+    };
+
+    if (logoData) {
+        newSettings.logo = logoData;
+        newSettings.logoType = logoType;
+    }
+
+    await dbUpdateSettings(newSettings);
 
     revalidatePath('/admin/settings');
     revalidatePath('/');
     return { message: 'Site settings updated successfully.' };
 }
+
