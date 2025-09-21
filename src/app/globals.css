@@ -93,13 +93,3 @@ body {
     @apply px-4 py-16 sm:px-6 sm:py-24 lg:px-8;
   }
 }
-
-@layer components {
-  .embla__slide {
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
-  .embla__slide--active {
-    opacity: 1;
-  }
-}

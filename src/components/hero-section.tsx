@@ -6,35 +6,22 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowDown } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
-import * as React from "react";
 
 export default function HeroSection() {
-  const heroImages = PlaceHolderImages.filter(img => img.id.startsWith('hero-background'));
+  const heroImage = PlaceHolderImages.find(img => img.id === ('hero-background-1'));
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center overflow-hidden">
-      <Carousel 
-        className="absolute inset-0 w-full h-full"
-        plugins={[Autoplay({ delay: 5000, stopOnInteraction: false })]}
-        opts={{ loop: true }}
-      >
-        <CarouselContent className="h-full">
-          {heroImages.map((heroImage) => (
-            <CarouselItem key={heroImage.id} className="h-full">
-                <Image
-                    src={heroImage.imageUrl}
-                    alt={heroImage.description}
-                    fill
-                    className="object-cover"
-                    priority={heroImage.id === 'hero-background-1'}
-                    data-ai-hint={heroImage.imageHint}
-                />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+        {heroImage && (
+            <Image
+                src={heroImage.imageUrl}
+                alt={heroImage.description}
+                fill
+                className="object-cover"
+                priority
+                data-ai-hint={heroImage.imageHint}
+            />
+        )}
       
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
