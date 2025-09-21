@@ -64,7 +64,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         }
     };
     
-    async function handleSettingsSave(formData: FormData) {
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!formRef.current) return;
+        const formData = new FormData(formRef.current);
+        
         try {
             const result = await updateSiteSettings(formData);
             toast({ title: "Settings Updated", description: result.message });
@@ -95,7 +99,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
     return (
         <div className="grid h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
             <Card className="w-full">
-                <form action={handleSettingsSave} ref={formRef} encType="multipart/form-data">
+                <form onSubmit={handleFormSubmit} ref={formRef} encType="multipart/form-data">
                     <CardHeader>
                         <CardTitle>Site & Content Settings</CardTitle>
                         <CardDescription>Update your site name, logo, homepage content, and other global settings.</CardDescription>
@@ -252,7 +256,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <SettingsSubmitButton />
+                        <Button type="submit">Save All Settings</Button>
                     </CardFooter>
                 </form>
             </Card>
