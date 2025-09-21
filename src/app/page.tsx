@@ -6,13 +6,14 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-import { getProjects, getVolunteers, getDonations, getSettings } from '@/lib/db';
+import { getProjects, getVolunteers, getDonations, getSettings, getCategories } from '@/lib/db';
 
 export default async function Home() {
   const projects = await getProjects();
   const allVolunteers = await getVolunteers();
   const approvedVolunteersCount = allVolunteers.filter(v => v.status === 'Approved').length;
   const allDonations = await getDonations();
+  const categories = await getCategories();
   
   const totalDonations = allDonations.reduce((sum, d) => sum + d.amount, 0);
   
@@ -31,6 +32,7 @@ export default async function Home() {
             volunteers={allVolunteers}
             approvedVolunteersCount={approvedVolunteersCount}
             totalDonations={totalDonations}
+            categories={categories}
         />
         <VolunteerSection settings={settings} />
       </main>

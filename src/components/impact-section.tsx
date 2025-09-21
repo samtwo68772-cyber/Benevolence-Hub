@@ -6,7 +6,7 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChar
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import { DollarSign, HandHeart, Users, Users2 } from "lucide-react";
-import { Project, Volunteer } from "@/lib/types";
+import { Project, Volunteer, Category } from "@/lib/types";
 
 
 const barChartConfig = {
@@ -66,18 +66,22 @@ type ImpactSectionProps = {
     volunteers: Volunteer[];
     approvedVolunteersCount: number;
     totalDonations: number;
+    categories: Category[];
 }
 
-export default function ImpactSection({ projects, volunteers, approvedVolunteersCount, totalDonations }: ImpactSectionProps) {
+export default function ImpactSection({ projects, volunteers, approvedVolunteersCount, totalDonations, categories }: ImpactSectionProps) {
   const totalProjects = projects.length;
 
-  const projectByCategory = projects.reduce((acc, project) => {
-    if (!acc[project.category]) {
-      acc[project.category] = { category: project.category, peopleHelped: 0 };
-    }
-    acc[project.category].peopleHelped += project.peopleHelped;
+  const projectByCategory = categories.reduce((acc, category) => {
+    acc[category.name] = { category: category.name, peopleHelped: 0 };
     return acc;
   }, {} as Record<string, { category: string; peopleHelped: number }>);
+
+  projects.forEach(project => {
+    if (projectByCategory[project.category]) {
+        projectByCategory[project.category].peopleHelped += project.peopleHelped;
+    }
+  });
 
   const barChartData = Object.values(projectByCategory);
   
