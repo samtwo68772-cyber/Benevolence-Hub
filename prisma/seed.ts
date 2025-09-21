@@ -1,4 +1,7 @@
-
+// This file is not used when using db.json
+// To switch to Prisma, you would uncomment this file
+// and update all the data access files to use prisma instead of db.
+/*
 import { PrismaClient, ProjectCategory } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import fs from 'fs/promises';
@@ -103,3 +106,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+*/

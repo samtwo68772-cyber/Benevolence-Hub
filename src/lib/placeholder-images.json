@@ -4,8 +4,20 @@
     {
       "id": "hero-background-1",
       "description": "A volunteer giving food to a child in a sunny field.",
-      "imageUrl": "https://picsum.photos/seed/hero-bg/1920/1080",
+      "imageUrl": "https://picsum.photos/seed/hero-bg-1/1920/1080",
       "imageHint": "volunteer child"
+    },
+    {
+      "id": "hero-background-2",
+      "description": "Volunteers working together at a construction site.",
+      "imageUrl": "https://picsum.photos/seed/hero-bg-2/1920/1080",
+      "imageHint": "volunteers construction"
+    },
+    {
+      "id": "hero-background-3",
+      "description": "A smiling doctor listening to a child's heartbeat with a stethoscope.",
+      "imageUrl": "https://picsum.photos/seed/hero-bg-3/1920/1080",
+      "imageHint": "doctor child"
     },
     {
       "id": "project-water",

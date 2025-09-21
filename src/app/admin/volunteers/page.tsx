@@ -1,8 +1,8 @@
 
 import * as React from 'react';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { VolunteerList } from './_components/volunteer-list';
-import { VolunteerStatus } from '@prisma/client';
+import { VolunteerStatus } from '@/lib/types';
 import { PaginationControls } from '@/components/ui/pagination';
 
 const ITEMS_PER_PAGE = 7;
@@ -22,7 +22,7 @@ export default async function AdminVolunteersPage({ searchParams }: { searchPara
     whereClause.interests = { has: interestFilter };
   }
 
-  const volunteers = await prisma.volunteer.findMany({
+  const volunteers = await db.volunteer.findMany({
     orderBy: {
       signupDate: 'desc',
     },
@@ -31,7 +31,7 @@ export default async function AdminVolunteersPage({ searchParams }: { searchPara
     take: ITEMS_PER_PAGE,
   });
 
-  const totalVolunteers = await prisma.volunteer.count({ where: whereClause });
+  const totalVolunteers = await db.volunteer.count({ where: whereClause });
   const totalPages = Math.ceil(totalVolunteers / ITEMS_PER_PAGE);
 
   return (

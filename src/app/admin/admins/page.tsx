@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { AdminDialog } from './_components/admin-dialog';
 import { addAdmin } from './_actions/admins';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { AdminActions } from './_components/admin-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -25,14 +25,14 @@ export default async function AdminAdminsPage({ searchParams }: { searchParams: 
     const page = Number(searchParams.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
 
-    const admins = await prisma.user.findMany({
+    const admins = await db.user.findMany({
         where: { role: 'ADMIN' },
         orderBy: { joinDate: 'desc' },
         skip: skip,
         take: ITEMS_PER_PAGE,
     });
     
-    const totalAdmins = await prisma.user.count({ where: { role: 'ADMIN' } });
+    const totalAdmins = await db.user.count({ where: { role: 'ADMIN' } });
     const totalPages = Math.ceil(totalAdmins / ITEMS_PER_PAGE);
 
   return (

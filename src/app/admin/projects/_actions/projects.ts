@@ -2,9 +2,9 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
-import { ProjectCategory, ProjectStatus } from '@prisma/client';
+import { ProjectCategory, ProjectStatus } from '@/lib/types';
 
 const projectSchema = z.object({
   id: z.string().optional(),
@@ -21,9 +21,9 @@ function assignImageId(category: ProjectCategory): string {
         case 'Water': return 'project-water';
         case 'Education': return 'project-education';
         case 'Medical': return 'project-medical';
-        case 'Community_Development': return 'project-community-development';
-        case 'Disaster_Relief': return 'project-disaster-relief';
-        default: return `project-${category.toLowerCase().replace('_', '-')}`;
+        case 'Community Development': return 'project-community-development';
+        case 'Disaster Relief': return 'project-disaster-relief';
+        default: return `project-${category.toLowerCase().replace(/ /g, '-')}`;
     }
 }
 
@@ -40,7 +40,7 @@ export async function addProject(data: z.infer<typeof projectSchema>) {
 
     const imageId = assignImageId(prismaCategory);
     
-    await prisma.project.create({
+    await db.project.create({
         data: {
             ...rest,
             category: prismaCategory,
@@ -64,7 +64,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
     const prismaCategory = category.replace(/ /g, '_') as ProjectCategory;
     const imageId = assignImageId(prismaCategory);
     
-    await prisma.project.update({
+    await db.project.update({
         where: { id: id! },
         data: {
             ...updateData,
@@ -79,7 +79,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
 }
 
 export async function deleteProject(projectId: string) {
-    await prisma.project.delete({
+    await db.project.delete({
         where: { id: projectId },
     });
     revalidatePath('/admin/projects');

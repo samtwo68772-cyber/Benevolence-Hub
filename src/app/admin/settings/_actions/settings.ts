@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { getSession, createSession, SessionPayload } from '@/lib/session';
@@ -34,12 +34,12 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
 
     const { name, email } = validatedFields.data;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await db.user.findUnique({ where: { email } });
     if (existingUser && existingUser.id !== session.userId) {
         throw new Error('Email is already in use by another account.');
     }
 
-    await prisma.user.update({
+    await db.user.update({
         where: { id: session.userId },
         data: { name, email },
     });
@@ -74,7 +74,7 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const { currentPassword, newPassword } = validatedFields.data;
 
-    const user = await prisma.user.findUnique({ where: { id: session.userId } });
+    const user = await db.user.findUnique({ where: { id: session.userId } });
     if (!user || !user.password) {
         throw new Error('User not found.');
     }
@@ -86,7 +86,7 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-    await prisma.user.update({
+    await db.user.update({
         where: { id: session.userId },
         data: { password: hashedNewPassword },
     });

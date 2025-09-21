@@ -15,7 +15,7 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Project } from '@prisma/client';
+import { Project } from '@/lib/types';
 
 const projectFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters."),
@@ -173,7 +173,7 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
+                  </Trigger>
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="Water">Water</SelectItem>

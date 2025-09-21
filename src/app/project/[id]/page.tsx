@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { Badge } from '@/components/ui/badge';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = await prisma.project.findUnique({
+  const project = await db.project.findUnique({
     where: { id: params.id },
   });
   

@@ -2,13 +2,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, FolderKanban, Users, UserCog } from 'lucide-react';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export default async function AdminDashboardPage() {
-    const projectCount = await prisma.project.count();
-    const volunteerCount = await prisma.volunteer.count();
-    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } });
-    const totalDonations = await prisma.donation.aggregate({
+    const projectCount = await db.project.count();
+    const volunteerCount = await db.volunteer.count();
+    const adminCount = await db.user.count({ where: { role: 'ADMIN' } });
+    const totalDonations = await db.donation.aggregate({
         _sum: {
             amount: true,
         },

@@ -16,8 +16,8 @@ import { format } from 'date-fns';
 import { ProjectDialog } from './_components/project-dialog';
 import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
-import prisma from '@/lib/prisma';
-import { ProjectCategory, ProjectStatus } from '@prisma/client';
+import { db } from '@/lib/db';
+import { ProjectCategory, ProjectStatus } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -35,7 +35,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
       category: categoryFilter === 'all' ? undefined : categoryFilter?.replace(' ', '_'),
     };
 
-    const projects = await prisma.project.findMany({
+    const projects = await db.project.findMany({
       where: whereClause,
       orderBy: {
         startDate: 'desc'
@@ -44,7 +44,7 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
       take: ITEMS_PER_PAGE,
     });
 
-    const totalProjects = await prisma.project.count({ where: whereClause });
+    const totalProjects = await db.project.count({ where: whereClause });
     const totalPages = Math.ceil(totalProjects / ITEMS_PER_PAGE);
 
   return (

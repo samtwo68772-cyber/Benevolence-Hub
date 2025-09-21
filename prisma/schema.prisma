@@ -1,4 +1,8 @@
+// This file is not used when using db.json
+// To switch to Prisma, you would uncomment this file
+// and update all the data access files to use prisma instead of db.
 
+/*
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -6,32 +10,31 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl"]
 }
 
 model Project {
-  id           String          @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
   description  String
   imageId      String
   details      String[]
-  status       ProjectStatus   @default(PLANNING)
-  startDate    DateTime        @default(now())
-  peopleHelped Int             @default(0)
+  status       ProjectStatus @default(Planning)
+  startDate    DateTime      @default(now())
+  peopleHelped Int           @default(0)
   category     ProjectCategory
   donations    Donation[]
 }
 
 model Volunteer {
-  id           String   @id @default(cuid())
+  id           String            @id @default(cuid())
   name         String
-  email        String   @unique
+  email        String            @unique
   phone        String?
-  signupDate   DateTime @default(now())
+  signupDate   DateTime          @default(now())
   skills       String
   interests    String[]
   availability String[]
-  status       VolunteerStatus @default(PENDING)
+  status       VolunteerStatus   @default(Pending)
 }
 
 model Donation {
@@ -41,8 +44,8 @@ model Donation {
   amount    Float
   date      DateTime     @default(now())
   type      DonationType
-  project   Project?     @relation(fields: [projectId], references: [id])
   projectId String?
+  project   Project?     @relation(fields: [projectId], references: [id])
 }
 
 model User {
@@ -55,23 +58,23 @@ model User {
 }
 
 enum ProjectStatus {
-  PLANNING
-  ACTIVE
-  COMPLETED
+  Planning
+  Active
+  Completed
 }
 
 enum ProjectCategory {
-  WATER
-  EDUCATION
-  MEDICAL
-  COMMUNITY_DEVELOPMENT
-  DISASTER_RELIEF
+  Water
+  Education
+  Medical
+  Community_Development
+  Disaster_Relief
 }
 
 enum VolunteerStatus {
-  PENDING
-  APPROVED
-  REJECTED
+  Pending
+  Approved
+  Rejected
 }
 
 enum DonationType {
@@ -82,3 +85,4 @@ enum DonationType {
 enum Role {
   ADMIN
 }
+*/

@@ -65,8 +65,8 @@
     { "id": "DON-005", "donorName": "David Garcia", "email": "david.g@example.com", "amount": 500, "date": "2024-02-15T00:00:00.000Z", "type": "ONE_TIME", "projectId": "water-for-villages" }
   ],
   "users": [
-    { "id": "ADM-001", "name": "Michael Scott", "email": "michael.s@benevolence.com", "password": "password123", "role": "ADMIN", "joinDate": "2021-01-01T00:00:00.000Z" },
-    { "id": "ADM-002", "name": "Dwight Schrute", "email": "dwight.s@benevolence.com", "password": "password123", "role": "ADMIN", "joinDate": "2021-06-15T00:00:00.000Z" },
-    { "id": "ADM-003", "name": "Pam Beesly", "email": "pam.b@benevolence.com", "password": "password123", "role": "ADMIN", "joinDate": "2022-03-10T00:00:00.000Z" }
+    { "id": "ADM-001", "name": "Michael Scott", "email": "michael.s@benevolence.com", "password": "$2a$10$Y.bY..1A8e4..4E5V8A4h.5jF9Y/Q5.x8J0.j4.j6l.K7O.m6.k6a", "role": "ADMIN", "joinDate": "2021-01-01T00:00:00.000Z" },
+    { "id": "ADM-002", "name": "Dwight Schrute", "email": "dwight.s@benevolence.com", "password": "$2a$10$Y.bY..1A8e4..4E5V8A4h.5jF9Y/Q5.x8J0.j4.j6l.K7O.m6.k6a", "role": "ADMIN", "joinDate": "2021-06-15T00:00:00.000Z" },
+    { "id": "ADM-003", "name": "Pam Beesly", "email": "pam.b@benevolence.com", "password": "$2a$10$Y.bY..1A8e4..4E5V8A4h.5jF9Y/Q5.x8J0.j4.j6l.K7O.m6.k6a", "role": "ADMIN", "joinDate": "2022-03-10T00:00:00.000Z" }
   ]
 }

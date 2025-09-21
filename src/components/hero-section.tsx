@@ -8,20 +8,24 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowDown } from "lucide-react";
 
 export default function HeroSection() {
-  const heroImage = PlaceHolderImages.find(img => img.id === ('hero-background-1'));
+  const heroImages = PlaceHolderImages.filter(img => img.id.startsWith('hero-background'));
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center overflow-hidden">
-        {heroImage && (
+      <div className="absolute inset-0 w-full h-full">
+        {heroImages.map((heroImage, index) => (
             <Image
+                key={heroImage.id}
                 src={heroImage.imageUrl}
                 alt={heroImage.description}
                 fill
-                className="object-cover"
-                priority
+                className="object-cover animate-fade-in-out"
+                priority={index === 0}
                 data-ai-hint={heroImage.imageHint}
+                style={{ animationDelay: `${index * 5}s` }}
             />
-        )}
+        ))}
+      </div>
       
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">

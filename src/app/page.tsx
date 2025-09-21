@@ -6,16 +6,16 @@ import MissionSection from '@/components/mission-section';
 import ProjectsSection from '@/components/projects-section';
 import ImpactSection from '@/components/impact-section';
 import VolunteerSection from '@/components/volunteer-section';
-import prisma from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export default async function Home() {
-  const projects = await prisma.project.findMany();
-  const allVolunteers = await prisma.volunteer.findMany();
+  const projects = await db.project.findMany();
+  const allVolunteers = await db.volunteer.findMany();
   const approvedVolunteers = allVolunteers.filter(v => v.status === 'Approved');
   
-  const totalDonations = await prisma.donation.aggregate({_sum: { amount: true}});
+  const totalDonations = await db.donation.aggregate({_sum: { amount: true}});
   
-  const featuredProjects = await prisma.project.findMany({ orderBy: { startDate: 'desc' }, take: 3 });
+  const featuredProjects = await db.project.findMany({ orderBy: { startDate: 'desc' }, take: 3 });
 
   return (
     <div className="flex min-h-screen flex-col">

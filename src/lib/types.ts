@@ -1,9 +1,49 @@
+export type ProjectStatus = 'Active' | 'Completed' | 'Planning';
+export type ProjectCategory = 'Water' | 'Education' | 'Medical' | 'Community Development' | 'Disaster Relief';
+export type VolunteerStatus = 'Pending' | 'Approved' | 'Rejected';
+export type DonationType = 'ONE_TIME' | 'MONTHLY';
+export type Role = 'ADMIN';
 
-import type { Project as P, Volunteer as V, Donation as D, User as U, ProjectStatus, ProjectCategory, VolunteerStatus, DonationType, Role } from '@prisma/client';
+export type Project = {
+  id: string;
+  title: string;
+  description: string;
+  imageId: string;
+  details: string[];
+  status: ProjectStatus;
+  startDate: Date;
+  peopleHelped: number;
+  category: ProjectCategory;
+};
 
-export type { ProjectStatus, ProjectCategory, VolunteerStatus, DonationType, Role };
+export type Volunteer = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  signupDate: Date;
+  skills: string;
+  interests: string[];
+  availability: string[];
+  status: VolunteerStatus;
+};
 
-export type Project = P;
-export type Volunteer = V;
-export type Donation = D & { project?: P | null };
-export type User = U;
+export type Donation = {
+  id: string;
+  donorName: string;
+  email: string;
+  amount: number;
+  date: Date;
+  type: DonationType;
+  projectId: string | null;
+  project?: Project | null;
+};
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  password?: string;
+  role: Role;
+  joinDate: Date;
+};
