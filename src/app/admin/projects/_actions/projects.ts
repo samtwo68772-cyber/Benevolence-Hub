@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { createProject, updateProject, deleteProject } from '@/lib/db';
+import { createProject, updateProject as dbUpdateProject, deleteProject as dbDeleteProject } from '@/lib/db';
 import { ProjectCategory, ProjectStatus } from '@/lib/types';
 
 const projectSchema = z.object({
@@ -58,7 +58,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
     const { id, category, ...updateData } = validatedFields.data;
     const imageId = assignImageId(category);
     
-    await updateProject(id, {
+    await dbUpdateProject(id, {
         ...updateData,
         category,
         imageId,
@@ -70,7 +70,7 @@ export async function updateProject(data: z.infer<typeof projectSchema>) {
 }
 
 export async function deleteProject(projectId: string) {
-    await deleteProject(projectId);
+    await dbDeleteProject(projectId);
     revalidatePath('/admin/projects');
     revalidatePath('/');
 }
