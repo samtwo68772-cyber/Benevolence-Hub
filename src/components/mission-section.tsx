@@ -1,27 +1,28 @@
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Target, Eye, HandHeart } from "lucide-react";
+import { Settings } from "@/lib/types";
 
-const goals = [
-  {
-    icon: Target,
-    title: "Our Mission",
-    description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.",
-  },
-  {
-    icon: Eye,
-    title: "Our Vision",
-    description: "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.",
-  },
-  {
-    icon: HandHeart,
-    title: "Our Values",
-    description: "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.",
-  },
-];
-
-export default function MissionSection() {
+export default function MissionSection({ settings }: { settings: Settings }) {
   const missionImage = PlaceHolderImages.find(img => img.id === 'mission-image');
+  
+  const goals = [
+    {
+      icon: Target,
+      title: settings.mission?.title || "Our Mission",
+      description: settings.mission?.description || "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.",
+    },
+    {
+      icon: Eye,
+      title: settings.vision?.title || "Our Vision",
+      description: settings.vision?.description || "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.",
+    },
+    {
+      icon: HandHeart,
+      title: settings.values?.title || "Our Values",
+      description: settings.values?.description || "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.",
+    },
+  ];
 
   return (
     <section id="mission" className="section-padding bg-card">

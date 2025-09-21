@@ -18,6 +18,7 @@ import { Settings } from '@/lib/types';
 import * as LucideIcons from 'lucide-react';
 import { useFormStatus } from 'react-dom';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 const profileFormSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -37,7 +38,7 @@ function SettingsSubmitButton() {
     const { pending } = useFormStatus();
     return (
         <Button type="submit" disabled={pending}>
-            {pending ? 'Saving...' : 'Save Site Settings'}
+            {pending ? 'Saving...' : 'Save Settings'}
         </Button>
     )
 }
@@ -83,7 +84,7 @@ function SiteSettingsForm({ settings }: { settings: Settings }) {
             <form action={handleSettingsSave} ref={formRef}>
                 <CardHeader>
                     <CardTitle>Site Settings</CardTitle>
-                    <CardDescription>Update your site name and logo.</CardDescription>
+                    <CardDescription>Update your site name, logo, and other global settings.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
@@ -114,6 +115,68 @@ function SiteSettingsForm({ settings }: { settings: Settings }) {
     );
 }
 
+function GoalsSettingsForm({ settings }: { settings: Settings }) {
+    const { toast } = useToast();
+    const formRef = React.useRef<HTMLFormElement>(null);
+    
+    async function handleSettingsSave(formData: FormData) {
+        try {
+            const result = await updateSettings(formData);
+            toast({ title: "Settings Updated", description: result.message });
+        } catch (error) {
+            toast({ variant: "destructive", title: "Error", description: (error as Error).message });
+        }
+    };
+
+    return (
+        <Card className="w-full lg:col-span-2">
+            <form action={handleSettingsSave} ref={formRef}>
+                <CardHeader>
+                    <CardTitle>Goals Section</CardTitle>
+                    <CardDescription>Update the content for the "Our Mission, Vision, and Values" section on the homepage.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="space-y-4 rounded-md border p-4">
+                        <h4 className="font-semibold">Our Mission</h4>
+                        <div className="space-y-2">
+                            <Label htmlFor="missionTitle">Title</Label>
+                            <Input id="missionTitle" name="missionTitle" defaultValue={settings.mission.title} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="missionDescription">Description</Label>
+                            <Textarea id="missionDescription" name="missionDescription" defaultValue={settings.mission.description} rows={3} />
+                        </div>
+                    </div>
+                    <div className="space-y-4 rounded-md border p-4">
+                        <h4 className="font-semibold">Our Vision</h4>
+                        <div className="space-y-2">
+                            <Label htmlFor="visionTitle">Title</Label>
+                            <Input id="visionTitle" name="visionTitle" defaultValue={settings.vision.title} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="visionDescription">Description</Label>
+                            <Textarea id="visionDescription" name="visionDescription" defaultValue={settings.vision.description} rows={3} />
+                        </div>
+                    </div>
+                    <div className="space-y-4 rounded-md border p-4">
+                        <h4 className="font-semibold">Our Values</h4>
+                        <div className="space-y-2">
+                            <Label htmlFor="valuesTitle">Title</Label>
+                            <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.values.title} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="valuesDescription">Description</Label>
+                            <Textarea id="valuesDescription" name="valuesDescription" defaultValue={settings.values.description} rows={3} />
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <SettingsSubmitButton />
+                </CardFooter>
+            </form>
+        </Card>
+    );
+}
 
 export function SettingsForm({ session, settings }: { session: SessionPayload, settings: Settings }) {
     const { toast } = useToast();
@@ -157,6 +220,8 @@ export function SettingsForm({ session, settings }: { session: SessionPayload, s
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
             <SiteSettingsForm settings={settings} />
+            
+            <GoalsSettingsForm settings={settings} />
 
             <Card className="w-full">
                  <Form {...profileForm}>

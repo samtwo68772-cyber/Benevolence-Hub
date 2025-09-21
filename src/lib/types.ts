@@ -50,9 +50,17 @@ export type User = {
   joinDate: Date;
 };
 
+export type Goal = {
+    title: string;
+    description: string;
+};
+
 export type Settings = {
   appName: string;
   logo: string;
   logoType: 'icon' | 'image';
   volunteerIcon: string;
+  mission: Goal;
+  vision: Goal;
+  values: Goal;
 };

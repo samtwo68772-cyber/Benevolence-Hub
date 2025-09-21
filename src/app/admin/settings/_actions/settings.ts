@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { getSession, createSession, SessionPayload } from '@/lib/session';
 import { getUserByEmail, updateUser, getUserById, updateSettings as dbUpdateSettings } from '@/lib/db';
+import { Settings } from '@/lib/types';
 
 const profileSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),
@@ -101,6 +102,13 @@ export async function updateSettings(formData: FormData) {
     const appName = formData.get('appName') as string;
     const logoFile = formData.get('logo') as File;
     const volunteerIcon = formData.get('volunteerIcon') as string;
+    
+    const missionTitle = formData.get('missionTitle') as string;
+    const missionDescription = formData.get('missionDescription') as string;
+    const visionTitle = formData.get('visionTitle') as string;
+    const visionDescription = formData.get('visionDescription') as string;
+    const valuesTitle = formData.get('valuesTitle') as string;
+    const valuesDescription = formData.get('valuesDescription') as string;
 
 
     const validatedAppName = z.string().min(2).safeParse(appName);
@@ -119,8 +127,11 @@ export async function updateSettings(formData: FormData) {
         logoType = 'image';
     }
 
-    const newSettings: { appName: string; logo?: string; logoType?: 'icon' | 'image', volunteerIcon?: string } = {
-        appName: validatedAppName.data
+    const newSettings: Partial<Settings> = {
+        appName: validatedAppName.data,
+        mission: { title: missionTitle, description: missionDescription },
+        vision: { title: visionTitle, description: visionDescription },
+        values: { title: valuesTitle, description: valuesDescription },
     };
 
     if (logoData) {

@@ -45,7 +45,7 @@
         "Conducted vaccination campaigns for 25,000 children."
       ],
       "status": "Completed",
-      "startDate": "2020-5-10T00:00:00.000Z",
+      "startDate": "2020-05-10T00:00:00.000Z",
       "peopleHelped": 50000,
       "category": "Medical"
     }
@@ -238,6 +238,18 @@
     "appName": "Benevolence Hub",
     "logo": "HandHeart",
     "logoType": "icon",
-    "volunteerIcon": "HeartHandshake"
+    "volunteerIcon": "HeartHandshake",
+    "mission": {
+      "title": "Our Mission",
+      "description": "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship."
+    },
+    "values": {
+      "title": "Our Values",
+      "description": "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact."
+    }
   }
 }

@@ -24,7 +24,7 @@ export default async function Home() {
       <AppHeader settings={settings}/>
       <main className="flex-1">
         <HeroSection />
-        <MissionSection />
+        <MissionSection settings={settings} />
         <ProjectsSection projects={featuredProjects} />
         <ImpactSection 
             projects={projects} 

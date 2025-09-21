@@ -29,11 +29,39 @@ async function readDb(): Promise<DbData> {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         // If the file doesn't exist, return a default structure
-        return { projects: [], volunteers: [], donations: [], users: [], settings: { appName: 'Benevolence Hub', logo: 'HandHeart', logoType: 'icon' } };
+        return { 
+            projects: [], 
+            volunteers: [], 
+            donations: [], 
+            users: [], 
+            settings: { 
+                appName: 'Benevolence Hub', 
+                logo: 'HandHeart', 
+                logoType: 'icon', 
+                volunteerIcon: 'HeartHandshake',
+                mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions...' },
+                vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity...' },
+                values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency...' }
+            } 
+        };
     }
     console.error("Could not read db.json", error);
     // For other errors, return a default structure
-    return { projects: [], volunteers: [], donations: [], users: [], settings: { appName: 'Benevolence Hub', logo: 'HandHeart', logoType: 'icon' } };
+     return { 
+        projects: [], 
+        volunteers: [], 
+        donations: [], 
+        users: [], 
+        settings: { 
+            appName: 'Benevolence Hub', 
+            logo: 'HandHeart', 
+            logoType: 'icon', 
+            volunteerIcon: 'HeartHandshake',
+            mission: { title: 'Our Mission', description: 'To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.' },
+            vision: { title: 'Our Vision', description: 'A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.' },
+            values: { title: 'Our Values', description: 'We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.' }
+        }
+    };
   }
 }
 
@@ -178,8 +206,27 @@ export async function deleteUser(id: string) {
   
 export async function getSettings() {
     const db = await readDb();
-    return db.settings || { appName: 'Benevolence Hub', logo: 'HandHeart', logoType: 'icon' };
+    const defaultSettings = {
+        appName: 'Benevolence Hub',
+        logo: 'HandHeart',
+        logoType: 'icon' as 'icon' | 'image',
+        volunteerIcon: 'HeartHandshake',
+        mission: {
+            title: "Our Mission",
+            description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
+        },
+        vision: {
+            title: "Our Vision",
+            description: "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship."
+        },
+        values: {
+            title: "Our Values",
+            description: "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact."
+        }
+    };
+    return { ...defaultSettings, ...(db.settings || {}) };
 }
+
 
 export async function updateSettings(settings: Partial<Settings>) {
     const dbData = await readDb();
@@ -187,4 +234,3 @@ export async function updateSettings(settings: Partial<Settings>) {
     await writeDb(dbData);
     return dbData.settings;
 }
-
