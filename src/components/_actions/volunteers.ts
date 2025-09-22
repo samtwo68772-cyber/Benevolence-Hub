@@ -31,11 +31,9 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
             interests: validatedFields.data.interests,
         });
     } catch (error: any) {
-        if (error.message.includes('A volunteer with this email already exists.')) {
-            throw new Error('A volunteer with this email address has already registered.');
-        }
-        if (error.message.includes('A volunteer with this phone number already exists.')) {
-            throw new Error('A volunteer with this phone number has already registered.');
+        if (error.message.includes('A volunteer with this email already exists.') ||
+            error.message.includes('A volunteer with this phone number already exists.')) {
+            throw error; // Re-throw the specific error from createVolunteer
         }
         throw new Error('An unexpected error occurred. Please try again.');
     }
@@ -43,4 +41,5 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
 
     revalidatePath('/admin/volunteers');
 }
+
 

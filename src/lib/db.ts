@@ -1,6 +1,3 @@
-
-'use server';
-
 import prisma from './prisma';
 import { Project, Volunteer, Donation, User, Settings, Category, SocialLink } from './types';
 import { defaultSettings } from './default-settings';
