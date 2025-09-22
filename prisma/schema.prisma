@@ -1,34 +1,30 @@
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL_POOLED")
+  directUrl = env("DATABASE_URL")
 }
 
 model Project {
   id           String        @id @default(cuid())
   title        String
-  description  String
+  description  String        @db.Text
   imageUrl     String?
-  details      String[]
+  details      String[]      @db.Text
   status       String        @default("Planning")
   startDate    DateTime
   peopleHelped Int           @default(0)
-  donations    Donation[]
   category     Category?     @relation(fields: [categoryId], references: [id])
   categoryId   String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-}
-
-model Category {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  projects  Project[]
-  donations Donation[]
+  donations    Donation[]
 }
 
 model Volunteer {
@@ -41,60 +37,59 @@ model Volunteer {
   interests    String[]
   availability String[]
   status       String   @default("Pending")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 }
 
 model Donation {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   donorName String
   email     String
   amount    Float
-  date      DateTime  @default(now())
+  date      DateTime @default(now())
   type      String
-  project   Project?  @relation(fields: [projectId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id])
   projectId String?
   category  Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("ADMIN")
-  joinDate  DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String
+  role     String   @default("ADMIN")
+  joinDate DateTime @default(now())
+}
+
+model Category {
+  id       String   @id @default(cuid())
+  name     String   @unique
+  projects Project[]
+  donations Donation[]
 }
 
 model Settings {
-    id                         String   @id @default(cuid())
-    appName                    String?
-    logo                       String?
-    logoType                   String?
-    volunteerIcon              String?
-    heroTitle                  String?
-    heroDescription            String?
-    heroImage                  String?
-    missionIntroTitle          String?
-    missionIntroDescription    String?
-    missionImage               String?
-    missionTitle               String?
-    missionDescription         String?
-    visionTitle                String?
-    visionDescription          String?
-    valuesTitle                String?
-    valuesDescription          String?
-    volunteerIntroTitle        String?
-    volunteerIntroDescription1 String?
-    volunteerIntroDescription2 String?
-    socialLinksTwitter         String?
-    socialLinksFacebook        String?
-    socialLinksInstagram       String?
-    createdAt                  DateTime @default(now())
-    updatedAt                  DateTime @updatedAt
+  id                         String   @id @default(cuid())
+  appName                    String?
+  logo                       String?
+  logoType                   String?
+  volunteerIcon              String?
+  heroTitle                  String?
+  heroDescription            String?
+  heroImage                  String?
+  missionIntroTitle          String?
+  missionIntroDescription    String?
+  missionImage               String?
+  missionTitle               String?
+  missionDescription         String?
+  visionTitle                String?
+  visionDescription          String?
+  valuesTitle                String?
+  valuesDescription          String?
+  volunteerIntroTitle        String?
+  volunteerIntroDescription1 String?
+  volunteerIntroDescription2 String?
+  socialLinksTwitter         String?
+  socialLinksFacebook        String?
+  socialLinksInstagram       String?
 }

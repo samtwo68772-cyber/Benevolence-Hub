@@ -10,8 +10,8 @@ const volunteerSchema = z.object({
     email: z.string().email("Please enter a valid email address."),
     phone: z.string().optional(),
     skills: z.string().min(10, "Please provide more details."),
-    availability: z.array(z.string()).nonempty(),
-    interests: z.array(z.string()).nonempty(),
+    availability: z.array(z.string()).nonempty({ message: "You have to select at least one availability option." }),
+    interests: z.array(z.string()).nonempty({ message: "Please select at least one area of interest." }),
 });
 
 export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
@@ -21,14 +21,22 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
         throw new Error('Invalid volunteer data.');
     }
     
-    await createVolunteer({
-        name: validatedFields.data.name,
-        email: validatedFields.data.email,
-        phone: validatedFields.data.phone,
-        skills: validatedFields.data.skills,
-        availability: validatedFields.data.availability,
-        interests: validatedFields.data.interests,
-    });
+    try {
+        await createVolunteer({
+            name: validatedFields.data.name,
+            email: validatedFields.data.email,
+            phone: validatedFields.data.phone,
+            skills: validatedFields.data.skills,
+            availability: validatedFields.data.availability,
+            interests: validatedFields.data.interests,
+        });
+    } catch (error: any) {
+        if (error.message.includes('A volunteer with this email already exists.')) {
+            throw new Error('A volunteer with this email address has already registered.');
+        }
+        throw new Error('An unexpected error occurred. Please try again.');
+    }
+
 
     revalidatePath('/admin/volunteers');
 }

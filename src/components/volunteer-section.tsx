@@ -45,7 +45,7 @@ const volunteerSchema = z.object({
   interests: z.array(z.string()).refine(value => value.length > 0, {
       message: "Please select at least one area of interest."
   }),
-  message: z.string().min(10, "Please tell us a bit more about your skills and why you'd like to volunteer."),
+  skills: z.string().min(10, "Please tell us a bit more about your skills and why you'd like to volunteer."),
 })
 
 type VolunteerFormValues = z.infer<typeof volunteerSchema>
@@ -70,25 +70,33 @@ export default function VolunteerSection({ settings, categories: initialCategori
             phone: "",
             availability: [],
             interests: [],
-            message: "",
+            skills: "",
         },
     })
 
     async function onSubmit(values: VolunteerFormValues) {
-        await addVolunteer({
-            name: values.name,
-            email: values.email,
-            phone: values.phone,
-            skills: values.message,
-            availability: values.availability,
-            interests: values.interests,
-        });
+        try {
+            await addVolunteer(values);
 
-        toast({
-            title: "Registration Received!",
-            description: `Thank you for your interest, ${values.name}. We've received your application and will be in touch soon!`,
-        })
-        form.reset()
+            toast({
+                title: "Registration Received!",
+                description: `Thank you for your interest, ${values.name}. We've received your application and will be in touch soon!`,
+            });
+            form.reset();
+        } catch (error: any) {
+            if (error.message.includes('A volunteer with this email address has already registered.')) {
+                form.setError('email', {
+                    type: 'manual',
+                    message: error.message,
+                });
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: 'Registration Failed',
+                    description: 'An unexpected error occurred. Please try again later.',
+                });
+            }
+        }
     }
 
     const VolunteerIcon = LucideIcons[settings.volunteerIcon as keyof typeof LucideIcons] || LucideIcons.HeartHandshake;
@@ -241,7 +249,7 @@ export default function VolunteerSection({ settings, categories: initialCategori
 
                  <FormField
                   control={form.control}
-                  name="message"
+                  name="skills"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Skills & Why You'd Like to Help</FormLabel>

@@ -112,7 +112,16 @@ export async function getVolunteers(): Promise<Volunteer[]> {
     }))
 }
 
+export async function getVolunteerByEmail(email: string): Promise<Volunteer | null> {
+    return await prisma.volunteer.findUnique({ where: { email } });
+}
+
 export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status' | 'signupDate'>) {
+    const existingVolunteer = await getVolunteerByEmail(volunteer.email);
+    if (existingVolunteer) {
+        throw new Error('A volunteer with this email already exists.');
+    }
+
     return await prisma.volunteer.create({
         data: {
             name: volunteer.name,
@@ -122,9 +131,11 @@ export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status'
             availability: volunteer.availability,
             interests: volunteer.interests,
             status: 'Pending',
+            signupDate: new Date(),
         }
     });
 }
+
 
 export async function updateVolunteer(id: string, data: Partial<Omit<Volunteer, 'id'>>) {
     return await prisma.volunteer.update({
@@ -135,24 +146,6 @@ export async function updateVolunteer(id: string, data: Partial<Omit<Volunteer, 
 
 export async function deleteVolunteer(id: string): Promise<void> {
     await prisma.volunteer.delete({ where: { id } });
-}
-
-// Donations
-export async function getDonations(): Promise<Donation[]> {
-    return await prisma.donation.findMany({ include: { project: true } });
-}
-
-export async function createDonation(donation: Omit<Donation, 'id' | 'date'>) {
-    return await prisma.donation.create({
-        data: {
-            donorName: donation.donorName,
-            email: donation.email,
-            amount: donation.amount,
-            type: donation.type,
-            ...(donation.projectId && { project: { connect: { id: donation.projectId } } }),
-            ...(donation.categoryId && { category: { connect: { id: donation.categoryId }}})
-        }
-    });
 }
 
 // Users
@@ -195,10 +188,35 @@ export async function deleteUser(id: string): Promise<void> {
 // Settings
 export async function getSettings(): Promise<Settings> {
     const dbSettings = await prisma.settings.findFirst();
-    if (!dbSettings) return defaultSettings;
+    if (!dbSettings) {
+        await prisma.settings.create({ data: {
+            appName: defaultSettings.appName,
+            logo: defaultSettings.logo,
+            logoType: defaultSettings.logoType,
+            volunteerIcon: defaultSettings.volunteerIcon,
+            heroTitle: defaultSettings.heroTitle,
+            heroDescription: defaultSettings.heroDescription,
+            heroImage: defaultSettings.heroImage,
+            missionIntroTitle: defaultSettings.missionIntroTitle,
+            missionIntroDescription: defaultSettings.missionIntroDescription,
+            missionImage: defaultSettings.missionImage,
+            missionTitle: defaultSettings.missionTitle,
+            missionDescription: defaultSettings.missionDescription,
+            visionTitle: defaultSettings.visionTitle,
+            visionDescription: defaultSettings.visionDescription,
+            valuesTitle: defaultSettings.valuesTitle,
+            valuesDescription: defaultSettings.valuesDescription,
+            volunteerIntroTitle: defaultSettings.volunteerIntroTitle,
+            volunteerIntroDescription1: defaultSettings.volunteerIntroDescription1,
+            volunteerIntroDescription2: defaultSettings.volunteerIntroDescription2,
+            socialLinksTwitter: defaultSettings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
+            socialLinksFacebook: defaultSettings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
+            socialLinksInstagram: defaultSettings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
+        }});
+        return defaultSettings;
+    }
 
     return {
-        ...defaultSettings,
         id: dbSettings.id,
         appName: dbSettings.appName || defaultSettings.appName,
         logo: dbSettings.logo || defaultSettings.logo,
@@ -206,7 +224,7 @@ export async function getSettings(): Promise<Settings> {
         volunteerIcon: dbSettings.volunteerIcon || defaultSettings.volunteerIcon,
         heroTitle: dbSettings.heroTitle || defaultSettings.heroTitle,
         heroDescription: dbSettings.heroDescription || defaultSettings.heroDescription,
-        heroImage: dbSettings.heroImage || defaultSettings.heroImage,
+        heroImage: dbSettings.heroImage,
         missionIntroTitle: dbSettings.missionIntroTitle || defaultSettings.missionIntroTitle,
         missionIntroDescription: dbSettings.missionIntroDescription || defaultSettings.missionIntroDescription,
         missionImage: dbSettings.missionImage,
@@ -228,7 +246,7 @@ export async function getSettings(): Promise<Settings> {
 }
 
 
-export async function updateSettings(settings: Partial<Settings>) {
+export async function updateSettings(settings: Partial<Omit<Settings, 'id' | 'socialLinks'>> & { socialLinks?: SocialLink[] }) {
     const currentSettings = await prisma.settings.findFirst();
 
     const { socialLinks, ...rest } = settings;

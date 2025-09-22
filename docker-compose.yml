@@ -10,6 +10,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence
       - DATABASE_URL_POOLED=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence?pg-bouncer=true
+      - DIRECT_URL=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence
       - NODE_ENV=production
       - PORT=9002
       - SESSION_SECRET=${SESSION_SECRET:-your_session_secret_here}
