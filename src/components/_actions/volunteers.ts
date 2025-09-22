@@ -22,22 +22,38 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
     }
     
     try {
-        await createVolunteer({
+        const result = await createVolunteer({
             name: validatedFields.data.name,
             email: validatedFields.data.email,
-            phone: validatedFields.data.phone,
+            phone: validatedFields.data.phone || null,
             skills: validatedFields.data.skills,
             availability: validatedFields.data.availability,
             interests: validatedFields.data.interests,
         });
+
+        if (!result) {
+            throw new Error('Failed to create volunteer record');
+        }
+
+        return { success: true };
     } catch (error: any) {
-        if (error.message.includes('A volunteer with this email already exists.')) {
+        console.error('Volunteer registration error:', error);
+        
+        if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
             throw new Error('A volunteer with this email address has already registered.');
         }
-        if (error.message.includes('A volunteer with this phone number already exists.')) {
+        if (error.code === 'P2002' && error.meta?.target?.includes('phone')) {
             throw new Error('A volunteer with this phone number has already registered.');
         }
-        throw new Error('An unexpected error occurred. Please try again.');
+        if (error.message === 'A volunteer with this email already exists.') {
+            throw new Error('A volunteer with this email address has already registered.');
+        }
+        if (error.message === 'A volunteer with this phone number already exists.') {
+            throw new Error('A volunteer with this phone number has already registered.');
+        }
+        
+        console.error('Detailed error:', error);
+        throw new Error('An unexpected error occurred. Please try again later.');
     }
 
 

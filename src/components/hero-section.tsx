@@ -14,9 +14,9 @@ export default function HeroSection({ settings }: { settings: Settings }) {
   // Hardcoded background images for the slideshow
   const backgroundImages = [
     "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1596807490741-8ea3437a280e?auto=format&fit=crop&w=1920&h=1080"
+    "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1920&h=1080",
+    "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1920&h=1080",
+    "https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=1920&h=1080"
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
