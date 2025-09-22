@@ -43,7 +43,12 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
     const updatedUser = await updateUser(session.userId, { name, email });
     
     // Re-set the session with updated information
-    await setSession(updatedUser);
+    await setSession({
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role as 'ADMIN'
+    });
 
     revalidatePath('/admin/settings');
     return { message: 'Profile updated successfully.' };

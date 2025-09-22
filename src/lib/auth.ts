@@ -50,6 +50,10 @@ export async function createSession(data: SessionPayload) {
   });
 }
 
+export async function setSession(data: any) {
+    await createSession(data);
+}
+
 export async function getSession(): Promise<SessionPayload | null> {
     const cookieStore = cookies();
     const cookie = cookieStore.get(cookieName);
