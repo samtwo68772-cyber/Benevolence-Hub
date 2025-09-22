@@ -12,32 +12,20 @@ const defaultSettings: Settings = {
     logo: 'HandHeart',
     logoType: 'icon',
     volunteerIcon: 'HeartHandshake',
-    hero: {
-        title: "Compassion in Action",
-        description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
-    },
+    heroTitle: "Compassion in Action",
+    heroDescription: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects.",
     heroImage: "https://picsum.photos/seed/hero-bg/1920/1080",
-    missionIntro: {
-        title: "Empowering Change, One Life at a Time",
-        description: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."
-    },
-    mission: {
-        title: "Our Mission",
-        description: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency."
-    },
-    vision: {
-        title: "Our Vision",
-        description: "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship."
-    },
-    values: {
-        title: "Our Values",
-        description: "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact."
-    },
-    volunteerIntro: {
-        title: "Become a Volunteer",
-        description1: "Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.",
-        description2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started."
-    },
+    missionIntroTitle: "Empowering Change, One Life at a Time",
+    missionIntroDescription: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future.",
+    missionTitle: "Our Mission",
+    missionDescription: "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.",
+    visionTitle: "Our Vision",
+    visionDescription: "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.",
+    valuesTitle: "Our Values",
+    valuesDescription: "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.",
+    volunteerIntroTitle: "Become a Volunteer",
+    volunteerIntroDescription1: "Your time and skills are invaluable. Join our team of dedicated volunteers and make a direct impact on the ground. Together, we can build stronger communities.",
+    volunteerIntroDescription2: "Whether you have experience in healthcare, education, construction, or administration, there's a place for you at Benevolence Hub. Fill out the form to get started.",
      socialLinks: [
         { icon: 'Twitter', href: '#' },
         { icon: 'Facebook', href: '#' },
@@ -280,27 +268,50 @@ export async function getSettings(): Promise<Settings> {
 export async function updateSettings(settings: Partial<Settings>) {
     const currentSettings = await prisma.settings.findFirst();
     
-    // Prepare database settings, excluding socialLinks
-    const { socialLinks, ...rest } = settings;
-    
-    const dbSettings: any = {
-        ...rest,
-        // Handle social links separately
-        ...(socialLinks && {
-            socialLinksTwitter: socialLinks.find(s => s.icon === 'Twitter')?.href,
-            socialLinksFacebook: socialLinks.find(s => s.icon === 'Facebook')?.href,
-            socialLinksInstagram: socialLinks.find(s => s.icon === 'Instagram')?.href,
-        })
+    const { 
+      socialLinks, 
+      hero,
+      missionIntro,
+      mission,
+      vision,
+      values,
+      volunteerIntro,
+      ...rest 
+    } = settings;
+
+    const dbData: any = {
+      ...rest,
+      heroTitle: hero?.title,
+      heroDescription: hero?.description,
+      missionIntroTitle: missionIntro?.title,
+      missionIntroDescription: missionIntro?.description,
+      missionTitle: mission?.title,
+      missionDescription: mission?.description,
+      visionTitle: vision?.title,
+      visionDescription: vision?.description,
+      valuesTitle: values?.title,
+      valuesDescription: values?.description,
+      volunteerIntroTitle: volunteerIntro?.title,
+      volunteerIntroDescription1: volunteerIntro?.description1,
+      volunteerIntroDescription2: volunteerIntro?.description2,
+      ...(socialLinks && {
+        socialLinksTwitter: socialLinks.find(s => s.icon === 'Twitter')?.href,
+        socialLinksFacebook: socialLinks.find(s => s.icon === 'Facebook')?.href,
+        socialLinksInstagram: socialLinks.find(s => s.icon === 'Instagram')?.href,
+      })
     };
+    
+    // Filter out undefined values
+    Object.keys(dbData).forEach(key => dbData[key] === undefined && delete dbData[key]);
 
     if (currentSettings) {
         return await prisma.settings.update({
             where: { id: currentSettings.id },
-            data: dbSettings,
+            data: dbData,
         });
     } else {
         return await prisma.settings.create({
-            data: dbSettings,
+            data: dbData,
         });
     }
 }

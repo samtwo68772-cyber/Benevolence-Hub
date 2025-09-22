@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-1.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -12,15 +11,15 @@ datasource db {
 }
 
 model Project {
-  id           String    @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
-  description  String    @db.Text
+  description  String
   imageUrl     String?
-  details      String?   @db.Text
+  details      String[]
   status       String
   startDate    DateTime
-  peopleHelped Int       @default(0)
-  category     Category? @relation(fields: [categoryId], references: [id])
+  peopleHelped Int
+  category     Category?     @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
 }
@@ -31,10 +30,10 @@ model Volunteer {
   email        String   @unique
   phone        String?
   signupDate   DateTime @default(now())
-  skills       String   @db.Text
-  interests    String?  @db.Text
-  availability String?  @db.Text
-  status       String   @default("Pending")
+  skills       String
+  interests    String[]
+  availability String[]
+  status       String
 }
 
 model Donation {
@@ -55,39 +54,39 @@ model User {
   name     String
   email    String   @unique
   password String
-  role     String   @default("ADMIN")
+  role     String
   joinDate DateTime @default(now())
 }
 
 model Settings {
-  id                          String    @id @default(cuid())
-  appName                     String?
-  logo                        String?
-  logoType                    String?
-  volunteerIcon               String?
-  heroTitle                   String?
-  heroDescription             String?
-  heroImages                  String?   @db.Text
-  missionIntroTitle           String?
-  missionIntroDescription     String?
-  missionImage                String?
-  missionTitle                String?
-  missionDescription          String?
-  visionTitle                 String?
-  visionDescription           String?
-  valuesTitle                 String?
-  valuesDescription           String?
-  volunteerIntroTitle         String?
-  volunteerIntroDescription1  String?
-  volunteerIntroDescription2  String?
-  socialLinksTwitter          String?
-  socialLinksFacebook         String?
-  socialLinksInstagram        String?
+  id                        String  @id @default(cuid())
+  appName                   String?
+  logo                      String?
+  logoType                  String?
+  volunteerIcon             String?
+  heroTitle                 String?
+  heroDescription           String?
+  heroImage                 String?
+  missionIntroTitle         String?
+  missionIntroDescription   String?
+  missionImage              String?
+  missionTitle              String?
+  missionDescription        String?
+  visionTitle               String?
+  visionDescription         String?
+  valuesTitle               String?
+  valuesDescription         String?
+  volunteerIntroTitle       String?
+  volunteerIntroDescription1 String?
+  volunteerIntroDescription2 String?
+  socialLinksTwitter        String?
+  socialLinksFacebook       String?
+  socialLinksInstagram      String?
 }
 
 model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  projects Project[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  projects  Project[]
   donations Donation[]
 }

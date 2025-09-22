@@ -21,7 +21,8 @@ export default async function AdminVolunteersPage({ searchParams }: { searchPara
 
   const filteredVolunteers = allVolunteers.filter(volunteer => {
     const statusMatch = !statusFilter || volunteer.status === statusFilter;
-    const interestMatch = !interestFilter || volunteer.interests.includes(interestFilter);
+    const volunteerInterests = Array.isArray(volunteer.interests) ? volunteer.interests : [];
+    const interestMatch = !interestFilter || volunteerInterests.includes(interestFilter);
     return statusMatch && interestMatch;
   });
 
