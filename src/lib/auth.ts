@@ -1,49 +1,62 @@
+
 'use server';
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { type User } from '@prisma/client';
+import { SignJWT, jwtVerify } from 'jose';
+import type { User } from '@prisma/client';
 
-const SESSION_COOKIE = 'admin_session';
+const secretKey = process.env.SESSION_SECRET || 'default-secret-key-for-development';
+const key = new TextEncoder().encode(secretKey);
+const cookieName = 'session';
 
-export async function setSession(user: User) {
-    // Create session data - don't include sensitive info like password
-    const session = {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-    };
-    
-    // Set session cookie with HTTP-only flag
-    cookies().set(SESSION_COOKIE, JSON.stringify(session), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 1 week
+export type SessionPayload = {
+    userId: string;
+    name: string;
+    email: string;
+    role: 'ADMIN';
+};
+
+async function encrypt(payload: SessionPayload) {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .sign(key);
+}
+
+async function decrypt(session: string | undefined = '') {
+  try {
+    const { payload } = await jwtVerify(session, key, {
+      algorithms: ['HS256'],
     });
+    return payload as SessionPayload;
+  } catch (error) {
+    console.log('Failed to verify session');
+    return null;
+  }
 }
 
-export async function getSession() {
-    const session = cookies().get(SESSION_COOKIE)?.value;
-    if (!session) return null;
-    
-    try {
-        return JSON.parse(session);
-    } catch {
-        return null;
-    }
+export async function createSession(payload: SessionPayload) {
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const session = await encrypt(payload);
+
+  cookies().set(cookieName, session, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  });
 }
 
-export async function clearSession() {
-    cookies().delete(SESSION_COOKIE);
+export async function getSession(): Promise<SessionPayload | null> {
+  const cookie = cookies().get(cookieName)?.value;
+  const session = await decrypt(cookie);
+  return session;
 }
 
-export async function requireAuth() {
-    const session = await getSession();
-    
-    if (!session || session.role !== 'ADMIN') {
-        redirect('/admin/login');
-    }
-    
-    return session;
+export async function logout() {
+  cookies().delete(cookieName);
+  redirect('/admin/login');
 }
