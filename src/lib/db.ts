@@ -243,10 +243,8 @@ export async function getSettings(): Promise<Settings> {
         logo: dbSettings.logo || defaultSettings.logo,
         logoType: (dbSettings.logoType as 'icon' | 'image') || defaultSettings.logoType,
         volunteerIcon: dbSettings.volunteerIcon || defaultSettings.volunteerIcon,
-        hero: {
-            title: dbSettings.heroTitle || defaultSettings.hero!.title,
-            description: dbSettings.heroDescription || defaultSettings.hero!.description,
-        },
+        heroTitle: dbSettings.heroTitle || defaultSettings.heroTitle,
+        heroDescription: dbSettings.heroDescription || defaultSettings.heroDescription,
         heroImage: dbSettings.heroImage || defaultSettings.heroImage,
         missionIntro: {
             title: dbSettings.missionIntroTitle || defaultSettings.missionIntro!.title,

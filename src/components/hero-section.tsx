@@ -8,21 +8,28 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowDown } from 'lucide-react';
 import { Settings } from '@/lib/types';
+import { defaultSettings } from '@/lib/default-settings';
 
 export default function HeroSection({ settings }: { settings: Settings }) {
-  const backgroundImages = settings.heroImages || [];
+  // Hardcoded background images for the slideshow
+  const backgroundImages = [
+    "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1920&h=1080",
+    "https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1920&h=1080",
+    "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1920&h=1080",
+    "https://images.unsplash.com/photo-1596807490741-8ea3437a280e?auto=format&fit=crop&w=1920&h=1080"
+  ];
 
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   // Effect for automatic slideshow
   React.useEffect(() => {
     if (backgroundImages.length > 1) {
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prevIndex) => 
-                prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
-            );
-        }, 5000); // Change image every 5 seconds
-        return () => clearInterval(interval);
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => 
+          prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 5000); // Change image every 5 seconds
+      return () => clearInterval(interval);
     }
   }, [backgroundImages.length]);
 
@@ -43,10 +50,10 @@ export default function HeroSection({ settings }: { settings: Settings }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
         <h1 className="font-headline text-4xl sm:text-6xl md:text-7xl leading-tight drop-shadow-2xl">
-          {settings.heroTitle}
+          {settings.heroTitle || defaultSettings.heroTitle}
         </h1>
         <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto font-light drop-shadow-lg">
-          {settings.heroDescription}
+          {settings.heroDescription || defaultSettings.heroDescription}
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link href="#projects">
@@ -62,20 +69,20 @@ export default function HeroSection({ settings }: { settings: Settings }) {
         </div>
       </div>
       {/* Slide indicators */}
-       {backgroundImages.length > 1 && (
+      {backgroundImages.length > 1 && (
         <div className="absolute bottom-20 z-10 flex gap-2 justify-center w-full">
-            {backgroundImages.map((_, index) => (
+          {backgroundImages.map((_, index) => (
             <button
-                key={index}
-                onClick={() => setCurrentImageIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 index === currentImageIndex
-                    ? 'bg-white scale-125'
-                    : 'bg-white/50 hover:bg-white/80'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
+                  ? 'bg-white scale-125'
+                  : 'bg-white/50 hover:bg-white/80'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
-            ))}
+          ))}
         </div>
       )}
 

@@ -110,11 +110,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Hero Section</h4>
                             <div className="space-y-2">
                                 <Label htmlFor="heroTitle">Title</Label>
-                                <Input id="heroTitle" name="heroTitle" defaultValue={settings.hero?.title} />
+                                <Input id="heroTitle" name="heroTitle" defaultValue={settings.heroTitle} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
-                                <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero?.description} rows={3} />
+                                <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.heroDescription} rows={3} />
                             </div>
                         </div>
 

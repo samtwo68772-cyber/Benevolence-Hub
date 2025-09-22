@@ -1,13 +1,25 @@
+-- CreateEnum
+CREATE TYPE "ProjectStatus" AS ENUM ('Active', 'Completed', 'Planning');
+
+-- CreateEnum
+CREATE TYPE "VolunteerStatus" AS ENUM ('Pending', 'Approved', 'Rejected');
+
+-- CreateEnum
+CREATE TYPE "DonationType" AS ENUM ('ONE_TIME', 'MONTHLY');
+
+-- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('ADMIN');
+
 -- CreateTable
 CREATE TABLE "Project" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "imageUrl" TEXT,
-    "details" TEXT[],
-    "status" TEXT NOT NULL,
+    "details" TEXT,
+    "status" "ProjectStatus" NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
-    "peopleHelped" INTEGER NOT NULL,
+    "peopleHelped" INTEGER NOT NULL DEFAULT 0,
     "categoryId" TEXT,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
@@ -21,9 +33,9 @@ CREATE TABLE "Volunteer" (
     "phone" TEXT,
     "signupDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "skills" TEXT NOT NULL,
-    "interests" TEXT[],
-    "availability" TEXT[],
-    "status" TEXT NOT NULL DEFAULT 'Pending',
+    "interests" TEXT,
+    "availability" TEXT,
+    "status" "VolunteerStatus" NOT NULL DEFAULT 'Pending',
 
     CONSTRAINT "Volunteer_pkey" PRIMARY KEY ("id")
 );
@@ -35,7 +47,7 @@ CREATE TABLE "Donation" (
     "email" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "type" TEXT NOT NULL,
+    "type" "DonationType" NOT NULL,
     "projectId" TEXT,
     "categoryId" TEXT,
 
@@ -48,7 +60,7 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'ADMIN',
+    "role" "UserRole" NOT NULL DEFAULT 'ADMIN',
     "joinDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -63,7 +75,7 @@ CREATE TABLE "Settings" (
     "volunteerIcon" TEXT,
     "heroTitle" TEXT,
     "heroDescription" TEXT,
-    "heroImages" TEXT[],
+    "heroImages" TEXT,
     "missionIntroTitle" TEXT,
     "missionIntroDescription" TEXT,
     "missionImage" TEXT,

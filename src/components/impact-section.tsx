@@ -113,16 +113,34 @@ export default function ImpactSection({ projects, donations, volunteers, approve
 
   const volunteerStatusChartData = Object.values(volunteerStatusData);
 
+  // Process volunteer interests data
   const volunteerInterestsData = categories.reduce((acc, category) => {
     acc[category.name] = { interest: category.name, count: 0 };
     return acc;
-    }, {} as Record<string, { interest: string; count: number }>);
+  }, {} as Record<string, { interest: string; count: number }>);
 
-  volunteers.flatMap(v => v.interests).forEach(interest => {
-    if (volunteerInterestsData[interest]) {
-        volunteerInterestsData[interest].count++;
-    }
-  });
+  // Count only approved volunteers' interests
+  volunteers
+    .filter(v => v.status === 'Approved')
+    .forEach(volunteer => {
+      let interestArray: string[] = [];
+      try {
+        interestArray = Array.isArray(volunteer.interests) 
+          ? volunteer.interests 
+          : typeof volunteer.interests === 'string'
+          ? JSON.parse(volunteer.interests)
+          : [];
+      } catch (e) {
+        console.error('Error parsing volunteer interests:', e);
+        interestArray = [];
+      }
+      
+      interestArray.forEach((interest: string) => {
+        if (volunteerInterestsData[interest]) {
+          volunteerInterestsData[interest].count++;
+        }
+      });
+    });
 
   const volunteerInterestsChartData = Object.values(volunteerInterestsData);
 
