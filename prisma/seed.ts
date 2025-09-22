@@ -126,14 +126,13 @@ async function main() {
 
   // Seed Settings
   const settings = dbData.settings;
-  const settingsData = {
+    const settingsData = {
     appName: settings.appName,
     logo: settings.logo,
     logoType: settings.logoType,
     volunteerIcon: settings.volunteerIcon,
     heroTitle: settings.hero.title,
     heroDescription: settings.hero.description,
-    heroImages: settings.heroImages,
     missionIntroTitle: settings.missionIntro.title,
     missionIntroDescription: settings.missionIntro.description,
     missionImage: settings.heroImage,
@@ -149,9 +148,7 @@ async function main() {
     socialLinksTwitter: settings.socialLinks?.find((s:any) => s.icon === 'Twitter')?.href || '#',
     socialLinksFacebook: settings.socialLinks?.find((s:any) => s.icon === 'Facebook')?.href || '#',
     socialLinksInstagram: settings.socialLinks?.find((s:any) => s.icon === 'Instagram')?.href || '#',
-  };
-
-  const existingSettings = await prisma.settings.findFirst();
+  };  const existingSettings = await prisma.settings.findFirst();
   if (existingSettings) {
       await prisma.settings.update({
           where: { id: existingSettings.id },

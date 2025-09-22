@@ -269,7 +269,7 @@
       "id": "ADM-001",
       "name": "Michael Scott",
       "email": "michael.s@benevolence.com",
-      "password": "$2a$10$k1i5tJ9v.p4C9wX6Z.G2B.Rz.n/a.n8Z.E.Y8/U/f2aB6E/G5JgWq",
+      "password": "$2a$10$kOil0Ey6q8ld1vK40Q/av.gWTZt2x4AToX/cEnaLv5Nf9psDbpYFu",
       "role": "ADMIN",
       "joinDate": "2021-01-01T00:00:00.000Z"
     },
