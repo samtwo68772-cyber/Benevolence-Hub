@@ -1,3 +1,4 @@
+
 'use server';
 
 import { cookies } from 'next/headers';
@@ -6,6 +7,7 @@ import { headers } from 'next/headers';
 
 const secretKey = process.env.SESSION_SECRET || 'default-secret-key-for-development';
 const key = new TextEncoder().encode(secretKey);
+const cookieName = 'session';
 
 export type SessionPayload = {
   id: string;
@@ -13,7 +15,7 @@ export type SessionPayload = {
   role: string;
 };
 
-export async function createSessionToken(payload: SessionPayload): Promise<string> {
+async function encrypt(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -21,58 +23,41 @@ export async function createSessionToken(payload: SessionPayload): Promise<strin
     .sign(key);
 }
 
-export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
+export async function decrypt(session: string | undefined = '') {
   try {
-    const { payload } = await jwtVerify(token, key, {
+    const { payload } = await jwtVerify(session, key, {
       algorithms: ['HS256'],
     });
-    return payload as SessionPayload;
+    return payload;
   } catch (error) {
-    console.error('Failed to verify token:', error);
+    console.log('Failed to verify session');
     return null;
   }
 }
 
-export async function getSession(): Promise<SessionPayload | null> {
-  const cookieStore = cookies();
-  const token = cookieStore.get('session')?.value;
-  if (!token) return null;
-  return verifySessionToken(token);
-}
-
 export async function createSession(data: SessionPayload) {
-  const token = await createSessionToken(data);
-  
-  // Create cookie options
-  const cookieOptions = {
-    // Set cookie to expire in 7 days
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const session = await encrypt(data);
+
+  cookies().set(cookieName, session, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    expires: expiresAt,
+    sameSite: 'lax',
     path: '/',
-    sameSite: 'lax' as const,
-  };
-
-  // Convert cookie options to string
-  const cookieStr = `session=${token}; Path=${cookieOptions.path}; ${
-    cookieOptions.secure ? 'Secure; ' : ''
-  }HttpOnly; SameSite=${cookieOptions.sameSite}; Expires=${cookieOptions.expires.toUTCString()}`;
-
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Location': '/admin',
-      'Set-Cookie': cookieStr,
-    },
   });
 }
 
+export async function getSession(): Promise<SessionPayload | null> {
+    const cookieStore = cookies();
+    const cookie = cookieStore.get(cookieName);
+    if (!cookie?.value) return null;
+    
+    const session = await decrypt(cookie.value);
+    return session as SessionPayload | null;
+}
+
+
 export async function clearSession() {
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Location': '/admin/login',
-      'Set-Cookie': 'session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
-    },
-  });
+  cookies().delete(cookieName);
 }

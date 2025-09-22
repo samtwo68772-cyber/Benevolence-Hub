@@ -3,7 +3,7 @@
 
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { createSession } from '@/lib/auth';
+import { createSession, clearSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 export async function authenticate(
@@ -30,7 +30,7 @@ export async function authenticate(
 
     if (passwordsMatch) {
       await createSession({
-        userId: user.id,
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role as 'ADMIN',
