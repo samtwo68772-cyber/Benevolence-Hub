@@ -84,12 +84,18 @@ export default function VolunteerSection({ settings, categories: initialCategori
             });
             form.reset();
         } catch (error: any) {
-            if (error.message.includes('A volunteer with this email address has already registered.')) {
+            if (error.message.includes('email')) {
                 form.setError('email', {
                     type: 'manual',
                     message: error.message,
                 });
-            } else {
+            } else if (error.message.includes('phone')) {
+                form.setError('phone', {
+                    type: 'manual',
+                    message: error.message,
+                });
+            }
+            else {
                 toast({
                     variant: 'destructive',
                     title: 'Registration Failed',

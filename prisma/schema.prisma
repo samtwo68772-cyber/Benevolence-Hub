@@ -1,27 +1,26 @@
-
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL_POOLED")
-  directUrl = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL_POOLED")
+  directUrl    = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Project {
   id           String        @id @default(cuid())
   title        String
-  description  String        @db.Text
+  description  String
   imageUrl     String?
-  details      String[]      @db.Text
-  status       String        @default("Planning")
+  details      String[]
+  status       String
   startDate    DateTime
-  peopleHelped Int           @default(0)
+  peopleHelped Int
   category     Category?     @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
@@ -31,24 +30,24 @@ model Volunteer {
   id           String   @id @default(cuid())
   name         String
   email        String   @unique
-  phone        String?
+  phone        String?  @unique
   signupDate   DateTime @default(now())
   skills       String
   interests    String[]
   availability String[]
-  status       String   @default("Pending")
+  status       String
 }
 
 model Donation {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   donorName String
   email     String
   amount    Float
-  date      DateTime @default(now())
+  date      DateTime     @default(now())
   type      String
-  project   Project? @relation(fields: [projectId], references: [id])
+  project   Project?     @relation(fields: [projectId], references: [id])
   projectId String?
-  category  Category? @relation(fields: [categoryId], references: [id])
+  category  Category?    @relation(fields: [categoryId], references: [id])
   categoryId String?
 }
 
@@ -57,39 +56,39 @@ model User {
   name     String
   email    String   @unique
   password String
-  role     String   @default("ADMIN")
+  role     String
   joinDate DateTime @default(now())
 }
 
 model Category {
-  id       String   @id @default(cuid())
-  name     String   @unique
+  id       String     @id @default(cuid())
+  name     String     @unique
   projects Project[]
   donations Donation[]
 }
 
 model Settings {
-  id                         String   @id @default(cuid())
-  appName                    String?
-  logo                       String?
-  logoType                   String?
-  volunteerIcon              String?
-  heroTitle                  String?
-  heroDescription            String?
-  heroImage                  String?
-  missionIntroTitle          String?
-  missionIntroDescription    String?
-  missionImage               String?
-  missionTitle               String?
-  missionDescription         String?
-  visionTitle                String?
-  visionDescription          String?
-  valuesTitle                String?
-  valuesDescription          String?
-  volunteerIntroTitle        String?
+  id                        String   @id @default(cuid())
+  appName                   String   @default("Benevolence Hub")
+  logo                      String?
+  logoType                  String?  @default("icon")
+  volunteerIcon             String?
+  heroTitle                 String?
+  heroDescription           String?
+  heroImage                 String?
+  missionIntroTitle         String?
+  missionIntroDescription   String?
+  missionImage              String?
+  missionTitle              String?
+  missionDescription        String?
+  visionTitle               String?
+  visionDescription         String?
+  valuesTitle               String?
+  valuesDescription         String?
+  volunteerIntroTitle       String?
   volunteerIntroDescription1 String?
   volunteerIntroDescription2 String?
-  socialLinksTwitter         String?
-  socialLinksFacebook        String?
-  socialLinksInstagram       String?
+  socialLinksTwitter        String?
+  socialLinksFacebook       String?
+  socialLinksInstagram      String?
 }

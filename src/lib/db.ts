@@ -116,20 +116,27 @@ export async function getVolunteerByEmail(email: string): Promise<Volunteer | nu
     return await prisma.volunteer.findUnique({ where: { email } });
 }
 
+export async function getVolunteerByPhone(phone: string): Promise<Volunteer | null> {
+    return await prisma.volunteer.findUnique({ where: { phone } });
+}
+
+
 export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status' | 'signupDate'>) {
-    const existingVolunteer = await getVolunteerByEmail(volunteer.email);
-    if (existingVolunteer) {
+    const existingByEmail = await getVolunteerByEmail(volunteer.email);
+    if (existingByEmail) {
         throw new Error('A volunteer with this email already exists.');
+    }
+
+    if (volunteer.phone) {
+        const existingByPhone = await getVolunteerByPhone(volunteer.phone);
+        if (existingByPhone) {
+            throw new Error('A volunteer with this phone number already exists.');
+        }
     }
 
     return await prisma.volunteer.create({
         data: {
-            name: volunteer.name,
-            email: volunteer.email,
-            phone: volunteer.phone,
-            skills: volunteer.skills,
-            availability: volunteer.availability,
-            interests: volunteer.interests,
+            ...volunteer,
             status: 'Pending',
             signupDate: new Date(),
         }
@@ -185,34 +192,33 @@ export async function deleteUser(id: string): Promise<void> {
     await prisma.user.delete({ where: { id } });
 }
   
+// Donations
+export async function getDonations(): Promise<Donation[]> {
+  const donations = await prisma.donation.findMany({ include: { project: true, category: true } });
+  return donations.map(d => ({
+    ...d,
+    amount: typeof d.amount === 'number' ? d.amount : d.amount,
+    project: d.project ? { ...d.project, details: [], category: d.project.category?.name || 'Uncategorized' } : null,
+  }));
+}
+
+export async function createDonation(donation: Omit<Donation, 'id' | 'date'>) {
+    const { projectId, categoryId, ...donationData } = donation;
+
+    return await prisma.donation.create({
+        data: {
+            ...donationData,
+            ...(projectId && { project: { connect: { id: projectId } } }),
+            ...(categoryId && { category: { connect: { id: categoryId } } }),
+        }
+    });
+}
+
 // Settings
 export async function getSettings(): Promise<Settings> {
     const dbSettings = await prisma.settings.findFirst();
+    
     if (!dbSettings) {
-        await prisma.settings.create({ data: {
-            appName: defaultSettings.appName,
-            logo: defaultSettings.logo,
-            logoType: defaultSettings.logoType,
-            volunteerIcon: defaultSettings.volunteerIcon,
-            heroTitle: defaultSettings.heroTitle,
-            heroDescription: defaultSettings.heroDescription,
-            heroImage: defaultSettings.heroImage,
-            missionIntroTitle: defaultSettings.missionIntroTitle,
-            missionIntroDescription: defaultSettings.missionIntroDescription,
-            missionImage: defaultSettings.missionImage,
-            missionTitle: defaultSettings.missionTitle,
-            missionDescription: defaultSettings.missionDescription,
-            visionTitle: defaultSettings.visionTitle,
-            visionDescription: defaultSettings.visionDescription,
-            valuesTitle: defaultSettings.valuesTitle,
-            valuesDescription: defaultSettings.valuesDescription,
-            volunteerIntroTitle: defaultSettings.volunteerIntroTitle,
-            volunteerIntroDescription1: defaultSettings.volunteerIntroDescription1,
-            volunteerIntroDescription2: defaultSettings.volunteerIntroDescription2,
-            socialLinksTwitter: defaultSettings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
-            socialLinksFacebook: defaultSettings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
-            socialLinksInstagram: defaultSettings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
-        }});
         return defaultSettings;
     }
 
@@ -246,31 +252,61 @@ export async function getSettings(): Promise<Settings> {
 }
 
 
-export async function updateSettings(settings: Partial<Omit<Settings, 'id' | 'socialLinks'>> & { socialLinks?: SocialLink[] }) {
+export async function updateSettings(settings: Partial<Settings>) {
     const currentSettings = await prisma.settings.findFirst();
-
-    const { socialLinks, ...rest } = settings;
-
-    const dbData: any = {
-      ...rest,
-      ...(socialLinks && {
-        socialLinksTwitter: socialLinks.find(s => s.icon === 'Twitter')?.href,
-        socialLinksFacebook: socialLinks.find(s => s.icon === 'Facebook')?.href,
-        socialLinksInstagram: socialLinks.find(s => s.icon === 'Instagram')?.href,
-      })
-    };
-    
-    // Filter out undefined values
-    Object.keys(dbData).forEach(key => dbData[key] === undefined && delete dbData[key]);
 
     if (currentSettings) {
         return await prisma.settings.update({
             where: { id: currentSettings.id },
-            data: dbData,
+            data: {
+                appName: settings.appName,
+                logo: settings.logo,
+                logoType: settings.logoType,
+                volunteerIcon: settings.volunteerIcon,
+                heroTitle: settings.heroTitle,
+                heroDescription: settings.heroDescription,
+                missionIntroTitle: settings.missionIntroTitle,
+                missionIntroDescription: settings.missionIntroDescription,
+                missionImage: settings.missionImage,
+                missionTitle: settings.missionTitle,
+                missionDescription: settings.missionDescription,
+                visionTitle: settings.visionTitle,
+                visionDescription: settings.visionDescription,
+                valuesTitle: settings.valuesTitle,
+                valuesDescription: settings.valuesDescription,
+                volunteerIntroTitle: settings.volunteerIntroTitle,
+                volunteerIntroDescription1: settings.volunteerIntroDescription1,
+                volunteerIntroDescription2: settings.volunteerIntroDescription2,
+                socialLinksTwitter: settings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
+                socialLinksFacebook: settings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
+                socialLinksInstagram: settings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
+            }
         });
     } else {
         return await prisma.settings.create({
-            data: dbData,
+            data: {
+                appName: settings.appName!,
+                logo: settings.logo,
+                logoType: settings.logoType,
+                volunteerIcon: settings.volunteerIcon,
+                heroTitle: settings.heroTitle,
+                heroDescription: settings.heroDescription,
+                missionIntroTitle: settings.missionIntroTitle,
+                missionIntroDescription: settings.missionIntroDescription,
+                missionImage: settings.missionImage,
+                missionTitle: settings.missionTitle,
+                missionDescription: settings.missionDescription,
+                visionTitle: settings.visionTitle,
+                visionDescription: settings.visionDescription,
+                valuesTitle: settings.valuesTitle,
+                valuesDescription: settings.valuesDescription,
+                volunteerIntroTitle: settings.volunteerIntroTitle,
+                volunteerIntroDescription1: settings.volunteerIntroDescription1,
+                volunteerIntroDescription2: settings.volunteerIntroDescription2,
+                socialLinksTwitter: settings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
+                socialLinksFacebook: settings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
+                socialLinksInstagram: settings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
+            }
         });
     }
 }
