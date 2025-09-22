@@ -1,93 +1,94 @@
-generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_URL_POOLED")
-  directUrl = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 model Project {
-  id              String   @id @default(cuid())
-  title           String
-  description     String   @db.Text
-  imageUrl        String?
-  details         String[]
-  status          String   @default("Planning")
-  startDate       DateTime
-  peopleHelped    Int      @default(0)
-  donations       Donation[]
-  category        Category? @relation(fields: [categoryId], references: [id])
-  categoryId      String?
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  imageUrl     String?
+  details      String[]
+  status       String    @default("Planning")
+  startDate    DateTime
+  peopleHelped Int       @default(0)
+  category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   String?
+  donations    Donation[]
 }
 
 model Volunteer {
-  id              String   @id @default(cuid())
-  name            String
-  email           String   @unique
-  phone           String?  @unique
-  signupDate      DateTime @default(now())
-  skills          String   @db.Text
-  interests       String[]
-  availability    String[]
-  status          String   @default("Pending")
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?  @unique
+  signupDate   DateTime @default(now())
+  skills       String
+  interests    String[]
+  availability String[]
+  status       String   @default("Pending")
 }
 
 model Donation {
-  id              String      @id @default(cuid())
-  donorName       String
-  email           String
-  amount          Float
-  date            DateTime    @default(now())
-  type            String
-  project         Project?    @relation(fields: [projectId], references: [id])
-  projectId       String?
-  category        Category?   @relation(fields: [categoryId], references: [id])
-  categoryId      String?
+  id         String   @id @default(cuid())
+  donorName  String
+  email      String
+  amount     Float
+  date       DateTime @default(now())
+  type       String
+  project    Project? @relation(fields: [projectId], references: [id])
+  projectId  String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 }
 
 model User {
-  id              String   @id @default(cuid())
-  name            String
-  email           String   @unique
-  password        String
-  role            String   @default("ADMIN")
-  joinDate        DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("ADMIN")
+  joinDate  DateTime @default(now())
 }
 
 model Category {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  projects  Project[]
-  donations Donation[]
+  id       String    @id @default(cuid())
+  name     String    @unique
+  projects Project[]
+  Donation Donation[]
 }
 
 model Settings {
-  id                         String   @id @default(cuid())
-  appName                    String?
-  logo                       String?
-  logoType                   String?
-  volunteerIcon              String?
-  heroTitle                  String?
-  heroDescription            String?
-  heroImage                  String?
-  missionIntroTitle          String?
-  missionIntroDescription    String?
-  missionImage               String?
-  missionTitle               String?
-  missionDescription         String?
-  visionTitle                String?
-  visionDescription          String?
-  valuesTitle                String?
-  valuesDescription          String?
-  volunteerIntroTitle        String?
-  volunteerIntroDescription1 String?
-  volunteerIntroDescription2 String?
-  socialLinksTwitter         String?
-  socialLinksFacebook        String?
-  socialLinksInstagram       String?
-  createdAt                  DateTime @default(now())
-  updatedAt                  DateTime @updatedAt
+  id                          String  @id @default(cuid())
+  appName                     String?
+  logo                        String?
+  logoType                    String?
+  volunteerIcon               String?
+  heroTitle                   String?
+  heroDescription             String?
+  heroImage                   String?
+  missionIntroTitle           String?
+  missionIntroDescription     String?
+  missionImage                String?
+  missionTitle                String?
+  missionDescription          String?
+  visionTitle                 String?
+  visionDescription           String?
+  valuesTitle                 String?
+  valuesDescription           String?
+  volunteerIntroTitle         String?
+  volunteerIntroDescription1  String?
+  volunteerIntroDescription2  String?
+  socialLinksTwitter          String?
+  socialLinksFacebook         String?
+  socialLinksInstagram        String?
 }
