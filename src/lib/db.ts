@@ -16,6 +16,12 @@ const defaultSettings: Settings = {
         title: "Compassion in Action",
         description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
     },
+    heroImages: [
+        "https://picsum.photos/seed/hero-bg/1920/1080",
+        "https://picsum.photos/seed/proj-water/1920/1080",
+        "https://picsum.photos/seed/proj-edu/1920/1080",
+        "https://picsum.photos/seed/proj-med/1920/1080"
+    ],
     missionIntro: {
         title: "Empowering Change, One Life at a Time",
         description: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."
@@ -77,13 +83,21 @@ export async function deleteCategory(id: string): Promise<void> {
 // Projects
 export async function getProjects(): Promise<Project[]> {
     const projects = await prisma.project.findMany({ include: { category: true } });
-    return projects.map(p => ({ ...p, category: p.category?.name || 'Uncategorized' }));
+    return projects.map(p => ({ 
+        ...p, 
+        category: p.category?.name || 'Uncategorized',
+        details: Array.isArray(p.details) ? p.details : (p.details as string).split(',').map(s => s.trim()),
+    }));
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
     const project = await prisma.project.findUnique({ where: { id }, include: { category: true } });
     if (!project) return null;
-    return { ...project, category: project.category?.name || 'Uncategorized' };
+    return { 
+        ...project, 
+        category: project.category?.name || 'Uncategorized',
+        details: Array.isArray(project.details) ? project.details : (project.details as string).split(',').map(s => s.trim()),
+    };
 }
 
 export async function createProject(project: Omit<Project, 'id' | 'peopleHelped' | 'category'> & { category: string, imageUrl?: string }) {
@@ -92,7 +106,7 @@ export async function createProject(project: Omit<Project, 'id' | 'peopleHelped'
             title: project.title,
             description: project.description,
             imageUrl: project.imageUrl,
-            details: project.details,
+            details: project.details.join(','),
             status: project.status,
             startDate: project.startDate,
             peopleHelped: 0,
@@ -107,11 +121,13 @@ export async function createProject(project: Omit<Project, 'id' | 'peopleHelped'
 }
 
 export async function updateProject(id: string, data: Partial<Omit<Project, 'id' | 'category'>> & { category?: string, imageUrl?: string }) {
-    const { category, ...projectData } = data;
+    const { category, details, ...projectData } = data;
+    
     return await prisma.project.update({
         where: { id },
         data: {
             ...projectData,
+            ...(details && { details: (details as string[]).join(',') }),
             ...(category && {
                 category: {
                     connectOrCreate: {
@@ -134,22 +150,37 @@ export async function deleteProject(id: string): Promise<void> {
 
 // Volunteers
 export async function getVolunteers(): Promise<Volunteer[]> {
-    return await prisma.volunteer.findMany();
+    const volunteers = await prisma.volunteer.findMany();
+    return volunteers.map(v => ({
+        ...v,
+        interests: Array.isArray(v.interests) ? v.interests : (v.interests as string).split(',').map(s => s.trim()),
+        availability: Array.isArray(v.availability) ? v.availability : (v.availability as string).split(',').map(s => s.trim()),
+    }))
 }
 
 export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status' | 'signupDate'>) {
     return await prisma.volunteer.create({
         data: {
-            ...volunteer,
+            name: volunteer.name,
+            email: volunteer.email,
+            phone: volunteer.phone,
+            skills: volunteer.skills,
+            availability: volunteer.availability.join(','),
+            interests: volunteer.interests.join(','),
             status: 'Pending',
         }
     });
 }
 
 export async function updateVolunteer(id: string, data: Partial<Omit<Volunteer, 'id'>>) {
+    const { interests, availability, ...volunteerData } = data;
     return await prisma.volunteer.update({
         where: { id },
-        data: data,
+        data: {
+            ...volunteerData,
+            ...(interests && { interests: (interests as string[]).join(',') }),
+            ...(availability && { availability: (availability as string[]).join(',') })
+        },
     });
 }
 
@@ -177,15 +208,19 @@ export async function createDonation(donation: Omit<Donation, 'id' | 'date'>) {
 
 // Users
 export async function getUsers(): Promise<User[]> {
-    return await prisma.user.findMany();
+    return (await prisma.user.findMany()).map(u => ({ ...u, password: u.password || undefined }));
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-    return await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return null;
+    return { ...user, password: user.password || undefined };
 }
 
 export async function getUserById(id: string): Promise<User | null> {
-    return await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) return null;
+    return { ...user, password: user.password || undefined };
 }
 
 export async function createUser(user: Omit<User, 'id' | 'joinDate' | 'role'>) {
@@ -213,6 +248,8 @@ export async function getSettings(): Promise<Settings> {
     const dbSettings = await prisma.settings.findFirst();
     if (!dbSettings) return defaultSettings;
 
+    const heroImages = dbSettings.heroImages ? (dbSettings.heroImages as string).split(',').map(s => s.trim()) : defaultSettings.heroImages;
+
     return {
         id: dbSettings.id,
         appName: dbSettings.appName || defaultSettings.appName,
@@ -223,7 +260,7 @@ export async function getSettings(): Promise<Settings> {
             title: dbSettings.heroTitle || defaultSettings.hero.title,
             description: dbSettings.heroDescription || defaultSettings.hero.description,
         },
-        heroImages: (dbSettings.heroImages as string[] | undefined) || defaultSettings.heroImages,
+        heroImages: heroImages,
         missionIntro: {
             title: dbSettings.missionIntroTitle || defaultSettings.missionIntro.title,
             description: dbSettings.missionIntroDescription || defaultSettings.missionIntro.description,
@@ -256,41 +293,31 @@ export async function getSettings(): Promise<Settings> {
 
 
 export async function updateSettings(settings: Partial<Settings>) {
-    try {
-        const currentSettings = await prisma.settings.findFirst();
-        
-        // Prepare database settings, excluding socialLinks
-        const { socialLinks, ...rest } = settings;
-        
-        const dbSettings = {
-            ...rest,
-            // Handle social links separately
-            ...(socialLinks && {
-                socialLinksTwitter: socialLinks[0]?.href,
-                socialLinksFacebook: socialLinks[1]?.href,
-                socialLinksInstagram: socialLinks[2]?.href,
-            })
-        };
+    const currentSettings = await prisma.settings.findFirst();
+    
+    // Prepare database settings, excluding socialLinks
+    const { heroImages, socialLinks, ...rest } = settings;
+    
+    const dbSettings: any = {
+        ...rest,
+        // Handle heroImages array
+        ...(heroImages && { heroImages: heroImages.join(',') }),
+        // Handle social links separately
+        ...(socialLinks && {
+            socialLinksTwitter: socialLinks[0]?.href,
+            socialLinksFacebook: socialLinks[1]?.href,
+            socialLinksInstagram: socialLinks[2]?.href,
+        })
+    };
 
-        // Filter out undefined values
-        Object.keys(dbSettings).forEach(key => 
-            dbSettings[key] === undefined && delete dbSettings[key]
-        );
-
-        console.log('Updating settings with:', dbSettings);
-
-        if (currentSettings) {
-            return await prisma.settings.update({
-                where: { id: currentSettings.id },
-                data: dbSettings,
-            });
-        } else {
-            return await prisma.settings.create({
-                data: dbSettings,
-            });
-        }
-    } catch (error) {
-        console.error('Error updating settings:', error);
-        throw new Error('Failed to update settings. Error: ' + (error as any).message);
+    if (currentSettings) {
+        return await prisma.settings.update({
+            where: { id: currentSettings.id },
+            data: dbSettings,
+        });
+    } else {
+        return await prisma.settings.create({
+            data: dbSettings,
+        });
     }
 }

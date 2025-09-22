@@ -117,6 +117,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             </div>
                             <div className="space-y-4">
                                 <Label>Hero Background Images</Label>
+                                <input type="hidden" name="heroImages" value={heroImagePreviews.join(',')} />
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                     {heroImagePreviews.map((preview, index) => (
                                         <div key={index} className="relative group">
@@ -134,18 +135,13 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                             >
                                                 <LucideIcons.X className="w-4 h-4" />
                                             </button>
-                                            <input
-                                                type="hidden"
-                                                name={`heroImage_${index}`}
-                                                value={preview}
-                                            />
                                         </div>
                                     ))}
                                     <div className="border-2 border-dashed rounded-md aspect-video flex items-center justify-center">
                                         <div className="text-center">
                                             <Input
-                                                id="heroImages"
-                                                name="heroImages"
+                                                id="newHeroImages"
+                                                name="newHeroImages"
                                                 type="file"
                                                 accept="image/png, image/jpeg, image/webp"
                                                 multiple
@@ -153,7 +149,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                                 onChange={handleHeroImagesChange}
                                             />
                                             <label
-                                                htmlFor="heroImages"
+                                                htmlFor="newHeroImages"
                                                 className="cursor-pointer flex flex-col items-center gap-2"
                                             >
                                                 <LucideIcons.Upload className="w-8 h-8 text-muted-foreground" />
@@ -175,11 +171,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Hero Section</h4>
                             <div className="space-y-2">
                                 <Label htmlFor="heroTitle">Title</Label>
-                                <Input id="heroTitle" name="heroTitle" defaultValue={settings.hero.title} />
+                                <Input id="heroTitle" name="heroTitle" defaultValue={settings.hero?.title} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
-                                <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero.description} rows={3} />
+                                <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero?.description} rows={3} />
                             </div>
                         </div>
 
@@ -187,11 +183,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Mission Intro</h4>
                             <div className="space-y-2">
                                 <Label htmlFor="missionIntroTitle">Title</Label>
-                                <Input id="missionIntroTitle" name="missionIntroTitle" defaultValue={settings.missionIntro.title} />
+                                <Input id="missionIntroTitle" name="missionIntroTitle" defaultValue={settings.missionIntro?.title} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="missionIntroDescription">Description</Label>
-                                <Textarea id="missionIntroDescription" name="missionIntroDescription" defaultValue={settings.missionIntro.description} rows={3} />
+                                <Textarea id="missionIntroDescription" name="missionIntroDescription" defaultValue={settings.missionIntro?.description} rows={3} />
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="missionImage">Image</Label>
@@ -225,27 +221,27 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Content Sections</h4>
                              <div className="space-y-2">
                                 <Label htmlFor="missionTitle">Mission Title</Label>
-                                <Input id="missionTitle" name="missionTitle" defaultValue={settings.mission.title} />
+                                <Input id="missionTitle" name="missionTitle" defaultValue={settings.mission?.title} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="missionDescription">Mission Description</Label>
-                                <Textarea id="missionDescription" name="missionDescription" defaultValue={settings.mission.description} rows={3} />
+                                <Textarea id="missionDescription" name="missionDescription" defaultValue={settings.mission?.description} rows={3} />
                             </div>
                             <div className="space-y-2 pt-4">
                                 <Label htmlFor="visionTitle">Vision Title</Label>
-                                <Input id="visionTitle" name="visionTitle" defaultValue={settings.vision.title} />
+                                <Input id="visionTitle" name="visionTitle" defaultValue={settings.vision?.title} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="visionDescription">Vision Description</Label>
-                                <Textarea id="visionDescription" name="visionDescription" defaultValue={settings.vision.description} rows={3} />
+                                <Textarea id="visionDescription" name="visionDescription" defaultValue={settings.vision?.description} rows={3} />
                             </div>
                             <div className="space-y-2 pt-4">
                                 <Label htmlFor="valuesTitle">Values Title</Label>
-                                <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.values.title} />
+                                <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.values?.title} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="valuesDescription">Values Description</Label>
-                                <Textarea id="valuesDescription" name="valuesDescription" defaultValue={settings.values.description} rows={3} />
+                                <Textarea id="valuesDescription" name="valuesDescription" defaultValue={settings.values?.description} rows={3} />
                             </div>
                         </div>
 

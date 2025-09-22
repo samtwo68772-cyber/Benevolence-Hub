@@ -38,6 +38,21 @@ export async function updateSiteSettings(formData: FormData) {
         { icon: 'Facebook', href: formData.get('socialFacebook') as string },
         { icon: 'Instagram', href: formData.get('socialInstagram') as string },
     ];
+    
+    const heroImagesString = formData.get('heroImages') as string;
+    const heroImages = heroImagesString ? heroImagesString.split(',').map(s => s.trim()) : [];
+
+    const newHeroImageFiles = formData.getAll('newHeroImages') as File[];
+
+    for (const file of newHeroImageFiles) {
+         if (file && file.size > 0) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                throw new Error("Hero images must be less than 2MB.");
+            }
+            const dataUri = await fileToDataURI(file);
+            heroImages.push(dataUri);
+        }
+    }
 
 
     const validatedAppName = z.string().min(2).safeParse(appName);
@@ -68,6 +83,7 @@ export async function updateSiteSettings(formData: FormData) {
         appName: validatedAppName.data,
         heroTitle,
         heroDescription,
+        heroImages,
         missionIntroTitle,
         missionIntroDescription,
         missionTitle,
