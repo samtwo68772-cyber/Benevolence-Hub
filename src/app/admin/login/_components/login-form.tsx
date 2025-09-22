@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useFormStatus } from "react-dom";
-import { useActionState } from "react";
+import { useFormStatus, useFormState } from "react-dom";
 import { authenticate } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
@@ -36,7 +35,7 @@ function Logo({ settings }: { settings: Settings }) {
 
 export function LoginForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
-    const [errorMessage, dispatch] = useActionState(authenticate, undefined);
+    const [errorMessage, formAction] = useFormState(authenticate, undefined);
 
     React.useEffect(() => {
         if (errorMessage) {
@@ -59,7 +58,7 @@ export function LoginForm({ settings }: { settings: Settings }) {
           <CardDescription>Enter your credentials to access the dashboard.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" action={dispatch}>
+          <form className="space-y-6" action={formAction}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" placeholder="admin@example.com" required />
