@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedForwardedHosts: ['didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
+      allowedOrigins: ['localhost:9002', 'didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
     },
   },
 };
