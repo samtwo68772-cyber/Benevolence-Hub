@@ -37,7 +37,7 @@ export default async function AdminAdminsPage({ searchParams }: { searchParams: 
   const totalPages = Math.ceil(totalAdmins / ITEMS_PER_PAGE);
 
   const session = await getSession();
-  const currentUserId = session?.userId;
+  const currentUserId = session?.id;
 
   return (
     <div className="flex flex-col h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
