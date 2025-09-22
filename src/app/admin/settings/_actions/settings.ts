@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { getSession, setSession, SessionPayload } from '@/lib/auth';
+import { getSession, createSession } from '@/lib/auth';
 import { getUserByEmail, updateUser, getUserById } from '@/lib/db';
 
 const profileSchema = z.object({
@@ -36,14 +36,14 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
     const { name, email } = validatedFields.data;
 
     const existingUser = await getUserByEmail(email);
-    if (existingUser && existingUser.id !== session.userId) {
+    if (existingUser && existingUser.id !== session.id) {
         throw new Error('Email is already in use by another account.');
     }
 
-    const updatedUser = await updateUser(session.userId, { name, email });
+    const updatedUser = await updateUser(session.id, { name, email });
     
     // Re-set the session with updated information
-    await setSession({
+    await createSession({
         id: updatedUser.id,
         name: updatedUser.name,
         email: updatedUser.email,
@@ -69,7 +69,7 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const { currentPassword, newPassword } = validatedFields.data;
 
-    const user = await getUserById(session.userId);
+    const user = await getUserById(session.id);
     if (!user || !user.password) {
         throw new Error('User not found.');
     }
@@ -81,7 +81,7 @@ export async function changePassword(data: z.infer<typeof passwordSchema>) {
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-    await updateUser(session.userId, { password: hashedNewPassword });
+    await updateUser(session.id, { password: hashedNewPassword });
 
     return { message: 'Password updated successfully.' };
 }

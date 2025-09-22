@@ -7,8 +7,8 @@ import { getSession } from '@/lib/auth';
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
-  const isAdminPath = pathname.startsWith('/admin') && pathname !== '/admin/login';
   const isLoginPage = pathname === '/admin/login';
+  const isAdminPath = pathname.startsWith('/admin') && !isLoginPage;
   
   const session = await getSession();
 

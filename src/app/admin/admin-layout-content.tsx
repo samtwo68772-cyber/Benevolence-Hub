@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { logout } from '@/app/admin/login/_actions/auth';
+import { logout } from '@/lib/auth';
 import { Settings } from '@/lib/types';
 import Image from 'next/image';
 
