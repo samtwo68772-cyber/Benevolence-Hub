@@ -75,10 +75,10 @@ export type Settings = {
   volunteerIcon?: string;
   heroTitle?: string;
   heroDescription?: string;
-  heroImages?: string[];
+  heroImage?: string | null;
   missionIntroTitle?: string;
   missionIntroDescription?: string;
-  missionImage?: string;
+  missionImage?: string | null;
   missionTitle?: string;
   missionDescription?: string;
   visionTitle?: string;

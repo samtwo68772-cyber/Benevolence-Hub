@@ -19,6 +19,7 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
+    const heroImageFile = formData.get('heroImage') as File | null;
     
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
@@ -39,22 +40,6 @@ export async function updateSiteSettings(formData: FormData) {
         { icon: 'Instagram', href: formData.get('socialInstagram') as string },
     ];
     
-    const heroImagesString = formData.get('heroImages') as string;
-    const heroImages = heroImagesString ? heroImagesString.split(',').map(s => s.trim()) : [];
-
-    const newHeroImageFiles = formData.getAll('newHeroImages') as File[];
-
-    for (const file of newHeroImageFiles) {
-         if (file && file.size > 0) {
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                throw new Error("Hero images must be less than 2MB.");
-            }
-            const dataUri = await fileToDataURI(file);
-            heroImages.push(dataUri);
-        }
-    }
-
-
     const validatedAppName = z.string().min(2).safeParse(appName);
     if(!validatedAppName.success) {
         throw new Error("App name must be at least 2 characters.");
@@ -71,6 +56,14 @@ export async function updateSiteSettings(formData: FormData) {
         logoType = 'image';
     }
 
+    let heroImageData: string | undefined;
+    if (heroImageFile && heroImageFile.size > 0) {
+        if (heroImageFile.size > 2 * 1024 * 1024) { // 2MB limit
+            throw new Error("Hero image must be less than 2MB.");
+        }
+        heroImageData = await fileToDataURI(heroImageFile);
+    }
+
     let missionImageData: string | undefined;
     if (missionImageFile && missionImageFile.size > 0) {
         if (missionImageFile.size > 1024 * 1024) { // 1MB limit
@@ -83,7 +76,6 @@ export async function updateSiteSettings(formData: FormData) {
         appName: validatedAppName.data,
         heroTitle,
         heroDescription,
-        heroImages,
         missionIntroTitle,
         missionIntroDescription,
         missionTitle,
@@ -101,6 +93,10 @@ export async function updateSiteSettings(formData: FormData) {
     if (logoData) {
         newSettings.logo = logoData;
         newSettings.logoType = logoType;
+    }
+    
+    if (heroImageData) {
+        newSettings.heroImage = heroImageData;
     }
 
     if (missionImageData) {

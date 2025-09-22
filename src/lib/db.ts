@@ -16,12 +16,7 @@ const defaultSettings: Settings = {
         title: "Compassion in Action",
         description: "Join Benevolence Hub in our mission to bring hope and support to communities in need through impactful humanitarian projects."
     },
-    heroImages: [
-        "https://picsum.photos/seed/hero-bg/1920/1080",
-        "https://picsum.photos/seed/proj-water/1920/1080",
-        "https://picsum.photos/seed/proj-edu/1920/1080",
-        "https://picsum.photos/seed/proj-med/1920/1080"
-    ],
+    heroImage: "https://picsum.photos/seed/hero-bg/1920/1080",
     missionIntro: {
         title: "Empowering Change, One Life at a Time",
         description: "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."
@@ -252,7 +247,7 @@ export async function getSettings(): Promise<Settings> {
             title: dbSettings.heroTitle || defaultSettings.hero!.title,
             description: dbSettings.heroDescription || defaultSettings.hero!.description,
         },
-        heroImages: Array.isArray(dbSettings.heroImages) ? dbSettings.heroImages : defaultSettings.heroImages,
+        heroImage: dbSettings.heroImage || defaultSettings.heroImage,
         missionIntro: {
             title: dbSettings.missionIntroTitle || defaultSettings.missionIntro!.title,
             description: dbSettings.missionIntroDescription || defaultSettings.missionIntro!.description,

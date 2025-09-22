@@ -27,9 +27,10 @@ function SettingsSubmitButton() {
 export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
+    const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background')?.imageUrl;
+    const [heroImagePreview, setHeroImagePreview] = React.useState<string | null>(settings.heroImage || defaultHeroImage || null);
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
-    const [heroImagePreviews, setHeroImagePreviews] = React.useState<string[]>(settings.heroImages || []);
     
     const formRef = React.useRef<HTMLFormElement>(null);
 
@@ -42,21 +43,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
             };
             reader.readAsDataURL(file);
         }
-    };
-
-    const handleHeroImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || []);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setHeroImagePreviews(prev => [...prev, reader.result as string]);
-            };
-            reader.readAsDataURL(file);
-        });
-    };
-
-    const removeHeroImage = (index: number) => {
-        setHeroImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
     
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -79,6 +65,13 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         if (settings.logoType === 'icon') {
             const Icon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
             return <Icon className="w-10 h-10 text-primary" />;
+        }
+        return null;
+    }
+
+    const HeroImagePreview = () => {
+        if (heroImagePreview) {
+            return <Image src={heroImagePreview} alt="Hero background preview" width={160} height={90} className="rounded-md object-cover" />;
         }
         return null;
     }
@@ -115,51 +108,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                     <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={(e) => handleImageChange(e, setLogoPreview)} />
                                 </div>
                             </div>
-                            <div className="space-y-4">
-                                <Label>Hero Background Images</Label>
-                                <input type="hidden" name="heroImages" value={heroImagePreviews.join(',')} />
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {heroImagePreviews.map((preview, index) => (
-                                        <div key={index} className="relative group">
-                                            <Image
-                                                src={preview}
-                                                alt={`Hero image ${index + 1}`}
-                                                width={200}
-                                                height={120}
-                                                className="rounded-md object-cover w-full aspect-video"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeHeroImage(index)}
-                                                className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                <LucideIcons.X className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    ))}
-                                    <div className="border-2 border-dashed rounded-md aspect-video flex items-center justify-center">
-                                        <div className="text-center">
-                                            <Input
-                                                id="newHeroImages"
-                                                name="newHeroImages"
-                                                type="file"
-                                                accept="image/png, image/jpeg, image/webp"
-                                                multiple
-                                                className="hidden"
-                                                onChange={handleHeroImagesChange}
-                                            />
-                                            <label
-                                                htmlFor="newHeroImages"
-                                                className="cursor-pointer flex flex-col items-center gap-2"
-                                            >
-                                                <LucideIcons.Upload className="w-8 h-8 text-muted-foreground" />
-                                                <span className="text-sm text-muted-foreground">Add Images</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-muted-foreground">Upload hero images for the slideshow. Recommended size: 1920x1080px. Max 2MB per image.</p>
-                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="volunteerIcon">Volunteer Section Icon</Label>
                                 <Input id="volunteerIcon" name="volunteerIcon" defaultValue={settings.volunteerIcon} />
@@ -176,6 +124,16 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero?.description} rows={3} />
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="heroImage">Background Image</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-40 h-auto flex items-center justify-center">
+                                        <HeroImagePreview />
+                                    </div>
+                                    <Input id="heroImage" name="heroImage" type="file" accept="image/png, image/jpeg" onChange={(e) => handleImageChange(e, setHeroImagePreview)} />
+                                </div>
+                                <p className="text-sm text-muted-foreground">Upload a background for the hero section. Max 2MB.</p>
                             </div>
                         </div>
 

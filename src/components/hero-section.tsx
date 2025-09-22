@@ -8,49 +8,30 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowDown } from 'lucide-react';
 import { Settings } from '@/lib/types';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
-import Fade from 'embla-carousel-fade';
 
 export default function HeroSection({ settings }: { settings: Settings }) {
-  const slideshowImages = [
-    'hero-background', 
-    'project-water', 
-    'project-education', 
-    'project-medical'
-  ].map(id => PlaceHolderImages.find(img => img.id === id)).filter(Boolean) as typeof PlaceHolderImages;
-
-  const [emblaRef] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 5000, stopOnInteraction: false }),
-    Fade()
-  ]);
+  const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background');
+  const heroImageSrc = settings.heroImage || defaultHeroImage?.imageUrl;
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center">
-      <div className="absolute inset-0 overflow-hidden" ref={emblaRef}>
-        <div className="flex h-full">
-          {slideshowImages.map((image, index) => (
-            <div className="relative flex-[0_0_100%] h-full" key={index}>
-              <Image
-                src={image.imageUrl}
-                alt={image.description}
-                fill
-                className="object-cover"
-                priority={index === 0}
-                data-ai-hint={image.imageHint}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      {heroImageSrc && (
+        <Image
+          src={heroImageSrc}
+          alt={defaultHeroImage?.description || 'Hero background image'}
+          fill
+          className="object-cover"
+          priority
+          data-ai-hint={defaultHeroImage?.imageHint}
+        />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
         <h1 className="font-headline text-4xl sm:text-6xl md:text-7xl leading-tight drop-shadow-2xl">
-          {settings.hero.title}
+          {settings.hero?.title}
         </h1>
         <p className="mt-6 text-lg md:text-xl max-w-2xl mx-auto font-light drop-shadow-lg">
-          {settings.hero.description}
+          {settings.hero?.description}
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link href="#projects">
