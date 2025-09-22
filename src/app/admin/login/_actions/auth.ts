@@ -3,7 +3,7 @@
 
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { createSession, clearSession } from '@/lib/auth';
+import { createSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export async function authenticate(
@@ -22,7 +22,7 @@ export async function authenticate(
       where: { email },
     });
 
-    if (!user || user.role !== 'ADMIN') {
+    if (!user) {
       return 'Invalid credentials.';
     }
 

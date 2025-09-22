@@ -1,3 +1,4 @@
+
 services:
   app:
     build:
@@ -17,7 +18,12 @@ services:
       - .:/app
       - /app/node_modules
     command: >
-      sh -c "npm run db:migrate && npm run db:seed && npm run start"
+      sh -c "
+        npx prisma migrate deploy &&
+        npx prisma generate &&
+        npx prisma db seed &&
+        npm run start
+      "
 
   postgres:
     image: postgres:latest
