@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
-import { authenticate } from "../../_actions/auth";
+import { authenticate } from "../_actions/auth";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
 import { Settings } from "@/lib/types";

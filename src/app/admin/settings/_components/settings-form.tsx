@@ -12,7 +12,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { updateProfile, changePassword } from '../_actions/settings';
-import { SessionPayload } from '@/lib/session';
+import { SessionPayload } from '@/lib/auth';
 
 const profileFormSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters."),

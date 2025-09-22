@@ -29,7 +29,6 @@ export async function authenticate(
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (passwordsMatch) {
-      // Create session and redirect to admin dashboard
       await setSession(user);
       redirect('/admin');
     } else {

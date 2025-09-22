@@ -1,5 +1,5 @@
 
-import { getSession } from '@/lib/session';
+import { getSession } from '@/lib/auth';
 import { SettingsForm } from './_components/settings-form';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 

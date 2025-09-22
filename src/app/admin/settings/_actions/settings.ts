@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { getSession, createSession, SessionPayload } from '@/lib/session';
+import { getSession, setSession, SessionPayload } from '@/lib/auth';
 import { getUserByEmail, updateUser, getUserById } from '@/lib/db';
 
 const profileSchema = z.object({
@@ -40,16 +40,10 @@ export async function updateProfile(data: z.infer<typeof profileSchema>) {
         throw new Error('Email is already in use by another account.');
     }
 
-    await updateUser(session.userId, { name, email });
+    const updatedUser = await updateUser(session.userId, { name, email });
     
-    const updatedSession: SessionPayload = {
-        userId: session.userId,
-        name,
-        email,
-        role: session.role
-    };
-    
-    await createSession(updatedSession);
+    // Re-set the session with updated information
+    await setSession(updatedUser);
 
     revalidatePath('/admin/settings');
     return { message: 'Profile updated successfully.' };

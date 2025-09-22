@@ -1,14 +1,9 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'standalone',
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['github.dev', 'app.github.dev', 'localhost:9002'],
-      bodySizeLimit: '2mb'
-    },
-  },
   // Optimize development and production
   webpack: (config, { dev }) => {
     // Development-specific optimizations

@@ -19,24 +19,23 @@ import { addAdmin } from './_actions/admins';
 import { getUsers } from '@/lib/db';
 import { AdminActions } from './_components/admin-actions';
 import { PaginationControls } from '@/components/ui/pagination';
+import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 const ITEMS_PER_PAGE = 7;
 
 export default async function AdminAdminsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-  const page = Number(searchParams.page || '1');
-  const skip = (page - 1) * ITEMS_PER_PAGE;
+    const page = Number(searchParams.page || '1');
+    const skip = (page - 1) * ITEMS_PER_PAGE;
 
-  const allAdmins = (await getUsers()).filter(u => u.role === 'ADMIN');
-  const admins = allAdmins
+    const allAdmins = (await getUsers()).filter(u => u.role === 'ADMIN');
+    const admins = allAdmins
     .sort((a, b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime())
     .slice(skip, skip + ITEMS_PER_PAGE);
   const totalAdmins = allAdmins.length;
   const totalPages = Math.ceil(totalAdmins / ITEMS_PER_PAGE);
 
-  // Get current user session
-  const { getSession } = await import('@/lib/session');
   const session = await getSession();
   const currentUserId = session?.userId;
 

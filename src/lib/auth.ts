@@ -17,7 +17,7 @@ export type SessionPayload = {
     role: 'ADMIN';
 };
 
-async function encrypt(payload: SessionPayload) {
+async function encrypt(payload: any) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -30,16 +30,22 @@ async function decrypt(session: string | undefined = '') {
     const { payload } = await jwtVerify(session, key, {
       algorithms: ['HS256'],
     });
-    return payload as SessionPayload;
+    return payload;
   } catch (error) {
     console.log('Failed to verify session');
     return null;
   }
 }
 
-export async function createSession(payload: SessionPayload) {
+export async function setSession(user: User) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const session = await encrypt(payload);
+  const sessionPayload: SessionPayload = {
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role as 'ADMIN',
+  };
+  const session = await encrypt(sessionPayload);
 
   cookies().set(cookieName, session, {
     httpOnly: true,
@@ -51,12 +57,12 @@ export async function createSession(payload: SessionPayload) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  const cookie = cookies().get(cookieName)?.value;
-  const session = await decrypt(cookie);
-  return session;
+    const cookie = cookies().get(cookieName)?.value;
+    const session = await decrypt(cookie);
+    return session as SessionPayload | null;
 }
 
-export async function logout() {
+
+export async function clearSession() {
   cookies().delete(cookieName);
-  redirect('/admin/login');
 }
