@@ -4,6 +4,12 @@ import type {NextConfig} from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'standalone',
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['github.dev', 'app.github.dev', 'localhost:9002', 'didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
+      bodySizeLimit: '4mb'
+    }
+  },
   // Optimize development and production
   webpack: (config, { dev }) => {
     // Development-specific optimizations
@@ -51,12 +57,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-  },
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:9002', 'didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
-    },
-  },
+  }
 };
 
 export default nextConfig;

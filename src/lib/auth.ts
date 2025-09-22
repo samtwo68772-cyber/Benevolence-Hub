@@ -57,10 +57,17 @@ export async function setSession(user: User) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-    const cookieStore = cookies();
-    const cookie = cookieStore.get(cookieName)?.value;
-    const session = await decrypt(cookie);
-    return session as SessionPayload | null;
+    try {
+        const cookieStore = await cookies();
+        const cookie = await cookieStore.get(cookieName);
+        if (!cookie?.value) return null;
+        
+        const session = await decrypt(cookie.value);
+        return session as SessionPayload | null;
+    } catch (error) {
+        console.error('Error getting session:', error);
+        return null;
+    }
 }
 
 
