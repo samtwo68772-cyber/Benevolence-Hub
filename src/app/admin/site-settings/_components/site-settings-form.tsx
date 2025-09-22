@@ -27,8 +27,6 @@ function SettingsSubmitButton() {
 export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
-    const defaultHeroImage = PlaceHolderImages.find(img => img.id === 'hero-background')?.imageUrl;
-    const [heroImagePreview, setHeroImagePreview] = React.useState<string | null>(settings.heroImage || defaultHeroImage || null);
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
     
@@ -65,13 +63,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         if (settings.logoType === 'icon') {
             const Icon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
             return <Icon className="w-10 h-10 text-primary" />;
-        }
-        return null;
-    }
-
-    const HeroImagePreview = () => {
-        if (heroImagePreview) {
-            return <Image src={heroImagePreview} alt="Hero background preview" width={160} height={90} className="rounded-md object-cover" />;
         }
         return null;
     }
@@ -124,16 +115,6 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.hero?.description} rows={3} />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="heroImage">Background Image</Label>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-40 h-auto flex items-center justify-center">
-                                        <HeroImagePreview />
-                                    </div>
-                                    <Input id="heroImage" name="heroImage" type="file" accept="image/png, image/jpeg" onChange={(e) => handleImageChange(e, setHeroImagePreview)} />
-                                </div>
-                                <p className="text-sm text-muted-foreground">Upload a background for the hero section. Max 2MB.</p>
                             </div>
                         </div>
 
