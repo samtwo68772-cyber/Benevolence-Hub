@@ -1,0 +1,64 @@
+diff --git a/node_modules/@prisma/client/generator-build/index.js b/node_modules/@prisma/client/generator-build/index.js
+index 773b062973a970929235e076628b08216c0263f3..9479a95e79a838575c39c63c7847c1b827e85c17 100644
+--- a/node_modules/@prisma/client/generator-build/index.js
++++ b/node_modules/@prisma/client/generator-build/index.js
+@@ -194,7 +194,7 @@
+ // TODO: an alternative to this could be to use https://github.com/prisma/engines/blob/main/helpers/compile/platforms.ts
+ // that way we have a single source of truth for all platforms
+ const platformToDistURL = {
+-  'debian-openssl-1.0.x': 'https://binaries.prisma.sh/all_commits/6a3747c37ff169c90047725a05a6ef02e32ac97e/linux-debian-openssl-1.0.x/libquery_engine.so.node.gz',
++  'debian-openssl-1.0.x': 'https://binaries.prisma.sh/all_commits/6a3747c37ff169c90047725a05a6ef02e32ac97e/linux-debian-openssl-3.0.x/libquery_engine.so.node.gz',
+   'debian-openssl-1.1.x': 'https://binaries.prisma.sh/all_commits/6a3747c37ff169c90047725a05a6ef02e32ac97e/linux-debian-openssl-1.1.x/libquery_engine.so.node.gz',
+   'debian-openssl-3.0.x': 'https://binaries.prisma.sh/all_commits/6a3747c37ff169c90047725a05a6ef02e32ac97e/linux-debian-openssl-3.0.x/libquery_engine.so.node.gz',
+   'rhel-openssl-1.0.x': 'https://binaries.prisma.sh/all_commits/6a3747c37ff169c90047725a05a6ef02e32ac97e/linux-rhel-openssl-1.0.x/libquery_engine.so.node.gz',
+diff --git a/node_modules/@prisma/client/package.json b/node_modules/@prisma/client/package.json
+index 619d08e5c469f3a9e52c87428e21a2c30089e9f6..67f27dd33833b3b4260a9277d33d69022634d0b2 100644
+--- a/node_modules/@prisma/client/package.json
++++ b/node_modules/@prisma/client/package.json
+@@ -6,7 +6,8 @@
+   "generator": {
+     "provider": {
+       "from": "node_modules/@prisma/client/generator-build",
+-      "output": "node_modules/.prisma/client"
++      "output": "node_modules/.prisma/client",
++      "binaryTargets": ["native", "debian-openssl-3.0.x"]
+     },
+     "relationModel": false,
+     "previewFeatures": [
+diff --git a/node_modules/@prisma/client/scripts/default-index.d.ts b/node_modules/@prisma/client/scripts/default-index.d.ts
+index b88c3a372e93b169542a1975e5387440409a80e4..7d4272186835a92a5491eb3c4d7d49818817da3f 100644
+--- a/node_modules/@prisma/client/scripts/default-index.d.ts
++++ b/node_modules/@prisma/client/scripts/default-index.d.ts
+@@ -107,7 +107,8 @@
+ export declare const Prisma: unique symbol;
+ 
+ type PrismaClient<T, U, PR = {}, RE = {}> = {
+-  (options?: Prisma.PrismaClientOptions): PrismaClient<T, U, PR, RE>;
++  new (options?: Prisma.PrismaClientOptions): PrismaClient<T, U, PR, RE>;
++  $connect(): Promise<void>;
+   /**
+    * @deprecated Use `$on` instead.
+    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-prismaclient/logging
+diff --git a/node_modules/@prisma/client/scripts/default-index.js b/node_modules/@prisma/client/scripts/default-index.js
+index 8e454432243d6c703b41e21b764c63286f78f654..928014e7a2b960d5b1d5ed5f265de2d8fc93006a 100644
+--- a/node_modules/@prisma/client/scripts/default-index.js
++++ b/node_modules/@prisma/client/scripts/default-index.js
+@@ -124,4 +124,4 @@
+ }
+ 
+ exports.Prisma.Debug.f = new Error()
+-Object.assign(exports, require('./runtime/index'))
++Object.assign(exports, require('./runtime/index.js'))
+diff --git a/node_modules/@prisma/client/scripts/postinstall.js b/node_modules/@prisma/client/scripts/postinstall.js
+index 99c7595568f5617a264a2b9f39446d32ef7bc034..e6d729606821d3f9b2d6ffb400a40f80b953d100 100644
+--- a/node_modules/@prisma/client/scripts/postinstall.js
++++ b/node_modules/@prisma/client/scripts/postinstall.js
+@@ -62,7 +62,7 @@
+  */
+ async function main() {
+   // if we are in a Vercel environment, we don't want to run this script
+-  if (process.env.VERCEL) {
++  if (false && process.env.VERCEL) {
+     return;
+   }
+ 

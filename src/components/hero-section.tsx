@@ -16,7 +16,7 @@ export default function HeroSection({ settings }: { settings: Settings }) {
     "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1596807490741-8ea3437a280e?auto=format&fit=crop&w=1920&h=1080"
+    "https://images.unsplash.com/photo-1532629345422-759b7f2d8b7e?auto=format&fit=crop&w=1920&h=1080"
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
