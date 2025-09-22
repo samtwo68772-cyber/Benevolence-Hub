@@ -23,12 +23,19 @@ services:
       retries: 3
     command: >
       sh -c "
+        apt-get update && 
+        apt-get install -y wget gnupg && 
+        echo 'deb http://deb.debian.org/debian buster main' > /etc/apt/sources.list.d/buster.list && 
+        apt-get update && 
+        apt-get install -y libssl1.1 && 
+        rm /etc/apt/sources.list.d/buster.list && 
+        apt-get update && 
         echo 'Waiting for database...' &&
         /app/wait-for-it.sh postgres:5432 -t 60 -- echo 'Database is up!' &&
         npx prisma migrate deploy &&
         npx prisma generate &&
         npx prisma db seed &&
-        node server.js
+        npm run start
       "
 
   postgres:

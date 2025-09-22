@@ -1,60 +1,35 @@
-# Stage 1: Dependencies
-FROM node:20-alpine AS deps
+# Use an official Node.js runtime as a parent image
+FROM node:18-slim
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Install dependencies necessary for node-gyp and Python
-RUN apk add --no-cache libc6-compat python3 make g++
+# Install dependencies needed for adding custom apt repositories
+RUN apt-get update && apt-get install -y wget gnupg
 
-# Copy package files
-COPY package.json package-lock.json ./
-RUN npm ci
+# Add Debian Buster repository for libssl1.1
+RUN echo 'deb http://deb.debian.org/debian buster main' > /etc/apt/sources.list.d/buster.list
 
-# Stage 2: Builder
-FROM node:20-alpine AS builder
-WORKDIR /app
+# Update package lists and install libssl1.1
+RUN apt-get update && apt-get install -y libssl1.1
 
-# Copy deps from previous stage
-COPY --from=deps /app/node_modules ./node_modules
+# Clean up apt lists to keep the image small
+RUN rm /etc/apt/sources.list.d/buster.list && apt-get update
+
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
+# Install app dependencies
+RUN npm install
+
+# Copy the rest of the application code
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Build application
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV=production
+# Build the Next.js application
 RUN npm run build
 
-# Stage 3: Runner
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-# Install production dependencies only
-RUN apk add --no-cache openssl
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV PORT=9002
-
-# Create system user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy necessary files and set permissions
-COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/package.json ./package-lock.json ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Switch to non-root user
-USER nextjs
-
-# Expose application port
+# Expose the port the app runs on
 EXPOSE 9002
 
-# Start the application
-CMD ["node", "server.js"]
+# The command to run the application (this will be overridden by docker-compose.yml)
+CMD ["npm", "run", "start"]
