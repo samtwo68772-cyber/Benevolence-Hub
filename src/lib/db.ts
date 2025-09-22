@@ -86,7 +86,7 @@ export async function getProjects(): Promise<Project[]> {
     return projects.map(p => ({ 
         ...p, 
         category: p.category?.name || 'Uncategorized',
-        details: Array.isArray(p.details) ? p.details : (p.details as string).split(',').map(s => s.trim()),
+        details: Array.isArray(p.details) ? p.details : [],
     }));
 }
 
@@ -96,7 +96,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
     return { 
         ...project, 
         category: project.category?.name || 'Uncategorized',
-        details: Array.isArray(project.details) ? project.details : (project.details as string).split(',').map(s => s.trim()),
+        details: Array.isArray(project.details) ? project.details : [],
     };
 }
 
@@ -106,7 +106,7 @@ export async function createProject(project: Omit<Project, 'id' | 'peopleHelped'
             title: project.title,
             description: project.description,
             imageUrl: project.imageUrl,
-            details: project.details.join(','),
+            details: project.details,
             status: project.status,
             startDate: project.startDate,
             peopleHelped: 0,
@@ -121,13 +121,12 @@ export async function createProject(project: Omit<Project, 'id' | 'peopleHelped'
 }
 
 export async function updateProject(id: string, data: Partial<Omit<Project, 'id' | 'category'>> & { category?: string, imageUrl?: string }) {
-    const { category, details, ...projectData } = data;
+    const { category, ...projectData } = data;
     
     return await prisma.project.update({
         where: { id },
         data: {
             ...projectData,
-            ...(details && { details: (details as string[]).join(',') }),
             ...(category && {
                 category: {
                     connectOrCreate: {
@@ -153,8 +152,8 @@ export async function getVolunteers(): Promise<Volunteer[]> {
     const volunteers = await prisma.volunteer.findMany();
     return volunteers.map(v => ({
         ...v,
-        interests: Array.isArray(v.interests) ? v.interests : (v.interests as string).split(',').map(s => s.trim()),
-        availability: Array.isArray(v.availability) ? v.availability : (v.availability as string).split(',').map(s => s.trim()),
+        interests: Array.isArray(v.interests) ? v.interests : [],
+        availability: Array.isArray(v.availability) ? v.availability : [],
     }))
 }
 
@@ -165,22 +164,17 @@ export async function createVolunteer(volunteer: Omit<Volunteer, 'id' | 'status'
             email: volunteer.email,
             phone: volunteer.phone,
             skills: volunteer.skills,
-            availability: volunteer.availability.join(','),
-            interests: volunteer.interests.join(','),
+            availability: volunteer.availability,
+            interests: volunteer.interests,
             status: 'Pending',
         }
     });
 }
 
 export async function updateVolunteer(id: string, data: Partial<Omit<Volunteer, 'id'>>) {
-    const { interests, availability, ...volunteerData } = data;
     return await prisma.volunteer.update({
         where: { id },
-        data: {
-            ...volunteerData,
-            ...(interests && { interests: (interests as string[]).join(',') }),
-            ...(availability && { availability: (availability as string[]).join(',') })
-        },
+        data: data,
     });
 }
 
@@ -248,7 +242,7 @@ export async function getSettings(): Promise<Settings> {
     const dbSettings = await prisma.settings.findFirst();
     if (!dbSettings) return defaultSettings;
 
-    const heroImages = dbSettings.heroImages ? (dbSettings.heroImages as string).split(',').map(s => s.trim()) : defaultSettings.heroImages;
+    const heroImages = Array.isArray(dbSettings.heroImages) ? dbSettings.heroImages : defaultSettings.heroImages;
 
     return {
         id: dbSettings.id,
@@ -256,33 +250,21 @@ export async function getSettings(): Promise<Settings> {
         logo: dbSettings.logo || defaultSettings.logo,
         logoType: (dbSettings.logoType as 'icon' | 'image') || defaultSettings.logoType,
         volunteerIcon: dbSettings.volunteerIcon || defaultSettings.volunteerIcon,
-        hero: {
-            title: dbSettings.heroTitle || defaultSettings.hero.title,
-            description: dbSettings.heroDescription || defaultSettings.hero.description,
-        },
+        heroTitle: dbSettings.heroTitle || defaultSettings.hero.title,
+        heroDescription: dbSettings.heroDescription || defaultSettings.hero.description,
         heroImages: heroImages,
-        missionIntro: {
-            title: dbSettings.missionIntroTitle || defaultSettings.missionIntro.title,
-            description: dbSettings.missionIntroDescription || defaultSettings.missionIntro.description,
-        },
+        missionIntroTitle: dbSettings.missionIntroTitle || defaultSettings.missionIntro.title,
+        missionIntroDescription: dbSettings.missionIntroDescription || defaultSettings.missionIntro.description,
         missionImage: dbSettings.missionImage,
-        mission: {
-            title: dbSettings.missionTitle || defaultSettings.mission.title,
-            description: dbSettings.missionDescription || defaultSettings.mission.description,
-        },
-        vision: {
-            title: dbSettings.visionTitle || defaultSettings.vision.title,
-            description: dbSettings.visionDescription || defaultSettings.vision.description,
-        },
-        values: {
-            title: dbSettings.valuesTitle || defaultSettings.values.title,
-            description: dbSettings.valuesDescription || defaultSettings.values.description,
-        },
-        volunteerIntro: {
-            title: dbSettings.volunteerIntroTitle || defaultSettings.volunteerIntro.title,
-            description1: dbSettings.volunteerIntroDescription1 || defaultSettings.volunteerIntro.description1,
-            description2: dbSettings.volunteerIntroDescription2 || defaultSettings.volunteerIntro.description2,
-        },
+        missionTitle: dbSettings.missionTitle || defaultSettings.mission.title,
+        missionDescription: dbSettings.missionDescription || defaultSettings.mission.description,
+        visionTitle: dbSettings.visionTitle || defaultSettings.vision.title,
+        visionDescription: dbSettings.visionDescription || defaultSettings.vision.description,
+        valuesTitle: dbSettings.valuesTitle || defaultSettings.values.title,
+        valuesDescription: dbSettings.valuesDescription || defaultSettings.values.description,
+        volunteerIntroTitle: dbSettings.volunteerIntroTitle || defaultSettings.volunteerIntro.title,
+        volunteerIntroDescription1: dbSettings.volunteerIntroDescription1 || defaultSettings.volunteerIntro.description1,
+        volunteerIntroDescription2: dbSettings.volunteerIntroDescription2 || defaultSettings.volunteerIntro.description2,
         socialLinks: [
             { icon: 'Twitter', href: dbSettings.socialLinksTwitter || '#' },
             { icon: 'Facebook', href: dbSettings.socialLinksFacebook || '#' },
@@ -296,12 +278,10 @@ export async function updateSettings(settings: Partial<Settings>) {
     const currentSettings = await prisma.settings.findFirst();
     
     // Prepare database settings, excluding socialLinks
-    const { heroImages, socialLinks, ...rest } = settings;
+    const { socialLinks, ...rest } = settings;
     
     const dbSettings: any = {
         ...rest,
-        // Handle heroImages array
-        ...(heroImages && { heroImages: heroImages.join(',') }),
         // Handle social links separately
         ...(socialLinks && {
             socialLinksTwitter: socialLinks[0]?.href,
