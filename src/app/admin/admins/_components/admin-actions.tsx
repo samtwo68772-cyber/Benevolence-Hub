@@ -17,18 +17,19 @@ import { DeleteAdminDialog } from './delete-admin-dialog';
 import { updateAdmin, deleteAdmin } from '../_actions/admins';
 import { User } from '@/lib/types';
 
-export function AdminActions({ admin }: { admin: User }) {
+export function AdminActions({ admin, currentUserId }: { admin: User, currentUserId?: string }) {
+  const isSelf = admin.id === currentUserId;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" disabled={isSelf}>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <AdminDialog admin={admin} onSave={updateAdmin}>
-          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()} disabled={isSelf}>
             Edit
           </DropdownMenuItem>
         </AdminDialog>
@@ -37,6 +38,7 @@ export function AdminActions({ admin }: { admin: User }) {
           <DropdownMenuItem
             onSelect={(e) => e.preventDefault()}
             className="text-destructive"
+            disabled={isSelf}
           >
             Delete
           </DropdownMenuItem>

@@ -27,11 +27,13 @@ export const dynamic = 'force-dynamic';
 const ITEMS_PER_PAGE = 7;
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-    const page = Number(searchParams.page || '1');
+    // Ensure searchParams is properly typed and awaited
+    const params = searchParams;
+    const page = Number(params?.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
     
-    const statusFilter = searchParams.status as ProjectStatus | undefined;
-    const categoryFilter = searchParams.category as string | undefined;
+    const statusFilter = params?.status as ProjectStatus | undefined;
+    const categoryFilter = params?.category as string | undefined;
 
     const allProjects = await getProjects();
     const allCategories = await getCategories();

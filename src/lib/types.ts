@@ -69,19 +69,30 @@ export type SocialLink = {
 
 export type Settings = {
   id?: string;
-  appName: string;
-  logo: string;
-  logoType: 'icon' | 'image';
-  volunteerIcon: string;
-  hero: Goal;
+  appName?: string;
+  logo?: string;
+  logoType?: string;
+  volunteerIcon?: string;
+  heroTitle?: string;
+  heroDescription?: string;
   heroImages?: string[];
-  missionIntro: Goal;
-  missionImage?: string | null;
-  mission: Goal;
-  vision: Goal;
-  values: Goal;
-  volunteerIntro: VolunteerIntro;
+  missionIntroTitle?: string;
+  missionIntroDescription?: string;
+  missionImage?: string;
+  missionTitle?: string;
+  missionDescription?: string;
+  visionTitle?: string;
+  visionDescription?: string;
+  valuesTitle?: string;
+  valuesDescription?: string;
+  volunteerIntroTitle?: string;
+  volunteerIntroDescription1?: string;
+  volunteerIntroDescription2?: string;
   socialLinks?: SocialLink[];
+  // Internal fields when reading from DB
+  socialLinksTwitter?: string;
+  socialLinksFacebook?: string;
+  socialLinksInstagram?: string;
 };
 
 export type Category = {

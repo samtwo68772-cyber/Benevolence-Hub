@@ -2,9 +2,9 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { getUserByEmail } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { createSession } from '@/lib/session';
+import { createAuthToken, setCookie } from '@/lib/cookies';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -18,22 +18,45 @@ export async function authenticate(
         return 'Please provide both email and password.';
     }
 
-    const user = await getUserByEmail(email);
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        role: true
+      }
+    });
 
-    if (!user || user.role !== 'ADMIN' || !user.password) {
+    if (!user || user.role !== 'ADMIN') {
       return 'Invalid credentials.';
     }
 
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (passwordsMatch) {
-      await createSession({
-          userId: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
+      // Create JWT token
+      const token = await createAuthToken({
+        id: user.id,
+        email: user.email,
+        role: user.role
       });
-      redirect('/admin');
+
+      // Set auth cookie
+      const headers = setCookie('session', token, {
+        maxAge: 7 * 24 * 60 * 60 // 7 days
+      });
+
+      // Create response with headers and redirect
+      const response = new Response(null, {
+        status: 302,
+        headers: {
+          Location: '/admin',
+          ...Object.fromEntries(headers.entries())
+        }
+      });
+
+      return response;
     } else {
       return 'Invalid credentials.';
     }

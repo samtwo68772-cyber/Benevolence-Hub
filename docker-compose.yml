@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: benevolence_app
+    ports:
+      - "9002:9002"
+    environment:
+      - DATABASE_URL=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence
+      - NODE_ENV=production
+      - PORT=9002
+      - SESSION_SECRET=your_session_secret_here
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: >
+      sh -c "npm run db:migrate &&
+             npm run db:seed &&
+             npm run start"
+
+  postgres:
+    image: postgres:latest
+    container_name: benevolence_db
+    environment:
+      POSTGRES_DB: benevolence
+      POSTGRES_USER: benevolence_user
+      POSTGRES_PASSWORD: benevolence_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U benevolence_user -d benevolence"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

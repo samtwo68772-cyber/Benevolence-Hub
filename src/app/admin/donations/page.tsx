@@ -25,11 +25,13 @@ export const dynamic = 'force-dynamic';
 const ITEMS_PER_PAGE = 7;
 
 export default async function AdminDonationsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-    const page = Number(searchParams.page || '1');
+    // Ensure searchParams is properly typed and awaited
+    const params = searchParams;
+    const page = Number(params?.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
     
-    const typeFilter = searchParams.type as string | undefined;
-    const projectFilter = searchParams.project as string | undefined;
+    const typeFilter = params?.type as string | undefined;
+    const projectFilter = params?.project as string | undefined;
 
     const allProjects = await getProjects();
     const allDonations = await getDonations();

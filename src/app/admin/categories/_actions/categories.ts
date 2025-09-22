@@ -17,10 +17,16 @@ export async function addCategory(data: z.infer<typeof categorySchema>) {
         throw new Error('Invalid category name.');
     }
 
-    await dbCreateCategory(validatedFields.data.name);
-
-    revalidatePath('/admin/categories');
-    revalidatePath('/admin/projects');
+    try {
+        await dbCreateCategory(validatedFields.data.name);
+        revalidatePath('/admin/categories');
+        revalidatePath('/admin/projects');
+    } catch (error: any) {
+        if (error?.code === 'P2002') {
+            throw new Error('A category with this name already exists.');
+        }
+        throw error;
+    }
 }
 
 export async function updateCategory(data: z.infer<typeof categorySchema>) {

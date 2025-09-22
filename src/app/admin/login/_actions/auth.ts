@@ -4,6 +4,7 @@
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { setSession, clearSession } from '@/lib/auth';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -28,8 +29,8 @@ export async function authenticate(
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (passwordsMatch) {
-      // In a real application, you would create a session here.
-      // For this prototype, we will just redirect.
+      // Create session and redirect to admin dashboard
+      await setSession(user);
       redirect('/admin');
     } else {
       return 'Invalid credentials.';
@@ -41,4 +42,9 @@ export async function authenticate(
     console.error('Authentication error:', error);
     return 'Something went wrong. Please try again.';
   }
+}
+
+export async function logout() {
+  await clearSession();
+  redirect('/admin/login');
 }

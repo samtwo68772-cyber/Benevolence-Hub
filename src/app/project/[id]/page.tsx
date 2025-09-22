@@ -12,7 +12,9 @@ import { Badge } from '@/components/ui/badge';
 import { getProjectById, getSettings } from '@/lib/db';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = await getProjectById(params.id);
+  // Ensure params is properly typed and awaited
+  const { id } = params;
+  const project = await getProjectById(id);
   const settings = await getSettings();
   
   if (!project) {

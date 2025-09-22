@@ -256,15 +256,41 @@ export async function getSettings(): Promise<Settings> {
 
 
 export async function updateSettings(settings: Partial<Settings>) {
-    const currentSettings = await prisma.settings.findFirst();
-    if (currentSettings) {
-        return await prisma.settings.update({
-            where: { id: currentSettings.id },
-            data: settings as any,
-        });
-    } else {
-         return await prisma.settings.create({
-            data: settings as any, 
-        });
+    try {
+        const currentSettings = await prisma.settings.findFirst();
+        
+        // Prepare database settings, excluding socialLinks
+        const { socialLinks, ...rest } = settings;
+        
+        const dbSettings = {
+            ...rest,
+            // Handle social links separately
+            ...(socialLinks && {
+                socialLinksTwitter: socialLinks[0]?.href,
+                socialLinksFacebook: socialLinks[1]?.href,
+                socialLinksInstagram: socialLinks[2]?.href,
+            })
+        };
+
+        // Filter out undefined values
+        Object.keys(dbSettings).forEach(key => 
+            dbSettings[key] === undefined && delete dbSettings[key]
+        );
+
+        console.log('Updating settings with:', dbSettings);
+
+        if (currentSettings) {
+            return await prisma.settings.update({
+                where: { id: currentSettings.id },
+                data: dbSettings,
+            });
+        } else {
+            return await prisma.settings.create({
+                data: dbSettings,
+            });
+        }
+    } catch (error) {
+        console.error('Error updating settings:', error);
+        throw new Error('Failed to update settings. Error: ' + (error as any).message);
     }
 }

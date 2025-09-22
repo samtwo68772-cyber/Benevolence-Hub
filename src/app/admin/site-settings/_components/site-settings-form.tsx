@@ -29,6 +29,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
+    const [heroImagePreviews, setHeroImagePreviews] = React.useState<string[]>(settings.heroImages || []);
     
     const formRef = React.useRef<HTMLFormElement>(null);
 
@@ -41,6 +42,21 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleHeroImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setHeroImagePreviews(prev => [...prev, reader.result as string]);
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const removeHeroImage = (index: number) => {
+        setHeroImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
     
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -98,7 +114,55 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                     </div>
                                     <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={(e) => handleImageChange(e, setLogoPreview)} />
                                 </div>
-                                <p className="text-sm text-muted-foreground">Upload a new logo. Recommended size: 128x128px. Max 1MB.</p>
+                            </div>
+                            <div className="space-y-4">
+                                <Label>Hero Background Images</Label>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    {heroImagePreviews.map((preview, index) => (
+                                        <div key={index} className="relative group">
+                                            <Image
+                                                src={preview}
+                                                alt={`Hero image ${index + 1}`}
+                                                width={200}
+                                                height={120}
+                                                className="rounded-md object-cover w-full aspect-video"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeHeroImage(index)}
+                                                className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <LucideIcons.X className="w-4 h-4" />
+                                            </button>
+                                            <input
+                                                type="hidden"
+                                                name={`heroImage_${index}`}
+                                                value={preview}
+                                            />
+                                        </div>
+                                    ))}
+                                    <div className="border-2 border-dashed rounded-md aspect-video flex items-center justify-center">
+                                        <div className="text-center">
+                                            <Input
+                                                id="heroImages"
+                                                name="heroImages"
+                                                type="file"
+                                                accept="image/png, image/jpeg, image/webp"
+                                                multiple
+                                                className="hidden"
+                                                onChange={handleHeroImagesChange}
+                                            />
+                                            <label
+                                                htmlFor="heroImages"
+                                                className="cursor-pointer flex flex-col items-center gap-2"
+                                            >
+                                                <LucideIcons.Upload className="w-8 h-8 text-muted-foreground" />
+                                                <span className="text-sm text-muted-foreground">Add Images</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-muted-foreground">Upload hero images for the slideshow. Recommended size: 1920x1080px. Max 2MB per image.</p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="volunteerIcon">Volunteer Section Icon</Label>

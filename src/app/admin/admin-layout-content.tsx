@@ -102,8 +102,8 @@ export default function AdminLayoutContent({
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-muted/40">
-        <Sidebar>
+      <div className="flex w-full bg-muted/40 min-h-screen h-auto">
+        <Sidebar className="h-auto min-h-screen">
           <SidebarHeader>
             <div className="flex items-center justify-between p-2">
                 <div className="flex items-center gap-2">
