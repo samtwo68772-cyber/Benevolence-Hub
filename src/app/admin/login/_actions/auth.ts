@@ -3,7 +3,8 @@
 
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { SignJWT } from 'jose';
+import { createSession, clearSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -19,12 +20,6 @@ export async function authenticate(
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: {
-        id: true,
-        email: true,
-        password: true,
-        role: true
-      }
     });
 
     if (!user || user.role !== 'ADMIN') {
@@ -34,43 +29,26 @@ export async function authenticate(
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (passwordsMatch) {
-      // Create JWT token and set cookie
-      const token = await new SignJWT({
-        id: user.id,
+      await createSession({
+        userId: user.id,
+        name: user.name,
         email: user.email,
-        role: user.role
-      })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('7d')
-        .setIssuedAt()
-        .sign(new TextEncoder().encode(process.env.SESSION_SECRET || 'default-secret-key-for-development'));
-
-      // Return response with Set-Cookie header and redirect
-      return new Response(null, {
-        status: 302,
-        headers: {
-          'Location': '/admin',
-          'Set-Cookie': `session=${token}; Path=/; HttpOnly; ${
-            process.env.NODE_ENV === 'production' ? 'Secure;' : ''
-          } SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`
-        }
+        role: user.role as 'ADMIN',
       });
-    } else {
+      return redirect('/admin');
+    }
+
+    return 'Invalid credentials.';
+  } catch (error) {
+    if ((error as Error).message.includes('credentialssignin')) {
       return 'Invalid credentials.';
     }
-  } catch (error) {
     console.error('Authentication error:', error);
-    return 'Something went wrong. Please try again.';
+    return 'An unexpected error occurred. Please try again.';
   }
 }
 
 export async function logout() {
-  // Return response that clears cookie and redirects
-  return new Response(null, {
-    status: 302,
-    headers: {
-      'Location': '/admin/login',
-      'Set-Cookie': 'session=; Path=/; HttpOnly; Max-Age=0'
-    }
-  });
+  await clearSession();
+  redirect('/admin/login');
 }

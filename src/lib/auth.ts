@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { cookies } from 'next/headers';
@@ -37,15 +38,9 @@ async function decrypt(session: string | undefined = '') {
   }
 }
 
-export async function setSession(user: User) {
+export async function createSession(data: SessionPayload) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const sessionPayload: SessionPayload = {
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role as 'ADMIN',
-  };
-  const session = await encrypt(sessionPayload);
+  const session = await encrypt(data);
 
   cookies().set(cookieName, session, {
     httpOnly: true,
@@ -57,17 +52,12 @@ export async function setSession(user: User) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-    try {
-        const cookieStore = await cookies();
-        const cookie = await cookieStore.get(cookieName);
-        if (!cookie?.value) return null;
-        
-        const session = await decrypt(cookie.value);
-        return session as SessionPayload | null;
-    } catch (error) {
-        console.error('Error getting session:', error);
-        return null;
-    }
+    const cookieStore = cookies();
+    const cookie = cookieStore.get(cookieName);
+    if (!cookie?.value) return null;
+    
+    const session = await decrypt(cookie.value);
+    return session as SessionPayload | null;
 }
 
 

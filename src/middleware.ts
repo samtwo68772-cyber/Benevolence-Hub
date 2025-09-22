@@ -1,73 +1,45 @@
 
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getSession } from '@/lib/auth';
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const isAdminRoute = pathname.startsWith('/admin');
-  const isLoginRoute = pathname === '/admin/login';
+  const isAdminPath = pathname.startsWith('/admin');
 
-  // For non-admin routes, proceed normally
-  if (!isAdminRoute) {
+  // If it's not an admin path, do nothing.
+  if (!isAdminPath) {
     return NextResponse.next();
   }
 
-  // Get session cookie
-  const session = request.cookies.get('session')?.value;
+  const session = await getSession();
+  const isLoginPage = pathname === '/admin/login';
 
-  // Handle admin login route
-  if (isLoginRoute) {
-    // If we have a valid session, redirect to admin dashboard
+  if (isLoginPage) {
+    // If the user is logged in and tries to access the login page,
+    // redirect them to the admin dashboard.
     if (session) {
-      try {
-        // Import needs to be dynamic in middleware
-        const { jwtVerify } = await import('jose');
-        const secretKey = process.env.SESSION_SECRET || 'default-secret-key-for-development';
-        const key = new TextEncoder().encode(secretKey);
-        
-        const { payload } = await jwtVerify(session, key, {
-          algorithms: ['HS256'],
-        });
-        if ((payload as any).role === 'ADMIN') {
-          return NextResponse.redirect(new URL('/admin', request.url));
-        }
-      } catch (error) {
-        // Invalid session, let them proceed to login
-      }
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
+    // Otherwise, allow them to see the login page.
     return NextResponse.next();
   }
 
-  // For all other admin routes, require authentication
+  // For all other admin pages, if there's no session,
+  // redirect to the login page.
   if (!session) {
     const loginUrl = new URL('/admin/login', request.url);
+    // Add a callbackUrl so we can redirect back after login
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  try {
-    // Import needs to be dynamic in middleware
-    const { jwtVerify } = await import('jose');
-    const secretKey = process.env.SESSION_SECRET || 'default-secret-key-for-development';
-    const key = new TextEncoder().encode(secretKey);
-    
-    const { payload } = await jwtVerify(session, key, {
-      algorithms: ['HS256'],
-    });
-
-    if ((payload as any).role !== 'ADMIN') {
-      throw new Error('Not authorized');
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    console.error('Auth error:', error);
-    const loginUrl = new URL('/admin/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+  // If the user is authenticated, allow them to proceed.
+  return NextResponse.next();
 }
 
 export const config = {
+  // Only apply this middleware to the /admin routes, excluding static assets
   matcher: ['/admin/:path*'],
 }
