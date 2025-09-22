@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -122,11 +123,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Mission Intro</h4>
                             <div className="space-y-2">
                                 <Label htmlFor="missionIntroTitle">Title</Label>
-                                <Input id="missionIntroTitle" name="missionIntroTitle" defaultValue={settings.missionIntro?.title} />
+                                <Input id="missionIntroTitle" name="missionIntroTitle" defaultValue={settings.missionIntroTitle} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="missionIntroDescription">Description</Label>
-                                <Textarea id="missionIntroDescription" name="missionIntroDescription" defaultValue={settings.missionIntro?.description} rows={3} />
+                                <Textarea id="missionIntroDescription" name="missionIntroDescription" defaultValue={settings.missionIntroDescription} rows={3} />
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="missionImage">Image</Label>
@@ -144,15 +145,15 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Volunteer Section</h4>
                             <div className="space-y-2">
                                 <Label htmlFor="volunteerIntroTitle">Title</Label>
-                                <Input id="volunteerIntroTitle" name="volunteerIntroTitle" defaultValue={settings.volunteerIntro?.title} />
+                                <Input id="volunteerIntroTitle" name="volunteerIntroTitle" defaultValue={settings.volunteerIntroTitle} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="volunteerIntroDescription1">Description Paragraph 1</Label>
-                                <Textarea id="volunteerIntroDescription1" name="volunteerIntroDescription1" defaultValue={settings.volunteerIntro?.description1} rows={3} />
+                                <Textarea id="volunteerIntroDescription1" name="volunteerIntroDescription1" defaultValue={settings.volunteerIntroDescription1} rows={3} />
                             </div>
                              <div className="space-y-2">
                                 <Label htmlFor="volunteerIntroDescription2">Description Paragraph 2</Label>
-                                <Textarea id="volunteerIntroDescription2" name="volunteerIntroDescription2" defaultValue={settings.volunteerIntro?.description2} rows={3} />
+                                <Textarea id="volunteerIntroDescription2" name="volunteerIntroDescription2" defaultValue={settings.volunteerIntroDescription2} rows={3} />
                             </div>
                         </div>
                         
@@ -160,27 +161,27 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <h4 className="font-semibold">Homepage: Content Sections</h4>
                              <div className="space-y-2">
                                 <Label htmlFor="missionTitle">Mission Title</Label>
-                                <Input id="missionTitle" name="missionTitle" defaultValue={settings.mission?.title} />
+                                <Input id="missionTitle" name="missionTitle" defaultValue={settings.missionTitle} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="missionDescription">Mission Description</Label>
-                                <Textarea id="missionDescription" name="missionDescription" defaultValue={settings.mission?.description} rows={3} />
+                                <Textarea id="missionDescription" name="missionDescription" defaultValue={settings.missionDescription} rows={3} />
                             </div>
                             <div className="space-y-2 pt-4">
                                 <Label htmlFor="visionTitle">Vision Title</Label>
-                                <Input id="visionTitle" name="visionTitle" defaultValue={settings.vision?.title} />
+                                <Input id="visionTitle" name="visionTitle" defaultValue={settings.visionTitle} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="visionDescription">Vision Description</Label>
-                                <Textarea id="visionDescription" name="visionDescription" defaultValue={settings.vision?.description} rows={3} />
+                                <Textarea id="visionDescription" name="visionDescription" defaultValue={settings.visionDescription} rows={3} />
                             </div>
                             <div className="space-y-2 pt-4">
                                 <Label htmlFor="valuesTitle">Values Title</Label>
-                                <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.values?.title} />
+                                <Input id="valuesTitle" name="valuesTitle" defaultValue={settings.valuesTitle} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="valuesDescription">Values Description</Label>
-                                <Textarea id="valuesDescription" name="valuesDescription" defaultValue={settings.values?.description} rows={3} />
+                                <Textarea id="valuesDescription" name="valuesDescription" defaultValue={settings.valuesDescription} rows={3} />
                             </div>
                         </div>
 

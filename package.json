@@ -15,7 +15,7 @@
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
-    "postinstall": "prisma generate --no-engine"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

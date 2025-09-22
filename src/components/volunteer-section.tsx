@@ -99,12 +99,12 @@ export default function VolunteerSection({ settings, categories: initialCategori
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
             <VolunteerIcon className="h-16 w-16 text-primary" />
-            <h2 className="font-headline text-4xl md:text-5xl">{settings.volunteerIntro?.title}</h2>
+            <h2 className="font-headline text-4xl md:text-5xl">{settings.volunteerIntroTitle}</h2>
             <p className="text-lg text-muted-foreground">
-             {settings.volunteerIntro?.description1}
+             {settings.volunteerIntroDescription1}
             </p>
              <p className="text-lg text-muted-foreground">
-              {settings.volunteerIntro?.description2}
+              {settings.volunteerIntroDescription2}
             </p>
           </div>
           <div className="rounded-lg bg-card p-6 sm:p-8 shadow-xl">

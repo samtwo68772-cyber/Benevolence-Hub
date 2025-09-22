@@ -10,18 +10,18 @@ export default function MissionSection({ settings }: { settings: Settings }) {
   const goals = [
     {
       icon: Target,
-      title: settings.mission?.title || "Our Mission",
-      description: settings.mission?.description || "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.",
+      title: settings.missionTitle || "Our Mission",
+      description: settings.missionDescription || "To provide immediate relief and long-term solutions to communities affected by poverty and disaster, fostering resilience and self-sufficiency.",
     },
     {
       icon: Eye,
-      title: settings.vision?.title || "Our Vision",
-      description: settings.vision?.description || "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.",
+      title: settings.visionTitle || "Our Vision",
+      description: settings.visionDescription || "A world where every individual has the opportunity to live a life of dignity, health, and well-being, free from hardship.",
     },
     {
       icon: HandHeart,
-      title: settings.values?.title || "Our Values",
-      description: settings.values?.description || "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.",
+      title: settings.valuesTitle || "Our Values",
+      description: settings.valuesDescription || "We operate with compassion, integrity, and transparency, ensuring that every contribution makes a tangible and lasting impact.",
     },
   ];
 
@@ -31,10 +31,10 @@ export default function MissionSection({ settings }: { settings: Settings }) {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <h2 className="font-headline text-4xl md:text-5xl text-primary">
-              {settings.missionIntro?.title || "Empowering Change, One Life at a Time"}
+              {settings.missionIntroTitle || "Empowering Change, One Life at a Time"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              {settings.missionIntro?.description || "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."}
+              {settings.missionIntroDescription || "At Benevolence Hub, we believe in the power of collective action to create a better world. Our work is driven by a deep commitment to humanity and a vision for a more equitable future."}
             </p>
             <div className="space-y-6">
               {goals.map((goal, index) => (

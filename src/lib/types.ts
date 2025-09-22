@@ -71,7 +71,7 @@ export type Settings = {
   id?: string;
   appName?: string;
   logo?: string;
-  logoType?: string;
+  logoType?: 'icon' | 'image';
   volunteerIcon?: string;
   heroTitle?: string;
   heroDescription?: string;
@@ -89,13 +89,4 @@ export type Settings = {
   volunteerIntroDescription1?: string;
   volunteerIntroDescription2?: string;
   socialLinks?: SocialLink[];
-  // Internal fields when reading from DB
-  socialLinksTwitter?: string;
-  socialLinksFacebook?: string;
-  socialLinksInstagram?: string;
-};
-
-export type Category = {
-    id: string;
-    name: string;
 };

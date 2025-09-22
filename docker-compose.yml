@@ -9,6 +9,7 @@ services:
       - "9002:9002"
     environment:
       - DATABASE_URL=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence
+      - DATABASE_URL_POOLED=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence?pg-bouncer=true
       - NODE_ENV=production
       - PORT=9002
       - SESSION_SECRET=${SESSION_SECRET:-your_session_secret_here}
@@ -23,13 +24,6 @@ services:
       retries: 3
     command: >
       sh -c "
-        apt-get update && 
-        apt-get install -y wget gnupg && 
-        echo 'deb http://deb.debian.org/debian buster main' > /etc/apt/sources.list.d/buster.list && 
-        apt-get update && 
-        apt-get install -y libssl1.1 && 
-        rm /etc/apt/sources.list.d/buster.list && 
-        apt-get update && 
         echo 'Waiting for database...' &&
         /app/wait-for-it.sh postgres:5432 -t 60 -- echo 'Database is up!' &&
         npx prisma migrate deploy &&
