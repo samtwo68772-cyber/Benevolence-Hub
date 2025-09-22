@@ -242,29 +242,39 @@ export async function getSettings(): Promise<Settings> {
     const dbSettings = await prisma.settings.findFirst();
     if (!dbSettings) return defaultSettings;
 
-    const heroImages = Array.isArray(dbSettings.heroImages) ? dbSettings.heroImages : defaultSettings.heroImages;
-
     return {
         id: dbSettings.id,
         appName: dbSettings.appName || defaultSettings.appName,
         logo: dbSettings.logo || defaultSettings.logo,
         logoType: (dbSettings.logoType as 'icon' | 'image') || defaultSettings.logoType,
         volunteerIcon: dbSettings.volunteerIcon || defaultSettings.volunteerIcon,
-        heroTitle: dbSettings.heroTitle || defaultSettings.hero.title,
-        heroDescription: dbSettings.heroDescription || defaultSettings.hero.description,
-        heroImages: heroImages,
-        missionIntroTitle: dbSettings.missionIntroTitle || defaultSettings.missionIntro.title,
-        missionIntroDescription: dbSettings.missionIntroDescription || defaultSettings.missionIntro.description,
+        hero: {
+            title: dbSettings.heroTitle || defaultSettings.hero!.title,
+            description: dbSettings.heroDescription || defaultSettings.hero!.description,
+        },
+        heroImages: Array.isArray(dbSettings.heroImages) ? dbSettings.heroImages : defaultSettings.heroImages,
+        missionIntro: {
+            title: dbSettings.missionIntroTitle || defaultSettings.missionIntro!.title,
+            description: dbSettings.missionIntroDescription || defaultSettings.missionIntro!.description,
+        },
         missionImage: dbSettings.missionImage,
-        missionTitle: dbSettings.missionTitle || defaultSettings.mission.title,
-        missionDescription: dbSettings.missionDescription || defaultSettings.mission.description,
-        visionTitle: dbSettings.visionTitle || defaultSettings.vision.title,
-        visionDescription: dbSettings.visionDescription || defaultSettings.vision.description,
-        valuesTitle: dbSettings.valuesTitle || defaultSettings.values.title,
-        valuesDescription: dbSettings.valuesDescription || defaultSettings.values.description,
-        volunteerIntroTitle: dbSettings.volunteerIntroTitle || defaultSettings.volunteerIntro.title,
-        volunteerIntroDescription1: dbSettings.volunteerIntroDescription1 || defaultSettings.volunteerIntro.description1,
-        volunteerIntroDescription2: dbSettings.volunteerIntroDescription2 || defaultSettings.volunteerIntro.description2,
+        mission: {
+            title: dbSettings.missionTitle || defaultSettings.mission!.title,
+            description: dbSettings.missionDescription || defaultSettings.mission!.description,
+        },
+        vision: {
+            title: dbSettings.visionTitle || defaultSettings.vision!.title,
+            description: dbSettings.visionDescription || defaultSettings.vision!.description,
+        },
+        values: {
+            title: dbSettings.valuesTitle || defaultSettings.values!.title,
+            description: dbSettings.valuesDescription || defaultSettings.values!.description,
+        },
+        volunteerIntro: {
+            title: dbSettings.volunteerIntroTitle || defaultSettings.volunteerIntro!.title,
+            description1: dbSettings.volunteerIntroDescription1 || defaultSettings.volunteerIntro!.description1,
+            description2: dbSettings.volunteerIntroDescription2 || defaultSettings.volunteerIntro!.description2,
+        },
         socialLinks: [
             { icon: 'Twitter', href: dbSettings.socialLinksTwitter || '#' },
             { icon: 'Facebook', href: dbSettings.socialLinksFacebook || '#' },
@@ -284,9 +294,9 @@ export async function updateSettings(settings: Partial<Settings>) {
         ...rest,
         // Handle social links separately
         ...(socialLinks && {
-            socialLinksTwitter: socialLinks[0]?.href,
-            socialLinksFacebook: socialLinks[1]?.href,
-            socialLinksInstagram: socialLinks[2]?.href,
+            socialLinksTwitter: socialLinks.find(s => s.icon === 'Twitter')?.href,
+            socialLinksFacebook: socialLinks.find(s => s.icon === 'Facebook')?.href,
+            socialLinksInstagram: socialLinks.find(s => s.icon === 'Instagram')?.href,
         })
     };
 
