@@ -1,50 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.0.x"]
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
-}
-
 model Project {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
-  description  String
+  description  String    @db.Text
   imageUrl     String?
-  details      String[]
+  details      String?   @db.Text
   status       String
   startDate    DateTime
-  peopleHelped Int
-  category     Category?     @relation(fields: [categoryId], references: [id])
+  peopleHelped Int       @default(0)
+  category     Category? @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
 }
 
 model Volunteer {
-  id           String        @id @default(cuid())
+  id           String   @id @default(cuid())
   name         String
-  email        String        @unique
+  email        String   @unique
   phone        String?
-  signupDate   DateTime      @default(now())
-  skills       String
-  interests    String[]
-  availability String[]
-  status       String        @default("Pending")
+  signupDate   DateTime @default(now())
+  skills       String   @db.Text
+  interests    String?  @db.Text
+  availability String?  @db.Text
+  status       String   @default("Pending")
 }
 
 model Donation {
-  id          String        @id @default(cuid())
+  id          String   @id @default(cuid())
   donorName   String
   email       String
   amount      Float
-  date        DateTime      @default(now())
+  date        DateTime @default(now())
   type        String
-  project     Project?      @relation(fields: [projectId], references: [id])
+  project     Project? @relation(fields: [projectId], references: [id])
   projectId   String?
-  category    Category?     @relation(fields: [categoryId], references: [id])
+  category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  String?
 }
 
@@ -58,34 +60,34 @@ model User {
 }
 
 model Settings {
-  id                         String  @id @default(cuid())
-  appName                    String?
-  logo                       String?
-  logoType                   String?
-  volunteerIcon              String?
-  heroTitle                  String?
-  heroDescription            String?
-  heroImages                 String[]
-  missionIntroTitle          String?
-  missionIntroDescription    String?
-  missionImage               String?
-  missionTitle               String?
-  missionDescription         String?
-  visionTitle                String?
-  visionDescription          String?
-  valuesTitle                String?
-  valuesDescription          String?
-  volunteerIntroTitle        String?
-  volunteerIntroDescription1 String?
-  volunteerIntroDescription2 String?
-  socialLinksTwitter         String?
-  socialLinksFacebook        String?
-  socialLinksInstagram       String?
+  id                          String    @id @default(cuid())
+  appName                     String?
+  logo                        String?
+  logoType                    String?
+  volunteerIcon               String?
+  heroTitle                   String?
+  heroDescription             String?
+  heroImages                  String?   @db.Text
+  missionIntroTitle           String?
+  missionIntroDescription     String?
+  missionImage                String?
+  missionTitle                String?
+  missionDescription          String?
+  visionTitle                 String?
+  visionDescription           String?
+  valuesTitle                 String?
+  valuesDescription           String?
+  volunteerIntroTitle         String?
+  volunteerIntroDescription1  String?
+  volunteerIntroDescription2  String?
+  socialLinksTwitter          String?
+  socialLinksFacebook         String?
+  socialLinksInstagram        String?
 }
 
 model Category {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  projects  Project[]
+  id       String     @id @default(cuid())
+  name     String     @unique
+  projects Project[]
   donations Donation[]
 }

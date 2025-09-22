@@ -8,7 +8,6 @@
     "start": "next start -p 9002",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "postinstall": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "ts-node --project tsconfig.seed.json prisma/seed.ts",
     "docker:build": "docker-compose build",
