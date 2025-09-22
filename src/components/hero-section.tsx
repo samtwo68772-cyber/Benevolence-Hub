@@ -30,7 +30,7 @@ export default function HeroSection({ settings }: { settings: Settings }) {
     }, 5000); // Change image every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [backgroundImages.length]);
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center overflow-hidden">
