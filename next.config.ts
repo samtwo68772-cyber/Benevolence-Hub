@@ -52,6 +52,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      allowedForwardedHosts: ['didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
+    },
+  },
 };
 
 export default nextConfig;

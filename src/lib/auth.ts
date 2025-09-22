@@ -57,7 +57,8 @@ export async function setSession(user: User) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-    const cookie = cookies().get(cookieName)?.value;
+    const cookieStore = cookies();
+    const cookie = cookieStore.get(cookieName)?.value;
     const session = await decrypt(cookie);
     return session as SessionPayload | null;
 }
