@@ -19,7 +19,7 @@ import { addAdmin } from './_actions/admins';
 import { getUsers } from '@/lib/db';
 import { AdminActions } from './_components/admin-actions';
 import { PaginationControls } from '@/components/ui/pagination';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 

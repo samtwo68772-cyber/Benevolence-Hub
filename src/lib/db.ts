@@ -117,7 +117,7 @@ export async function getVolunteerByEmail(email: string): Promise<Volunteer | nu
 }
 
 export async function getVolunteerByPhone(phone: string): Promise<Volunteer | null> {
-    return await prisma.volunteer.findUnique({ where: { phone } });
+    return await prisma.volunteer.findFirst({ where: { phone } });
 }
 
 
@@ -310,3 +310,5 @@ export async function updateSettings(settings: Partial<Settings>) {
         });
     }
 }
+
+    

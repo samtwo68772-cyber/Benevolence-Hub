@@ -14,15 +14,18 @@ const volunteerSchema = z.object({
     interests: z.array(z.string()).nonempty({ message: "Please select at least one area of interest." }),
 });
 
-export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
+type VolunteerFormValues = z.infer<typeof volunteerSchema>;
+
+export async function addVolunteer(data: VolunteerFormValues) {
     const validatedFields = volunteerSchema.safeParse(data);
 
     if (!validatedFields.success) {
+        // This can be more granular if needed
         throw new Error('Invalid volunteer data.');
     }
     
     try {
-        const result = await createVolunteer({
+        await createVolunteer({
             name: validatedFields.data.name,
             email: validatedFields.data.email,
             phone: validatedFields.data.phone || null,
@@ -31,32 +34,11 @@ export async function addVolunteer(data: z.infer<typeof volunteerSchema>) {
             interests: validatedFields.data.interests,
         });
 
-        if (!result) {
-            throw new Error('Failed to create volunteer record');
-        }
-
-        return { success: true };
+        revalidatePath('/admin/volunteers');
     } catch (error: any) {
-        console.error('Volunteer registration error:', error);
-        
-        if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-            throw new Error('A volunteer with this email address has already registered.');
-        }
-        if (error.code === 'P2002' && error.meta?.target?.includes('phone')) {
-            throw new Error('A volunteer with this phone number has already registered.');
-        }
-        if (error.message === 'A volunteer with this email already exists.') {
-            throw new Error('A volunteer with this email address has already registered.');
-        }
-        if (error.message === 'A volunteer with this phone number already exists.') {
-            throw new Error('A volunteer with this phone number has already registered.');
-        }
-        
-        console.error('Detailed error:', error);
-        throw new Error('An unexpected error occurred. Please try again later.');
+        // Re-throw the specific error from the DB layer
+        throw error;
     }
-
-
-    revalidatePath('/admin/volunteers');
 }
 
+    

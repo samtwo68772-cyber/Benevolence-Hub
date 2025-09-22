@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
-import { getSession, createSession } from '@/lib/auth';
+import { getSession, createSession } from '@/lib/session';
 import { getUserByEmail, updateUser, getUserById } from '@/lib/db';
 
 const profileSchema = z.object({
