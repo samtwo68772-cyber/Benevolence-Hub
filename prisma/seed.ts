@@ -2,6 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import * as fs from 'fs';
 import * as path from 'path';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient()
 
@@ -12,15 +13,18 @@ async function main() {
   const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
 
   // Seed Users
+  const hashedPassword = await bcrypt.hash('password', 10);
   for (const user of dbData.users) {
     await prisma.user.upsert({
-      where: { id: user.id },
-      update: {},
+      where: { email: user.email },
+      update: {
+        password: hashedPassword
+      },
       create: {
         id: user.id,
         name: user.name,
         email: user.email,
-        password: user.password,
+        password: hashedPassword,
         role: user.role,
         joinDate: new Date(user.joinDate),
       },

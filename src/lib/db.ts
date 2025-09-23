@@ -310,5 +310,3 @@ export async function updateSettings(settings: Partial<Settings>) {
         });
     }
 }
-
-    

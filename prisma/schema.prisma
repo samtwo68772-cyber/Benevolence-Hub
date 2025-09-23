@@ -1,15 +1,14 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  directUrl    = env("DIRECT_URL")
-}
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Project {
@@ -18,9 +17,9 @@ model Project {
   description  String
   imageUrl     String?
   details      String[]
-  status       String    @default("Planning")
+  status       String
   startDate    DateTime
-  peopleHelped Int       @default(0)
+  peopleHelped Int
   category     Category? @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
@@ -35,29 +34,29 @@ model Volunteer {
   skills       String
   interests    String[]
   availability String[]
-  status       String   @default("Pending")
+  status       String
 }
 
 model Donation {
-  id         String   @id @default(cuid())
-  donorName  String
-  email      String
-  amount     Float
-  date       DateTime @default(now())
-  type       String
-  project    Project? @relation(fields: [projectId], references: [id])
-  projectId  String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  id          String    @id @default(cuid())
+  donorName   String
+  email       String
+  amount      Float
+  date        DateTime  @default(now())
+  type        String
+  project     Project?  @relation(fields: [projectId], references: [id])
+  projectId   String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("ADMIN")
-  joinDate  DateTime @default(now())
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String
+  role     String
+  joinDate DateTime @default(now())
 }
 
 model Category {
@@ -69,10 +68,10 @@ model Category {
 
 model Settings {
   id                          String  @id @default(cuid())
-  appName                     String?
+  appName                     String  @default("Benevolence Hub")
   logo                        String?
-  logoType                    String?
-  volunteerIcon               String?
+  logoType                    String? @default("icon")
+  volunteerIcon               String? @default("HeartHandshake")
   heroTitle                   String?
   heroDescription             String?
   heroImage                   String?
@@ -88,7 +87,7 @@ model Settings {
   volunteerIntroTitle         String?
   volunteerIntroDescription1  String?
   volunteerIntroDescription2  String?
-  socialLinksTwitter          String?
-  socialLinksFacebook         String?
-  socialLinksInstagram        String?
+  socialLinksTwitter        String?
+  socialLinksFacebook       String?
+  socialLinksInstagram      String?
 }

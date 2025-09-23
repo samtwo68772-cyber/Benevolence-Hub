@@ -1,10 +1,13 @@
 
+
+'use server';
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { User } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { createSession, clearSession } from './session';
+import { createSession, clearSession, getSession } from './session';
 
 export async function authenticate(
   prevState: string | undefined,
