@@ -1,14 +1,17 @@
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Project {
@@ -25,11 +28,18 @@ model Project {
   donations    Donation[]
 }
 
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  projects Project[]
+  donations Donation[]
+}
+
 model Volunteer {
   id           String   @id @default(cuid())
   name         String
   email        String   @unique
-  phone        String?
+  phone        String?  @unique
   signupDate   DateTime @default(now())
   skills       String   @db.Text
   interests    String[]
@@ -44,50 +54,43 @@ model Donation {
   amount     Float
   date       DateTime @default(now())
   type       String
-  project    Project? @relation(fields: [projectId], references: [id])
   projectId  String?
-  category   Category? @relation(fields: [categoryId], references: [id])
+  project    Project? @relation(fields: [projectId], references: [id])
   categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
 
 model User {
-  id       String   @id @default(cuid())
-  name     String
-  email    String   @unique
-  password String
-  role     String
-  joinDate DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  joinDate  DateTime @default(now())
 }
 
 model Settings {
-  id                         String  @id @default(cuid())
+  id                         String   @id @default(cuid())
   appName                    String?
-  logo                       String?
+  logo                       String?  @db.Text
   logoType                   String?
   volunteerIcon              String?
   heroTitle                  String?
-  heroDescription            String?
-  heroImage                  String?
+  heroDescription            String?  @db.Text
+  heroImage                  String?  @db.Text
   missionIntroTitle          String?
-  missionIntroDescription    String?
-  missionImage               String?
+  missionIntroDescription    String?  @db.Text
+  missionImage               String?  @db.Text
   missionTitle               String?
-  missionDescription         String?
+  missionDescription         String?  @db.Text
   visionTitle                String?
-  visionDescription          String?
+  visionDescription          String?  @db.Text
   valuesTitle                String?
-  valuesDescription          String?
+  valuesDescription          String?  @db.Text
   volunteerIntroTitle        String?
-  volunteerIntroDescription1 String?
-  volunteerIntroDescription2 String?
+  volunteerIntroDescription1 String?  @db.Text
+  volunteerIntroDescription2 String?  @db.Text
   socialLinksTwitter         String?
   socialLinksFacebook        String?
   socialLinksInstagram       String?
-}
-
-model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  projects Project[]
-  Donation Donation[]
 }
