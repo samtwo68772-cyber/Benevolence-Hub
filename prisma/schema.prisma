@@ -1,52 +1,50 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client-js"
+  provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_URL")
 }
 
 model Project {
-  id           String    @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
-  description  String    @db.Text
-  imageUrl     String?   @db.Text
-  details      String[]
+  description  String        @db.Text
+  imageUrl     String?       @db.Text
+  details      String[]      @db.Text
   status       String
   startDate    DateTime
-  peopleHelped Int       @default(0)
-  category     Category? @relation(fields: [categoryId], references: [id])
-  categoryId   String?
+  peopleHelped Int
   donations    Donation[]
+  category     Category?     @relation(fields: [categoryId], references: [id])
+  categoryId   String?
 }
 
 model Volunteer {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String
-  email        String   @unique
-  phone        String?
-  signupDate   DateTime @default(now())
-  skills       String   @db.Text
+  email        String    @unique
+  phone        String?   @unique
+  signupDate   DateTime
+  skills       String    @db.Text
   interests    String[]
   availability String[]
   status       String
 }
 
 model Donation {
-  id         String   @id @default(cuid())
-  donorName  String
-  email      String
-  amount     Float
-  date       DateTime @default(now())
-  type       String
-  project    Project? @relation(fields: [projectId], references: [id])
-  projectId  String?
-  category   Category? @relation(fields: [categoryId], references: [id])
+  id        String    @id @default(cuid())
+  donorName String
+  email     String
+  amount    Float
+  date      DateTime
+  type      String
+  project   Project?  @relation(fields: [projectId], references: [id])
+  projectId String?
+  category  Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
 }
 
@@ -60,8 +58,8 @@ model User {
 }
 
 model Settings {
-  id                         String  @id @default(cuid())
-  appName                    String?
+  id                         String   @id @default(cuid())
+  appName                    String
   logo                       String?
   logoType                   String?
   volunteerIcon              String?
@@ -86,8 +84,8 @@ model Settings {
 }
 
 model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
+  id       String   @id @default(cuid())
+  name     String   @unique
   projects Project[]
   Donation Donation[]
 }

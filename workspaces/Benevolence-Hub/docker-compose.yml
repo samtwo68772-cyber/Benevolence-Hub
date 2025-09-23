@@ -28,6 +28,7 @@ services:
         echo 'Waiting for database...' &&
         /app/wait-for-it.sh postgres:5432 -t 60 -- echo 'Database is up!' &&
         npx prisma migrate deploy &&
+        npx prisma generate &&
         npx prisma db seed &&
         npm run build &&
         npm start

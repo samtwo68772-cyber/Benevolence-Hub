@@ -51,7 +51,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
     return { 
         ...project, 
         category: project.category?.name || 'Uncategorized',
-        details: Array.isArray(project.details) ? p.details : [],
+        details: Array.isArray(project.details) ? project.details : [],
     };
 }
 
@@ -194,21 +194,22 @@ export async function deleteUser(id: string): Promise<void> {
   
 // Donations
 export async function getDonations(): Promise<Donation[]> {
-  const donations = await prisma.donation.findMany({ include: { project: true } });
+  const donations = await prisma.donation.findMany({ include: { project: true, category: true } });
   return donations.map(d => ({
     ...d,
-    amount: typeof d.amount === 'number' ? d.amount : d.amount,
+    amount: typeof d.amount === 'number' ? d.amount : parseFloat(d.amount as any),
     project: d.project ? { ...d.project, details: [], category: d.project.category?.name || 'Uncategorized' } : null,
   }));
 }
 
 export async function createDonation(donation: Omit<Donation, 'id' | 'date'>) {
-    const { projectId, ...donationData } = donation;
+    const { projectId, categoryId, ...donationData } = donation as any;
 
     return await prisma.donation.create({
         data: {
             ...donationData,
             ...(projectId && { project: { connect: { id: projectId } } }),
+            ...(categoryId && { category: { connect: { id: categoryId } } }),
         }
     });
 }

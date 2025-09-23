@@ -1,24 +1,19 @@
-# Use an official Node.js runtime as a parent image
 FROM node:20-bookworm
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock, etc.)
+# Copy package.json and package-lock.json (or npm-shrinkwrap.json)
 COPY package*.json ./
 
-# Install app dependencies
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the application's code
+# Copy the rest of the application code
 COPY . .
 
-# Generate Prisma client
-RUN npx prisma generate
-
-# Make port 9002 available to the world outside this container
+# Expose the port the app runs on
 EXPOSE 9002
 
-# Define the command to run your app
-# The actual command to run dev/start will be in docker-compose.yml
+# The command to run the app will be handled by docker-compose
 CMD ["npm", "run", "dev"]
