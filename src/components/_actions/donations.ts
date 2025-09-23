@@ -12,7 +12,6 @@ const donationSchema = z.object({
     amount: z.number().min(1, "Amount must be greater than 0."),
     type: z.enum(['ONE_TIME', 'MONTHLY']),
     projectId: z.string().optional().nullable(),
-    categoryId: z.string().optional().nullable(),
 });
 
 export async function addDonation(data: z.infer<typeof donationSchema>) {

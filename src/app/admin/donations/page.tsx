@@ -35,7 +35,6 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
 
     const allProjects = await getProjects();
     const allDonations = await getDonations();
-    const allCategories = await getCategories();
 
     const projectNames = ['General Fund', ...allProjects.map(p => p.title)];
 
@@ -81,14 +80,12 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
                             <TableHead>Amount</TableHead>
                             <TableHead className='hidden sm:table-cell'>Type</TableHead>
                             <TableHead className='hidden md:table-cell'>Project</TableHead>
-                            <TableHead className='hidden lg:table-cell'>Category</TableHead>
                             <TableHead className='hidden lg:table-cell'>Date</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                         </TableHeader>
                         <TableBody>
                         {donations.map((donation) => {
-                            const category = allCategories.find(c => c.id === (donation as any).categoryId);
                             return (
                                 <TableRow key={donation.id}>
                                 <TableCell className="font-medium">{donation.donorName}</TableCell>
@@ -99,7 +96,6 @@ export default async function AdminDonationsPage({ searchParams }: { searchParam
                                     </Badge>
                                 </TableCell>
                                 <TableCell className='hidden md:table-cell'>{(donation as any).project?.title || 'General Fund'}</TableCell>
-                                <TableCell className='hidden lg:table-cell'>{category?.name || 'N/A'}</TableCell>
                                 <TableCell className='hidden lg:table-cell'>{format(new Date(donation.date), 'yyyy-MM-dd')}</TableCell>
                                 <TableCell className="text-right">
                                     <Button variant="ghost" size="icon">

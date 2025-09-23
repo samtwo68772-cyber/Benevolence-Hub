@@ -38,7 +38,6 @@ export type Donation = {
   date: Date;
   type: DonationType;
   projectId: string | null;
-  categoryId?: string | null;
   project?: Partial<Project> | null;
 };
 

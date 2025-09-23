@@ -30,8 +30,8 @@ import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import React from "react"
 import { addDonation } from "./_actions/donations"
-import { Category } from "@/lib/types"
-import { getCategories } from "@/lib/db"
+import { Category, Project } from "@/lib/types"
+import { getCategories, getProjects } from "@/lib/db"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 
 const donationSchema = z.object({
@@ -41,7 +41,6 @@ const donationSchema = z.object({
   customAmount: z.string().optional(),
   isRecurring: z.boolean().default(false),
   projectId: z.string().optional(),
-  categoryId: z.string().optional(),
 }).refine(data => {
     if (data.amount === 'custom') {
         return data.customAmount && !isNaN(parseFloat(data.customAmount)) && parseFloat(data.customAmount) > 0;
@@ -59,15 +58,15 @@ const presetAmounts = ["25", "50", "100", "250"];
 export function DonationDialog({ projectId }: { projectId?: string }) {
   const { toast } = useToast()
   const [open, setOpen] = React.useState(false);
-  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [projects, setProjects] = React.useState<Project[]>([]);
   
   React.useEffect(() => {
-    async function fetchCategories() {
-        const cats = await getCategories();
-        setCategories(cats);
+    async function fetchProjects() {
+        const prjs = await getProjects();
+        setProjects(prjs);
     }
     if (open) {
-        fetchCategories();
+        fetchProjects();
     }
   }, [open])
   
@@ -79,10 +78,13 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
       amount: "50",
       customAmount: "",
       isRecurring: false,
-      projectId: projectId,
-      categoryId: undefined,
+      projectId: projectId || "general",
     },
   })
+
+  React.useEffect(() => {
+    form.setValue('projectId', projectId || 'general');
+  }, [projectId, form]);
 
   async function onSubmit(values: DonationFormValues) {
     const finalAmount = values.amount === 'custom' ? values.customAmount : values.amount;
@@ -92,8 +94,7 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
         email: values.email,
         amount: parseFloat(finalAmount || '0'),
         type: values.isRecurring ? 'MONTHLY' : 'ONE_TIME',
-        projectId: values.projectId,
-        categoryId: values.categoryId
+        projectId: values.projectId === 'general' ? undefined : values.projectId,
     });
 
     toast({
@@ -231,20 +232,20 @@ export function DonationDialog({ projectId }: { projectId?: string }) {
 
             <FormField
                 control={form.control}
-                name="categoryId"
+                name="projectId"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>Project</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!projectId}>
                         <FormControl>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select a category for your donation" />
+                                <SelectValue placeholder="Select a project to support" />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="general">General Fund</SelectItem>
-                            {categories.map((item, index) => (
-                                <SelectItem key={`${item.id}-${index}`} value={item.id}>{item.name}</SelectItem>
+                            {projects.map((item) => (
+                                <SelectItem key={item.id} value={item.id}>{item.title}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>

@@ -77,19 +77,19 @@ type ImpactSectionProps = {
 export default function ImpactSection({ projects, donations, volunteers, approvedVolunteersCount, totalDonations, categories }: ImpactSectionProps) {
   const totalProjects = projects.length;
 
-  const engagementByCategory = categories.map(category => {
-    const categoryDonations = donations
-      .filter(d => (d as any).categoryId === category.id)
+ const engagementByProject = projects.map(project => {
+    const projectDonations = donations
+      .filter(d => d.projectId === project.id)
       .reduce((sum, d) => sum + d.amount, 0);
 
-    const categoryVolunteers = volunteers.filter(v => 
-        v.status === 'Approved' && v.interests.includes(category.name)
+    const projectVolunteers = volunteers.filter(v =>
+      v.status === 'Approved' && Array.isArray(v.interests) && v.interests.includes(project.category || '')
     ).length;
 
     return {
-      category: category.name,
-      donations: categoryDonations,
-      volunteers: categoryVolunteers,
+      category: project.title,
+      donations: projectDonations,
+      volunteers: projectVolunteers,
     };
   });
   
@@ -181,13 +181,13 @@ export default function ImpactSection({ projects, donations, volunteers, approve
           <div className="lg:col-span-2">
             <Card className="shadow-lg h-full">
               <CardHeader>
-                <CardTitle className="font-headline text-2xl">Engagement by Sector</CardTitle>
-                <CardDescription>Donations and approved volunteers for each category.</CardDescription>
+                <CardTitle className="font-headline text-2xl">Engagement by Project</CardTitle>
+                <CardDescription>Donations and approved volunteers for each project.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={barChartConfig} className="h-[350px] w-full">
                   <ResponsiveContainer>
-                    <BarChart data={engagementByCategory} margin={{ top: 20, right: 20, left: -10, bottom: 5 }}>
+                    <BarChart data={engagementByProject} margin={{ top: 20, right: 20, left: -10, bottom: 5 }}>
                       <XAxis
                         dataKey="category"
                         tickLine={false}
