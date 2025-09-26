@@ -1,36 +1,27 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+}
 
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
-datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
 model Project {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
   description  String
   imageUrl     String?
   details      String[]
-  status       String        @default("Planning")
-  startDate    DateTime      @default(now())
-  peopleHelped Int           @default(0)
-  category     Category?     @relation(fields: [categoryId], references: [id])
-  categoryId   String?
+  status       String    @default("Planning")
+  startDate    DateTime
+  peopleHelped Int       @default(0)
   donations    Donation[]
-}
-
-model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  projects Project[]
-  donations Donation[]
+  category     Category?  @relation(fields: [categoryId], references: [id])
+  categoryId   String?
 }
 
 model Volunteer {
@@ -51,7 +42,7 @@ model Donation {
   email       String
   amount      Float
   date        DateTime @default(now())
-  type        String   // "ONE_TIME" or "MONTHLY"
+  type        String
   project     Project? @relation(fields: [projectId], references: [id])
   projectId   String?
   category    Category? @relation(fields: [categoryId], references: [id])
@@ -67,12 +58,19 @@ model User {
   joinDate DateTime @default(now())
 }
 
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  projects  Project[]
+  donations Donation[]
+}
+
 model Settings {
-  id                         String  @id @default(cuid())
-  appName                    String
+  id                         String   @id @default(cuid())
+  appName                    String   @default("Benevolence Hub")
   logo                       String?
-  logoType                   String?
-  volunteerIcon              String?
+  logoType                   String?  @default("icon")
+  volunteerIcon              String?  @default("HeartHandshake")
   heroTitle                  String?
   heroDescription            String?
   heroImage                  String?

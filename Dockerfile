@@ -1,26 +1,20 @@
-# Use a specific Node.js version with a compatible Debian release
+
 FROM node:20-bookworm
 
-# Set the working directory in the container
+# Install necessary packages for Prisma
+RUN apt-get update && apt-get install -y openssl libssl3
+
+# Set up the working directory
 WORKDIR /app
 
-# Install dependencies for Prisma
-RUN apt-get update && apt-get install -y procps openssl
-
-# Copy package.json and package-lock.json (or yarn.lock, etc.)
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install npm dependencies
+# Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Expose the port the app runs on
+# Expose the application port
 EXPOSE 9002
-
-# The command to run the application
-CMD ["npm", "run", "dev"]
