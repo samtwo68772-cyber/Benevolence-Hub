@@ -4,8 +4,7 @@ import { Target, Eye, HandHeart } from "lucide-react";
 import { Settings } from "@/lib/types";
 
 export default function MissionSection({ settings }: { settings: Settings }) {
-  const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image');
-  const missionImageSrc = settings.missionImage || defaultMissionImage?.imageUrl;
+  const missionImageSrc = settings.missionImage;
   
   const goals = [
     {
@@ -51,14 +50,17 @@ export default function MissionSection({ settings }: { settings: Settings }) {
             </div>
           </div>
           <div className="relative h-80 md:h-[500px] rounded-lg overflow-hidden shadow-2xl transform transition-transform duration-500 hover:scale-105">
-            {missionImageSrc && (
+            {missionImageSrc ? (
               <Image
                 src={missionImageSrc}
-                alt={defaultMissionImage?.description || 'Volunteers working together'}
+                alt={settings.missionIntroTitle || 'Mission section image'}
                 fill
                 className="object-cover"
-                data-ai-hint={defaultMissionImage?.imageHint}
               />
+            ) : (
+                <div className="bg-muted w-full h-full flex items-center justify-center">
+                    <span className="text-muted-foreground text-xl">No Image</span>
+                </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
           </div>

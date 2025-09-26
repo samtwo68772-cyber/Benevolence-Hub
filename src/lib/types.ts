@@ -62,7 +62,7 @@ export type VolunteerIntro = {
 }
 
 export type SocialLink = {
-    icon: 'Twitter' | 'Facebook' | 'Instagram';
+    icon: 'Twitter' | 'Facebook' | 'Instagram' | 'YouTube' | 'Telegram' | 'WhatsApp' | 'Mail' | 'Linkedin' | 'TikTok';
     href: string;
 };
 

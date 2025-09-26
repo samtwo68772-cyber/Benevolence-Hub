@@ -97,7 +97,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                     <div className="w-12 h-12 flex items-center justify-center">
                                     <LogoPreview />
                                     </div>
-                                    <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml" onChange={(e) => handleImageChange(e, setLogoPreview)} />
+                                    <Input id="logo" name="logo" type="file" accept="image/png, image/jpeg, image/svg+xml, image/jpg" onChange={(e) => handleImageChange(e, setLogoPreview)} />
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -135,7 +135,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                     <div className="w-40 h-auto flex items-center justify-center">
                                         <MissionImagePreview />
                                     </div>
-                                    <Input id="missionImage" name="missionImage" type="file" accept="image/png, image/jpeg" onChange={(e) => handleImageChange(e, setMissionImagePreview)} />
+                                    <Input id="missionImage" name="missionImage" type="file" accept="image/png, image/jpeg, image/jpg" onChange={(e) => handleImageChange(e, setMissionImagePreview)} />
                                 </div>
                                 <p className="text-sm text-muted-foreground">Upload an image for the mission section. Max 1MB.</p>
                             </div>
@@ -187,17 +187,43 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
 
                         <div className="space-y-4 rounded-md border p-4">
                             <h4 className="font-semibold">Footer: Social Links</h4>
-                             <div className="space-y-2">
-                                <Label htmlFor="socialTwitter">Twitter URL</Label>
-                                <Input id="socialTwitter" name="socialTwitter" defaultValue={settings.socialLinks?.find(s => s.icon === 'Twitter')?.href} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="socialFacebook">Facebook URL</Label>
-                                <Input id="socialFacebook" name="socialFacebook" defaultValue={settings.socialLinks?.find(s => s.icon === 'Facebook')?.href} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="socialInstagram">Instagram URL</Label>
-                                <Input id="socialInstagram" name="socialInstagram" defaultValue={settings.socialLinks?.find(s => s.icon === 'Instagram')?.href} />
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="socialTwitter">Twitter URL</Label>
+                                    <Input id="socialTwitter" name="socialTwitter" defaultValue={settings.socialLinks?.find(s => s.icon === 'Twitter')?.href} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="socialFacebook">Facebook URL</Label>
+                                    <Input id="socialFacebook" name="socialFacebook" defaultValue={settings.socialLinks?.find(s => s.icon === 'Facebook')?.href} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="socialInstagram">Instagram URL</Label>
+                                    <Input id="socialInstagram" name="socialInstagram" defaultValue={settings.socialLinks?.find(s => s.icon === 'Instagram')?.href} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="socialYoutube">YouTube URL</Label>
+                                    <Input id="socialYoutube" name="socialYoutube" defaultValue={settings.socialLinks?.find(s => s.icon === 'Youtube')?.href} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="socialTelegram">Telegram Handle</Label>
+                                    <Input id="socialTelegram" name="socialTelegram" defaultValue={settings.socialLinks?.find(s => s.icon === 'Telegram')?.href} />
+                                </div>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="socialWhatsApp">WhatsApp Number</Label>
+                                    <Input id="socialWhatsApp" name="socialWhatsApp" defaultValue={settings.socialLinks?.find(s => s.icon === 'WhatsApp')?.href} />
+                                </div>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="socialEmail">Email Address</Label>
+                                    <Input id="socialEmail" name="socialEmail" defaultValue={settings.socialLinks?.find(s => s.icon === 'Email')?.href} />
+                                </div>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="socialLinkedin">LinkedIn URL</Label>
+                                    <Input id="socialLinkedin" name="socialLinkedin" defaultValue={settings.socialLinks?.find(s => s.icon === 'Linkedin')?.href} />
+                                </div>
+                                 <div className="space-y-2">
+                                    <Label htmlFor="socialTikTok">TikTok Handle</Label>
+                                    <Input id="socialTikTok" name="socialTikTok" defaultValue={settings.socialLinks?.find(s => s.icon === 'TikTok')?.href} />
+                                </div>
                             </div>
                         </div>
                     </CardContent>

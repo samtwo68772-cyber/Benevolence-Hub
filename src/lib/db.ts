@@ -1,7 +1,8 @@
 
+
 'use server';
 
-import prisma from './prisma';
+import prisma from '@/lib/prisma';
 import { Project, Volunteer, Donation, User, Settings, Category, SocialLink } from './types';
 import { defaultSettings } from './default-settings';
 
@@ -247,7 +248,13 @@ export async function getSettings(): Promise<Settings> {
             { icon: 'Twitter', href: dbSettings.socialLinksTwitter || '#' },
             { icon: 'Facebook', href: dbSettings.socialLinksFacebook || '#' },
             { icon: 'Instagram', href: dbSettings.socialLinksInstagram || '#' },
-        ] as SocialLink[],
+            { icon: 'Youtube', href: dbSettings.socialLinksYoutube || '#' },
+            { icon: 'Telegram', href: dbSettings.socialLinksTelegram || '#' },
+            { icon: 'WhatsApp', href: dbSettings.socialLinksWhatsApp || '#' },
+            { icon: 'Mail', href: dbSettings.socialLinksEmail || '#' },
+            { icon: 'Linkedin', href: dbSettings.socialLinksLinkedin || '#' },
+            { icon: 'TikTok', href: dbSettings.socialLinksTikTok || '#' },
+        ].filter(link => link.href && link.href !== '#') as SocialLink[],
     };
 }
 
@@ -255,57 +262,47 @@ export async function getSettings(): Promise<Settings> {
 export async function updateSettings(settings: Partial<Settings>) {
     const currentSettings = await prisma.settings.findFirst();
 
+    const dataToUpdate = {
+        appName: settings.appName,
+        logo: settings.logo,
+        logoType: settings.logoType,
+        volunteerIcon: settings.volunteerIcon,
+        heroTitle: settings.heroTitle,
+        heroDescription: settings.heroDescription,
+        missionIntroTitle: settings.missionIntroTitle,
+        missionIntroDescription: settings.missionIntroDescription,
+        missionImage: settings.missionImage,
+        missionTitle: settings.missionTitle,
+        missionDescription: settings.missionDescription,
+        visionTitle: settings.visionTitle,
+        visionDescription: settings.visionDescription,
+        valuesTitle: settings.valuesTitle,
+        valuesDescription: settings.valuesDescription,
+        volunteerIntroTitle: settings.volunteerIntroTitle,
+        volunteerIntroDescription1: settings.volunteerIntroDescription1,
+        volunteerIntroDescription2: settings.volunteerIntroDescription2,
+        socialLinksTwitter: settings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
+        socialLinksFacebook: settings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
+        socialLinksInstagram: settings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
+        socialLinksYoutube: settings.socialLinks?.find(s => s.icon === 'Youtube')?.href,
+        socialLinksTelegram: settings.socialLinks?.find(s => s.icon === 'Telegram')?.href,
+        socialLinksWhatsApp: settings.socialLinks?.find(s => s.icon === 'WhatsApp')?.href,
+        socialLinksEmail: settings.socialLinks?.find(s => s.icon === 'Email')?.href,
+        socialLinksLinkedin: settings.socialLinks?.find(s => s.icon === 'Linkedin')?.href,
+        socialLinksTikTok: settings.socialLinks?.find(s => s.icon === 'TikTok')?.href,
+    };
+
+
     if (currentSettings) {
         return await prisma.settings.update({
             where: { id: currentSettings.id },
-            data: {
-                appName: settings.appName,
-                logo: settings.logo,
-                logoType: settings.logoType,
-                volunteerIcon: settings.volunteerIcon,
-                heroTitle: settings.heroTitle,
-                heroDescription: settings.heroDescription,
-                missionIntroTitle: settings.missionIntroTitle,
-                missionIntroDescription: settings.missionIntroDescription,
-                missionImage: settings.missionImage,
-                missionTitle: settings.missionTitle,
-                missionDescription: settings.missionDescription,
-                visionTitle: settings.visionTitle,
-                visionDescription: settings.visionDescription,
-                valuesTitle: settings.valuesTitle,
-                valuesDescription: settings.valuesDescription,
-                volunteerIntroTitle: settings.volunteerIntroTitle,
-                volunteerIntroDescription1: settings.volunteerIntroDescription1,
-                volunteerIntroDescription2: settings.volunteerIntroDescription2,
-                socialLinksTwitter: settings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
-                socialLinksFacebook: settings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
-                socialLinksInstagram: settings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
-            }
+            data: dataToUpdate
         });
     } else {
         return await prisma.settings.create({
             data: {
                 appName: settings.appName!,
-                logo: settings.logo,
-                logoType: settings.logoType,
-                volunteerIcon: settings.volunteerIcon,
-                heroTitle: settings.heroTitle,
-                heroDescription: settings.heroDescription,
-                missionIntroTitle: settings.missionIntroTitle,
-                missionIntroDescription: settings.missionIntroDescription,
-                missionImage: settings.missionImage,
-                missionTitle: settings.missionTitle,
-                missionDescription: settings.missionDescription,
-                visionTitle: settings.visionTitle,
-                visionDescription: settings.visionDescription,
-                valuesTitle: settings.valuesTitle,
-                valuesDescription: settings.valuesDescription,
-                volunteerIntroTitle: settings.volunteerIntroTitle,
-                volunteerIntroDescription1: settings.volunteerIntroDescription1,
-                volunteerIntroDescription2: settings.volunteerIntroDescription2,
-                socialLinksTwitter: settings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
-                socialLinksFacebook: settings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
-                socialLinksInstagram: settings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
+                ...dataToUpdate
             }
         });
     }

@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from 'zod';
@@ -37,6 +38,12 @@ export async function updateSiteSettings(formData: FormData) {
         { icon: 'Twitter', href: formData.get('socialTwitter') as string },
         { icon: 'Facebook', href: formData.get('socialFacebook') as string },
         { icon: 'Instagram', href: formData.get('socialInstagram') as string },
+        { icon: 'Youtube', href: formData.get('socialYoutube') as string },
+        { icon: 'Telegram', href: formData.get('socialTelegram') as string },
+        { icon: 'WhatsApp', href: formData.get('socialWhatsApp') as string },
+        { icon: 'Email', href: formData.get('socialEmail') as string },
+        { icon: 'Linkedin', href: formData.get('socialLinkedin') as string },
+        { icon: 'TikTok', href: formData.get('socialTikTok') as string },
     ];
     
     const validatedAppName = z.string().min(2).safeParse(appName);
@@ -57,8 +64,8 @@ export async function updateSiteSettings(formData: FormData) {
 
     let missionImageData: string | undefined;
     if (missionImageFile && missionImageFile.size > 0) {
-        if (missionImageFile.size > 1024 * 1024) { // 1MB limit
-            throw new Error("Mission image must be less than 1MB.");
+        if (missionImageFile.size > 2 * 1024 * 1024) { // 2MB limit
+            throw new Error("Mission image must be less than 2MB.");
         }
         missionImageData = await fileToDataURI(missionImageFile);
     }
