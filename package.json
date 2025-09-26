@@ -11,6 +11,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate deploy",
+    "db:dev-migrate": "npx prisma migrate dev --name update-settings-socials",
     "db:seed": "ts-node --project tsconfig.seed.json prisma/seed.ts",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
