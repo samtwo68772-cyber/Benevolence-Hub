@@ -1,8 +1,7 @@
 
-
 'use client';
 
-import { Twitter, Facebook, Instagram, Youtube, Send, Linkedin, Mail, Smartphone } from "lucide-react"
+import { Twitter, Facebook, Instagram, Youtube, Send, Linkedin, Mail, Smartphone, HandHeart } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 import * as LucideIcons from 'lucide-react';
@@ -58,7 +57,7 @@ function SocialLinks({ links }: { links: SocialLink[] }) {
         <div className="flex items-center gap-4">
         {links.map((social) => {
             const Icon = socialIconMap[social.icon];
-            if (!social.href || social.href === '#') return null;
+            if (!social.href || social.href === '#' || !Icon) return null;
 
             return (
             <Link key={social.icon} href={formatUrl(social.href, social.icon)} className="text-muted-foreground hover:text-primary transition-colors" prefetch={false} target="_blank" rel="noopener noreferrer">

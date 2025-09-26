@@ -1,24 +1,25 @@
 # Use the official Node.js 20 image.
-FROM node:20-bookworm
+# https://hub.docker.com/_/node
+FROM node:20-bullseye
 
-# Set the working directory in the container
+# Create and change to the app directory.
 WORKDIR /app
 
-# Install dependencies needed for Prisma and other native modules
-RUN apt-get update && apt-get install -y procps openssl libssl1.1 && rm -rf /var/lib/apt/lists/*
-
-# Copy package.json and package-lock.json
+# Copy application dependency manifests to the container image.
+# A wildcard is used to ensure both package.json AND package-lock.json are copied.
+# Copying this first prevents re-running npm install on every code change.
 COPY package*.json ./
-COPY prisma ./prisma/
 
-# Install app dependencies
+# Install production dependencies.
+RUN apt-get update && apt-get install -y libssl1.1 && rm -rf /var/lib/apt/lists/*
 RUN npm install
 
-# Copy the rest of the application code
+# Copy local code to the container image.
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 9002
+# Run the build command which creates the production bundle.
+# The --filter=... option is used to only build the 'nextn' workspace.
+RUN npm run build
 
-# The command to run the app will be provided via docker-compose
-CMD []
+# Set the entrypoint to the production server.
+CMD ["npm", "start"]

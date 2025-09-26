@@ -1,37 +1,44 @@
-
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL_POOLED")
-  directUrl    = env("DIRECT_URL")
-  relationMode = "prisma"
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("ADMIN")
+  joinDate  DateTime @default(now())
+}
+
+model Category {
+  id         String @id @default(cuid())
+  name       String @unique
+  projects   Project[]
+  donations  Donation[]
+}
+
 model Project {
-  id           String        @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
-  description  String
+  description  String    @db.Text
   imageUrl     String?
   details      String[]
   status       String
   startDate    DateTime
-  peopleHelped Int           @default(0)
-  donations    Donation[]
-  category     Category?     @relation(fields: [categoryId], references: [id])
+  peopleHelped Int       @default(0)
+  category     Category? @relation(fields: [categoryId], references: [id])
   categoryId   String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-}
-
-model Category {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  projects  Project[]
-  donations Donation[]
+  donations    Donation[]
 }
 
 model Volunteer {
@@ -39,13 +46,11 @@ model Volunteer {
   name         String
   email        String   @unique
   phone        String?
-  signupDate   DateTime @default(now())
-  skills       String
+  signupDate   DateTime
+  skills       String   @db.Text
   interests    String[]
   availability String[]
-  status       String   @default("Pending")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  status       String
 }
 
 model Donation {
@@ -59,54 +64,36 @@ model Donation {
   projectId   String?
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String
-  joinDate  DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Settings {
-  id String @id @default(cuid())
-  appName String?
-  logo String?
-  logoType String? @default("icon")
-  volunteerIcon String?
-
-  heroTitle String?
-  heroDescription String?
-  heroImage String?
-
-  missionIntroTitle String?
-  missionIntroDescription String?
-  missionImage String?
-  
-  missionTitle String?
-  missionDescription String?
-  visionTitle String?
-  visionDescription String?
-  valuesTitle String?
-  valuesDescription String?
-
-  volunteerIntroTitle String?
-  volunteerIntroDescription1 String?
-  volunteerIntroDescription2 String?
-
-  socialLinksTwitter String?
-  socialLinksFacebook String?
-  socialLinksInstagram String?
-  socialLinksYoutube String?
-  socialLinksTelegram String?
-  socialLinksWhatsApp String?
-  socialLinksEmail String?
-  socialLinksLinkedin String?
-  socialLinksTikTok String?
+  id                          String    @id @default(cuid())
+  appName                     String
+  logo                        String?
+  logoType                    String?
+  volunteerIcon               String?
+  heroTitle                   String?
+  heroDescription             String?
+  heroImage                   String?
+  missionIntroTitle           String?
+  missionIntroDescription     String?
+  missionImage                String?
+  missionTitle                String?
+  missionDescription          String?
+  visionTitle                 String?
+  visionDescription           String?
+  valuesTitle                 String?
+  valuesDescription           String?
+  volunteerIntroTitle         String?
+  volunteerIntroDescription1  String?
+  volunteerIntroDescription2  String?
+  socialLinksTwitter          String?
+  socialLinksFacebook         String?
+  socialLinksInstagram        String?
+  socialLinksYoutube          String?
+  socialLinksTelegram         String?
+  socialLinksWhatsApp         String?
+  socialLinksEmail            String?
+  socialLinksLinkedin         String?
+  socialLinksTikTok           String?
 }
