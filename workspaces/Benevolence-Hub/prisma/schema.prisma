@@ -3,7 +3,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -27,9 +27,9 @@ model Project {
   description  String    @db.Text
   imageUrl     String?   @db.Text
   details      String[]
-  status       String
+  status       String    @default("Planning") // Planning, Active, Completed
   startDate    DateTime
-  peopleHelped Int
+  peopleHelped Int       @default(0)
   donations    Donation[]
   category     Category? @relation(fields: [categoryId], references: [id])
   categoryId   String?
@@ -44,57 +44,59 @@ model Volunteer {
   skills       String   @db.Text
   interests    String[]
   availability String[]
-  status       String
+  status       String   @default("Pending") // Pending, Approved, Rejected
 }
 
 model Donation {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   donorName  String
   email      String
   amount     Float
-  date       DateTime  @default(now())
-  type       String
-  project    Project?  @relation(fields: [projectId], references: [id])
+  date       DateTime @default(now())
+  type       String // ONE_TIME, MONTHLY
+  project    Project? @relation(fields: [projectId], references: [id])
   projectId  String?
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
 }
 
-model Settings {
-  id                        String  @id @default(cuid())
-  appName                   String
-  logo                      String?
-  logoType                  String?
-  volunteerIcon             String?
-  heroTitle                 String?
-  heroDescription           String?
-  heroImage                 String? @db.Text
-  missionIntroTitle         String?
-  missionIntroDescription   String? @db.Text
-  missionImage              String? @db.Text
-  missionTitle              String?
-  missionDescription        String? @db.Text
-  visionTitle               String?
-  visionDescription         String? @db.Text
-  valuesTitle               String?
-  valuesDescription         String? @db.Text
-  volunteerIntroTitle       String?
-  volunteerIntroDescription1 String? @db.Text
-  volunteerIntroDescription2 String? @db.Text
-  socialLinksTwitter        String?
-  socialLinksFacebook       String?
-  socialLinksInstagram      String?
-  socialLinksYoutube        String?
-  socialLinksTelegram       String?
-  socialLinksWhatsApp       String?
-  socialLinksEmail          String?
-  socialLinksLinkedin       String?
-  socialLinksTikTok         String?
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  projects  Project[]
+  donations Donation[]
 }
 
-model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  projects Project[]
-  donations Donation[]
+model Settings {
+  id                         String   @id @default(cuid())
+  appName                    String   @default("Benevolence Hub")
+  logo                       String?
+  logoType                   String?
+  volunteerIcon              String?
+  heroTitle                  String?
+  heroDescription            String?
+  heroImage                  String?
+  missionIntroTitle          String?
+  missionIntroDescription    String?
+  missionImage               String?
+  missionTitle               String?
+  missionDescription         String?
+  visionTitle                String?
+  visionDescription          String?
+  valuesTitle                String?
+  valuesDescription          String?
+  volunteerIntroTitle        String?
+  volunteerIntroDescription1 String?
+  volunteerIntroDescription2 String?
+  socialLinksTwitter         String?
+  socialLinksFacebook        String?
+  socialLinksInstagram       String?
+  socialLinksYoutube         String?
+  socialLinksTelegram        String?
+  socialLinksWhatsApp        String?
+  socialLinksEmail           String?
+  socialLinksLinkedin        String?
+  socialLinksTikTok          String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 }

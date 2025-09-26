@@ -1,23 +1,20 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20-bookworm-slim
+# Use the official Node.js 20 image based on Debian 11 (Bullseye)
+FROM node:20-bullseye
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install app dependencies
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Copy the rest of the application code
 COPY . .
-
-# Make the wait-for-it.sh script executable
-RUN chmod +x /app/wait-for-it.sh
 
 # Expose the port the app runs on
 EXPOSE 9002
 
-# The command to start the app will be handled by docker-compose
-CMD []
+# The command to run the app will be handled by docker-compose.yml
+CMD ["npm", "run", "dev"]
