@@ -1,30 +1,23 @@
-# Use the official Node.js 20 image based on Debian Bullseye
+# Use the official Node.js 20 image as a parent image.
+# This version of Debian ("Bullseye") includes libssl1.1 which is required by Prisma.
 FROM node:20-bullseye
 
-# Set environment variables
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
-# Install pnpm
-RUN corepack enable
-
-# Set the working directory in the container
+# Set the working directory in the container.
 WORKDIR /app
 
-# Install necessary packages including libssl1.1 for Prisma
-RUN apt-get update && apt-get install -y libssl1.1 procps && rm -rf /var/lib/apt/lists/*
+# Copy package.json and package-lock.json to the working directory.
+COPY package*.json ./
 
-# Copy package.json and pnpm-lock.yaml to leverage Docker cache
-COPY package.json ./
+# Install app dependencies.
+RUN npm install
 
-# Install dependencies
-RUN pnpm install
-
-# Copy the rest of the application code
+# Copy the rest of the application's source code to the working directory.
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 9002
+# Copy the wait-for-it.sh script and make it executable
+COPY wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/wait-for-it.sh
 
-# The command to start the app will be handled by docker-compose.yml
-CMD ["npm", "run", "dev"]
+# The Next.js app will be started by the command in docker-compose.yml
+# This CMD is a fallback if the container is run without a command.
+CMD ["npm", "start"]

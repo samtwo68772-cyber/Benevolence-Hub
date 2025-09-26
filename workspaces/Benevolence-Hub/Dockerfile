@@ -1,6 +1,7 @@
-FROM node:20-bookworm
+# Use the official Node.js 20 image based on Debian Bullseye
+FROM node:20-bullseye
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
 # Copy package.json and package-lock.json
@@ -12,11 +13,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Generate Prisma client
-RUN npx prisma generate
-
-# Expose the application port
+# Expose the port the app runs on
 EXPOSE 9002
 
-# The command to run the application will be handled by docker-compose
+# The command to run the app will be handled by docker-compose
 CMD []

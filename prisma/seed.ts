@@ -152,6 +152,12 @@ async function main() {
     socialLinksTwitter: settings.socialLinks?.find((s:any) => s.icon === 'Twitter')?.href || '#',
     socialLinksFacebook: settings.socialLinks?.find((s:any) => s.icon === 'Facebook')?.href || '#',
     socialLinksInstagram: settings.socialLinks?.find((s:any) => s.icon === 'Instagram')?.href || '#',
+    socialLinksYoutube: settings.socialLinks?.find((s:any) => s.icon === 'Youtube')?.href || '#',
+    socialLinksTelegram: settings.socialLinks?.find((s:any) => s.icon === 'Telegram')?.href || '#',
+    socialLinksWhatsApp: settings.socialLinks?.find((s:any) => s.icon === 'WhatsApp')?.href || '#',
+    socialLinksEmail: settings.socialLinks?.find((s:any) => s.icon === 'Email')?.href || '#',
+    socialLinksLinkedin: settings.socialLinks?.find((s:any) => s.icon === 'Linkedin')?.href || '#',
+    socialLinksTikTok: settings.socialLinks?.find((s:any) => s.icon === 'TikTok')?.href || '#',
   };  const existingSettings = await prisma.settings.findFirst();
   if (existingSettings) {
       await prisma.settings.update({
@@ -175,4 +181,5 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
 
