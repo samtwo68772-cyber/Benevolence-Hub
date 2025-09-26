@@ -1,14 +1,15 @@
-
-datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  directUrl    = env("DIRECT_URL")
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
-  binaryTargets   = ["native", "debian-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Project {
@@ -16,10 +17,10 @@ model Project {
   title        String
   description  String
   imageUrl     String?
-  details      Json
-  status       String        @default("PLANNING")
-  startDate    DateTime
-  peopleHelped Int
+  details      String[]
+  status       String        @default("Planning")
+  startDate    DateTime      @default(now())
+  peopleHelped Int           @default(0)
   category     Category?     @relation(fields: [categoryId], references: [id])
   categoryId   String?
   donations    Donation[]
@@ -36,7 +37,7 @@ model Volunteer {
   id           String   @id @default(cuid())
   name         String
   email        String   @unique
-  phone        String?
+  phone        String?  @unique
   signupDate   DateTime @default(now())
   skills       String
   interests    String[]
@@ -45,16 +46,16 @@ model Volunteer {
 }
 
 model Donation {
-  id        String   @id @default(cuid())
-  donorName String
-  email     String
-  amount    Float
-  date      DateTime @default(now())
-  type      String
-  project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?
-  category  Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  id          String   @id @default(cuid())
+  donorName   String
+  email       String
+  amount      Float
+  date        DateTime @default(now())
+  type        String   // "ONE_TIME" or "MONTHLY"
+  project     Project? @relation(fields: [projectId], references: [id])
+  projectId   String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
 }
 
 model User {
@@ -67,33 +68,33 @@ model User {
 }
 
 model Settings {
-  id                         String   @id @default(cuid())
+  id                         String  @id @default(cuid())
   appName                    String
-  logo                       String
-  logoType                   String   @default("icon")
-  volunteerIcon              String
-  heroTitle                  String
-  heroDescription            String
+  logo                       String?
+  logoType                   String?
+  volunteerIcon              String?
+  heroTitle                  String?
+  heroDescription            String?
   heroImage                  String?
-  missionIntroTitle          String
-  missionIntroDescription    String
+  missionIntroTitle          String?
+  missionIntroDescription    String?
   missionImage               String?
-  missionTitle               String
-  missionDescription         String
-  visionTitle                String
-  visionDescription          String
-  valuesTitle                String
-  valuesDescription          String
-  volunteerIntroTitle        String
-  volunteerIntroDescription1 String
-  volunteerIntroDescription2 String
-  socialLinksTwitter         String   @default("#")
-  socialLinksFacebook        String   @default("#")
-  socialLinksInstagram       String   @default("#")
-  socialLinksYoutube         String   @default("#")
-  socialLinksTelegram        String   @default("#")
-  socialLinksWhatsApp        String   @default("#")
-  socialLinksEmail           String   @default("#")
-  socialLinksLinkedin        String   @default("#")
-  socialLinksTikTok          String   @default("#")
+  missionTitle               String?
+  missionDescription         String?
+  visionTitle                String?
+  visionDescription          String?
+  valuesTitle                String?
+  valuesDescription          String?
+  volunteerIntroTitle        String?
+  volunteerIntroDescription1 String?
+  volunteerIntroDescription2 String?
+  socialLinksTwitter         String?
+  socialLinksFacebook        String?
+  socialLinksInstagram       String?
+  socialLinksYoutube         String?
+  socialLinksTelegram        String?
+  socialLinksWhatsApp        String?
+  socialLinksEmail           String?
+  socialLinksLinkedin        String?
+  socialLinksTikTok          String?
 }
