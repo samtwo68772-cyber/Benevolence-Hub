@@ -1,25 +1,30 @@
-# Use the official Node.js 20 image.
-# https://hub.docker.com/_/node
+# Use the official Node.js 20 image based on Debian Bullseye
 FROM node:20-bullseye
 
-# Create and change to the app directory.
+# Set environment variables
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# Install pnpm
+RUN corepack enable
+
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure both package.json AND package-lock.json are copied.
-# Copying this first prevents re-running npm install on every code change.
-COPY package*.json ./
+# Install necessary packages including libssl1.1 for Prisma
+RUN apt-get update && apt-get install -y libssl1.1 procps && rm -rf /var/lib/apt/lists/*
 
-# Install production dependencies.
-RUN apt-get update && apt-get install -y libssl1.1 && rm -rf /var/lib/apt/lists/*
-RUN npm install
+# Copy package.json and pnpm-lock.yaml to leverage Docker cache
+COPY package.json ./
 
-# Copy local code to the container image.
+# Install dependencies
+RUN pnpm install
+
+# Copy the rest of the application code
 COPY . .
 
-# Run the build command which creates the production bundle.
-# The --filter=... option is used to only build the 'nextn' workspace.
-RUN npm run build
+# Expose the port the app runs on
+EXPOSE 9002
 
-# Set the entrypoint to the production server.
-CMD ["npm", "start"]
+# The command to start the app will be handled by docker-compose.yml
+CMD ["npm", "run", "dev"]

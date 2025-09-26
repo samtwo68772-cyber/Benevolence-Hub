@@ -251,7 +251,7 @@ export async function getSettings(): Promise<Settings> {
             { icon: 'Youtube', href: dbSettings.socialLinksYoutube || '#' },
             { icon: 'Telegram', href: dbSettings.socialLinksTelegram || '#' },
             { icon: 'WhatsApp', href: dbSettings.socialLinksWhatsApp || '#' },
-            { icon: 'Mail', href: dbSettings.socialLinksEmail || '#' },
+            { icon: 'Email', href: dbSettings.socialLinksEmail || '#' },
             { icon: 'Linkedin', href: dbSettings.socialLinksLinkedin || '#' },
             { icon: 'TikTok', href: dbSettings.socialLinksTikTok || '#' },
         ].filter(link => link.href && link.href !== '#') as SocialLink[],
