@@ -1,39 +1,51 @@
 
 datasource db {
   provider     = "postgresql"
-  url          = env("DATABASE_URL")
+  url          = env("DATABASE_URL_POOLED")
   directUrl    = env("DIRECT_URL")
+  relationMode = "prisma"
 }
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 model Project {
-  id           String    @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
   description  String
   imageUrl     String?
   details      String[]
-  status       String    @default("Planning")
+  status       String
   startDate    DateTime
-  peopleHelped Int       @default(0)
+  peopleHelped Int           @default(0)
   donations    Donation[]
-  category     Category?  @relation(fields: [categoryId], references: [id])
+  category     Category?     @relation(fields: [categoryId], references: [id])
   categoryId   String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  projects  Project[]
+  donations Donation[]
 }
 
 model Volunteer {
   id           String   @id @default(cuid())
   name         String
   email        String   @unique
-  phone        String?  @unique
+  phone        String?
   signupDate   DateTime @default(now())
   skills       String
   interests    String[]
   availability String[]
   status       String   @default("Pending")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Donation {
@@ -47,52 +59,54 @@ model Donation {
   projectId   String?
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model User {
-  id       String   @id @default(cuid())
-  name     String
-  email    String   @unique
-  password String
-  role     String   @default("ADMIN")
-  joinDate DateTime @default(now())
-}
-
-model Category {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  projects  Project[]
-  donations Donation[]
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  joinDate  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Settings {
-  id                         String   @id @default(cuid())
-  appName                    String   @default("Benevolence Hub")
-  logo                       String?
-  logoType                   String?  @default("icon")
-  volunteerIcon              String?  @default("HeartHandshake")
-  heroTitle                  String?
-  heroDescription            String?
-  heroImage                  String?
-  missionIntroTitle          String?
-  missionIntroDescription    String?
-  missionImage               String?
-  missionTitle               String?
-  missionDescription         String?
-  visionTitle                String?
-  visionDescription          String?
-  valuesTitle                String?
-  valuesDescription          String?
-  volunteerIntroTitle        String?
+  id String @id @default(cuid())
+  appName String?
+  logo String?
+  logoType String? @default("icon")
+  volunteerIcon String?
+
+  heroTitle String?
+  heroDescription String?
+  heroImage String?
+
+  missionIntroTitle String?
+  missionIntroDescription String?
+  missionImage String?
+  
+  missionTitle String?
+  missionDescription String?
+  visionTitle String?
+  visionDescription String?
+  valuesTitle String?
+  valuesDescription String?
+
+  volunteerIntroTitle String?
   volunteerIntroDescription1 String?
   volunteerIntroDescription2 String?
-  socialLinksTwitter         String?
-  socialLinksFacebook        String?
-  socialLinksInstagram       String?
-  socialLinksYoutube         String?
-  socialLinksTelegram        String?
-  socialLinksWhatsApp        String?
-  socialLinksEmail           String?
-  socialLinksLinkedin        String?
-  socialLinksTikTok          String?
+
+  socialLinksTwitter String?
+  socialLinksFacebook String?
+  socialLinksInstagram String?
+  socialLinksYoutube String?
+  socialLinksTelegram String?
+  socialLinksWhatsApp String?
+  socialLinksEmail String?
+  socialLinksLinkedin String?
+  socialLinksTikTok String?
 }
