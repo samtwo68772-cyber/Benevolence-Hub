@@ -49,11 +49,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         }
     };
     
-    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!formRef.current) return;
-        const formData = new FormData(formRef.current);
-        
+    const handleFormAction = async (formData: FormData) => {
         try {
             const result = await updateSiteSettings(formData);
             if (result.success) {
@@ -88,7 +84,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
     return (
         <div className="grid h-full gap-6 p-4 sm:p-6 w-full max-w-full overflow-x-auto">
             <Card className="w-full">
-                <form onSubmit={handleFormSubmit} ref={formRef} encType="multipart/form-data">
+                <form action={handleFormAction} ref={formRef} encType="multipart/form-data">
                     <CardHeader>
                         <CardTitle>Site & Content Settings</CardTitle>
                         <CardDescription>Update your site name, logo, homepage content, and other global settings.</CardDescription>
