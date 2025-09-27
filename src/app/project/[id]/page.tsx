@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
 import { Badge } from '@/components/ui/badge';
 import { getProjectById, getSettings } from '@/lib/db';
+import { ProjectStatus } from '@/lib/types';
 
 export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
   // Ensure params is properly typed and awaited

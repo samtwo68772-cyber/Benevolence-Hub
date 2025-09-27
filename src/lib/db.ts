@@ -3,7 +3,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { Project, Volunteer, Donation, User, Settings, Category, SocialLink } from './types';
+import { Project, Volunteer, Donation, User, Settings, Category, SocialLink, ProjectStatus } from './types';
 import { defaultSettings } from './default-settings';
 
 // Categories
@@ -41,6 +41,7 @@ export async function getProjects(): Promise<Project[]> {
     const projects = await prisma.project.findMany({ include: { category: true } });
     return projects.map(p => ({ 
         ...p, 
+        status: p.status as ProjectStatus,
         category: p.category?.name || 'Uncategorized',
         details: Array.isArray(p.details) ? p.details : [],
     }));
@@ -51,8 +52,9 @@ export async function getProjectById(id: string): Promise<Project | null> {
     if (!project) return null;
     return { 
         ...project, 
+        status: project.status as ProjectStatus,
         category: project.category?.name || 'Uncategorized',
-        details: Array.isArray(p.details) ? p.details : [],
+        details: Array.isArray(project.details) ? project.details : [],
     };
 }
 
@@ -199,7 +201,7 @@ export async function getDonations(): Promise<Donation[]> {
   return donations.map(d => ({
     ...d,
     amount: typeof d.amount === 'number' ? d.amount : parseFloat(d.amount as any),
-    project: d.project ? { ...d.project, details: [], category: d.project.category?.name || 'Uncategorized' } : null,
+    project: d.project ? { ...d.project, details: [], status: d.project.status as ProjectStatus, category: d.project.category?.name || 'Uncategorized' } : null,
   }));
 }
 

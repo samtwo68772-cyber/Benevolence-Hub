@@ -1,12 +1,11 @@
 
 'use server';
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { User } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { createSession, clearSession, getSession } from './session';
+import { createSession, clearSession } from './session';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -41,8 +40,6 @@ export async function authenticate(
       role: user.role as 'ADMIN',
     });
 
-    redirect('/admin');
-
   } catch (error) {
     if ((error as Error).message.includes('NEXT_REDIRECT')) {
       throw error;
@@ -50,9 +47,11 @@ export async function authenticate(
     console.error('Authentication error:', error);
     return 'An unexpected error occurred. Please try again.';
   }
+  redirect('/admin');
 }
 
 export async function logout() {
   await clearSession();
   redirect('/admin/login');
 }
+

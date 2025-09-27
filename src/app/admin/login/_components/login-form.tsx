@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useFormStatus, useFormState } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { authenticate } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
@@ -25,7 +25,7 @@ function LoginButton() {
 
 function Logo({ settings }: { settings: Settings }) {
     if (settings.logoType === 'image' && settings.logo) {
-      return <Image src={settings.logo} alt={settings.appName} width={48} height={48} className="h-12 w-12" />;
+      return <Image src={settings.logo} alt={settings.appName || 'Logo'} width={48} height={48} className="h-12 w-12" />;
     }
   
     const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
@@ -35,7 +35,7 @@ function Logo({ settings }: { settings: Settings }) {
 
 export function LoginForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
-    const [errorMessage, formAction] = useFormState(authenticate, undefined);
+    const [errorMessage, formAction] = React.useActionState(authenticate, undefined);
 
     React.useEffect(() => {
         if (errorMessage) {
