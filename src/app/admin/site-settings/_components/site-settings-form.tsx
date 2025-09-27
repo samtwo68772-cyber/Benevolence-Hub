@@ -31,6 +31,11 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
     
+    const [heroImage1Preview, setHeroImage1Preview] = React.useState<string | null>(settings.heroImage1 || null);
+    const [heroImage2Preview, setHeroImage2Preview] = React.useState<string | null>(settings.heroImage2 || null);
+    const [heroImage3Preview, setHeroImage3Preview] = React.useState<string | null>(settings.heroImage3 || null);
+    const [heroImage4Preview, setHeroImage4Preview] = React.useState<string | null>(settings.heroImage4 || null);
+
     const formRef = React.useRef<HTMLFormElement>(null);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
@@ -116,6 +121,23 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                             <div className="space-y-2">
                                 <Label htmlFor="heroDescription">Description</Label>
                                 <Textarea id="heroDescription" name="heroDescription" defaultValue={settings.heroDescription} rows={3} />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {[1, 2, 3, 4].map(i => {
+                                    const previewState = [heroImage1Preview, heroImage2Preview, heroImage3Preview, heroImage4Preview][i-1];
+                                    const setPreviewState = [setHeroImage1Preview, setHeroImage2Preview, setHeroImage3Preview, setHeroImage4Preview][i-1];
+                                    return (
+                                        <div key={i} className="space-y-2">
+                                            <Label htmlFor={`heroImage${i}`}>Hero Image {i}</Label>
+                                             {previewState && (
+                                                <div className="w-full h-auto flex items-center justify-center">
+                                                    <Image src={previewState} alt={`Hero image ${i} preview`} width={160} height={90} className="rounded-md object-cover" />
+                                                </div>
+                                            )}
+                                            <Input id={`heroImage${i}`} name={`heroImage${i}`} type="file" accept="image/png, image/jpeg" onChange={(e) => handleImageChange(e, setPreviewState)} />
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </div>
 

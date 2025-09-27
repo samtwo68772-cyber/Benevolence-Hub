@@ -75,6 +75,10 @@ export type Settings = {
   heroTitle?: string;
   heroDescription?: string;
   heroImage?: string | null;
+  heroImage1?: string | null;
+  heroImage2?: string | null;
+  heroImage3?: string | null;
+  heroImage4?: string | null;
   missionIntroTitle?: string;
   missionIntroDescription?: string;
   missionImage?: string | null;

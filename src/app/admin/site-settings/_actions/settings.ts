@@ -20,6 +20,11 @@ export async function updateSiteSettings(formData: FormData) {
     
     const heroTitle = formData.get('heroTitle') as string;
     const heroDescription = formData.get('heroDescription') as string;
+
+    const heroImage1File = formData.get('heroImage1') as File | null;
+    const heroImage2File = formData.get('heroImage2') as File | null;
+    const heroImage3File = formData.get('heroImage3') as File | null;
+    const heroImage4File = formData.get('heroImage4') as File | null;
     
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
@@ -69,11 +74,29 @@ export async function updateSiteSettings(formData: FormData) {
         }
         missionImageData = await fileToDataURI(missionImageFile);
     }
+    
+    const heroImageFiles = [heroImage1File, heroImage2File, heroImage3File, heroImage4File];
+    const heroImageUrls: (string | null)[] = [];
 
+    for (const file of heroImageFiles) {
+        if (file && file.size > 0) {
+            if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                throw new Error("Hero image must be less than 2MB.");
+            }
+            heroImageUrls.push(await fileToDataURI(file));
+        } else {
+            heroImageUrls.push(null);
+        }
+    }
+    
     const newSettings: Partial<Settings> = {
         appName: validatedAppName.data,
         heroTitle,
         heroDescription,
+        heroImage1: heroImageUrls[0],
+        heroImage2: heroImageUrls[1],
+        heroImage3: heroImageUrls[2],
+        heroImage4: heroImageUrls[3],
         missionIntroTitle,
         missionIntroDescription,
         missionTitle,

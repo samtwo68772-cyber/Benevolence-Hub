@@ -1,34 +1,25 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x"]
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
-}
-
-model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("ADMIN")
-  joinDate  DateTime @default(now())
-}
-
 model Project {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
-  description  String   @db.Text
-  imageUrl     String?  @db.Text
+  description  String
+  imageUrl     String?
   details      String[]
   status       String
   startDate    DateTime
   peopleHelped Int
   donations    Donation[]
-  category     Category?  @relation(fields: [categoryId], references: [id])
+  category     Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId   String?
 }
 
@@ -38,30 +29,39 @@ model Volunteer {
   email        String   @unique
   phone        String?  @unique
   signupDate   DateTime @default(now())
-  skills       String   @db.Text
+  skills       String
   interests    String[]
   availability String[]
-  status       String
+  status       String   @default("Pending")
 }
 
-model Donation {
-  id         String    @id @default(cuid())
-  donorName  String
-  email      String
-  amount     Float
-  date       DateTime  @default(now())
-  type       String
-  project    Project?  @relation(fields: [projectId], references: [id])
-  projectId  String?
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+model User {
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String
+  role     String   @default("ADMIN")
+  joinDate DateTime @default(now())
 }
 
 model Category {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  projects Project[]
-  Donation Donation[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  projects  Project[]
+  donations Donation[]
+}
+
+model Donation {
+  id         String   @id @default(cuid())
+  donorName  String
+  email      String
+  amount     Decimal
+  date       DateTime @default(now())
+  type       String
+  project    Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId  String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?
 }
 
 model Settings {
@@ -73,6 +73,10 @@ model Settings {
   heroTitle                  String?
   heroDescription            String?
   heroImage                  String?
+  heroImage1                 String?
+  heroImage2                 String?
+  heroImage3                 String?
+  heroImage4                 String?
   missionIntroTitle          String?
   missionIntroDescription    String?
   missionImage               String?

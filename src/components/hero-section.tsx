@@ -5,30 +5,27 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowDown } from 'lucide-react';
 import { Settings } from '@/lib/types';
 import { defaultSettings } from '@/lib/default-settings';
 
 export default function HeroSection({ settings }: { settings: Settings }) {
-  // Hardcoded background images for the slideshow
   const backgroundImages = [
-    "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&w=1920&h=1080"
-  ];
+    settings.heroImage1,
+    settings.heroImage2,
+    settings.heroImage3,
+    settings.heroImage4,
+  ].filter(Boolean) as string[];
 
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
-  // Effect for automatic slideshow
   React.useEffect(() => {
     if (backgroundImages.length > 1) {
       const interval = setInterval(() => {
         setCurrentImageIndex((prevIndex) => 
           prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
         );
-      }, 5000); // Change image every 5 seconds
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [backgroundImages.length]);
@@ -68,7 +65,6 @@ export default function HeroSection({ settings }: { settings: Settings }) {
           </Link>
         </div>
       </div>
-      {/* Slide indicators */}
       {backgroundImages.length > 1 && (
         <div className="absolute bottom-20 z-10 flex gap-2 justify-center w-full">
           {backgroundImages.map((_, index) => (

@@ -52,7 +52,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
     return { 
         ...project, 
         category: project.category?.name || 'Uncategorized',
-        details: Array.isArray(project.details) ? project.details : [],
+        details: Array.isArray(p.details) ? p.details : [],
     };
 }
 
@@ -232,6 +232,10 @@ export async function getSettings(): Promise<Settings> {
         heroTitle: dbSettings.heroTitle || defaultSettings.heroTitle,
         heroDescription: dbSettings.heroDescription || defaultSettings.heroDescription,
         heroImage: dbSettings.heroImage,
+        heroImage1: dbSettings.heroImage1,
+        heroImage2: dbSettings.heroImage2,
+        heroImage3: dbSettings.heroImage3,
+        heroImage4: dbSettings.heroImage4,
         missionIntroTitle: dbSettings.missionIntroTitle || defaultSettings.missionIntroTitle,
         missionIntroDescription: dbSettings.missionIntroDescription || defaultSettings.missionIntroDescription,
         missionImage: dbSettings.missionImage,
@@ -269,6 +273,11 @@ export async function updateSettings(settings: Partial<Settings>) {
         volunteerIcon: settings.volunteerIcon,
         heroTitle: settings.heroTitle,
         heroDescription: settings.heroDescription,
+        heroImage: settings.heroImage,
+        heroImage1: settings.heroImage1,
+        heroImage2: settings.heroImage2,
+        heroImage3: settings.heroImage3,
+        heroImage4: settings.heroImage4,
         missionIntroTitle: settings.missionIntroTitle,
         missionIntroDescription: settings.missionIntroDescription,
         missionImage: settings.missionImage,

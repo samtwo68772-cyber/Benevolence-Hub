@@ -1,29 +1,23 @@
-# Dockerfile
-
-# Use the official Node.js 20 image.
-# https://hub.docker.com/_/node
+# Use the official Node.js 20 image based on Debian Bookworm Slim
 FROM node:20-bookworm-slim
 
-# Create and change to the app directory.
+# Set the working directory
 WORKDIR /app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure both package.json AND package-lock.json are copied.
-# Copying this first prevents re-running npm install on every code change.
+# Install dependencies for Prisma and other tools
+RUN apt-get update && apt-get install -y procps postgresql-client && rm -rf /var/lib/apt/lists/*
+
+# Copy package.json and package-lock.json
 COPY package*.json ./
-COPY prisma ./prisma/
 
-# Install production dependencies.
-RUN npm install --production
+# Install npm dependencies
+RUN npm install
 
-# Copy local code to the container image.
+# Copy the rest of the application code
 COPY . .
 
-# Build the app.
-RUN npm run build
-
-# Expose the port that the application will listen on.
+# Expose the port the app runs on
 EXPOSE 9002
 
-# Run the application.
+# The command to run the application will be handled by docker-compose.yml
 CMD ["npm", "start"]

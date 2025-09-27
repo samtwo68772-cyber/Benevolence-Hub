@@ -137,6 +137,10 @@ async function main() {
     volunteerIcon: settings.volunteerIcon,
     heroTitle: settings.hero.title,
     heroDescription: settings.hero.description,
+    heroImage1: settings.heroImages?.[0],
+    heroImage2: settings.heroImages?.[1],
+    heroImage3: settings.heroImages?.[2],
+    heroImage4: settings.heroImages?.[3],
     missionIntroTitle: settings.missionIntro.title,
     missionIntroDescription: settings.missionIntro.description,
     missionImage: settings.heroImage,
@@ -181,5 +185,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
-
-
