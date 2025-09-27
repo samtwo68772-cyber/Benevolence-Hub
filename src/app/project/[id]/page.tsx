@@ -1,5 +1,7 @@
 
 
+'use client';
+
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -10,16 +12,34 @@ import { notFound } from 'next/navigation';
 import { DonationDialog } from '@/components/donation-dialog';
 import { Badge } from '@/components/ui/badge';
 import { getProjectById, getSettings } from '@/lib/db';
-import { ProjectStatus } from '@/lib/types';
+import { ProjectStatus, Project, Settings } from '@/lib/types';
+import { useState, useEffect } from 'react';
 
-export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  // Ensure params is properly typed and awaited
-  const { id } = params;
-  const project = await getProjectById(id);
-  const settings = await getSettings();
-  
-  if (!project) {
-    notFound();
+export default function ProjectDetailsPage({ params }: { params: { id: string } }) {
+  const [project, setProject] = useState<Project | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const { id } = params;
+      const [projectData, settingsData] = await Promise.all([
+        getProjectById(id),
+        getSettings()
+      ]);
+      
+      if (!projectData) {
+        notFound();
+      }
+      
+      setProject(projectData);
+      setSettings(settingsData);
+    }
+    fetchData();
+  }, [params]);
+
+  if (!project || !settings) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -27,12 +47,13 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
       <AppHeader settings={settings} />
       <main className="flex-1">
         <section className="relative h-64 md:h-96 w-full text-white">
-            {project.imageUrl ? (
+            {project.imageUrl && !imageError ? (
                 <Image
                 src={project.imageUrl}
                 alt={project.title}
                 fill
                 className="object-cover"
+                onError={() => setImageError(true)}
                 />
             ) : (
                 <div className="bg-muted w-full h-full flex items-center justify-center">

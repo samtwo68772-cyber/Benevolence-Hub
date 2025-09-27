@@ -18,32 +18,48 @@ export default function HeroSection({ settings }: { settings: Settings }) {
   ].filter(Boolean) as string[];
 
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [failedImages, setFailedImages] = React.useState<Set<number>>(new Set());
+
+  // Filter out failed images
+  const validImages = backgroundImages.filter((_, index) => !failedImages.has(index));
 
   React.useEffect(() => {
-    if (backgroundImages.length > 1) {
+    if (validImages.length > 1) {
       const interval = setInterval(() => {
         setCurrentImageIndex((prevIndex) => 
-          prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+          prevIndex === validImages.length - 1 ? 0 : prevIndex + 1
         );
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [backgroundImages.length]);
+  }, [validImages.length]);
 
   return (
     <section className="relative h-[90vh] min-h-[600px] w-full text-white flex items-center justify-center overflow-hidden">
-      {backgroundImages.map((image, index) => (
-        <Image
-          key={image}
-          src={image}
-          alt={`Hero background ${index + 1}`}
-          fill
-          className={`object-cover transition-opacity duration-1000 ${
-            index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-          }`}
-          priority={index === 0}
-        />
-      ))}
+      <div className="absolute inset-0 z-0">
+        {validImages.length > 0 ? (
+          validImages.map((image, index) => {
+            const originalIndex = backgroundImages.indexOf(image);
+            return (
+              <Image
+                key={`hero-image-${originalIndex}`}
+                src={image}
+                alt={`Hero background ${index + 1}`}
+                fill
+                className={`object-cover transition-opacity duration-1000 ${
+                  index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+                priority={index === 0}
+                onError={() => {
+                  setFailedImages(prev => new Set([...prev, originalIndex]));
+                }}
+              />
+            );
+          })
+        ) : (
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 w-full h-full" />
+        )}
+      </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
       <div className="relative z-10 mx-auto max-w-4xl text-center px-4 sm:px-6">
         <h1 className="font-headline text-4xl sm:text-6xl md:text-7xl leading-tight drop-shadow-2xl">

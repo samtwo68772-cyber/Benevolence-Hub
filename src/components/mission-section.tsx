@@ -1,9 +1,13 @@
+'use client';
+
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Target, Eye, HandHeart } from "lucide-react";
 import { Settings } from "@/lib/types";
+import { useState } from "react";
 
 export default function MissionSection({ settings }: { settings: Settings }) {
+  const [imageError, setImageError] = useState(false);
   const missionImageSrc = settings.missionImage;
   
   const goals = [
@@ -50,12 +54,13 @@ export default function MissionSection({ settings }: { settings: Settings }) {
             </div>
           </div>
           <div className="relative h-80 md:h-[500px] rounded-lg overflow-hidden shadow-2xl transform transition-transform duration-500 hover:scale-105">
-            {missionImageSrc ? (
+            {missionImageSrc && !imageError ? (
               <Image
                 src={missionImageSrc}
                 alt={settings.missionIntroTitle || 'Mission section image'}
                 fill
                 className="object-cover"
+                onError={() => setImageError(true)}
               />
             ) : (
                 <div className="bg-muted w-full h-full flex items-center justify-center">

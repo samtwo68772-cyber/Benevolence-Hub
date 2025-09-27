@@ -56,9 +56,13 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
         
         try {
             const result = await updateSiteSettings(formData);
-            toast({ title: "Settings Updated", description: result.message });
+            if (result.success) {
+                toast({ title: "Settings Updated", description: result.message });
+            } else {
+                toast({ variant: "destructive", title: "Error", description: result.message });
+            }
         } catch (error) {
-            toast({ variant: "destructive", title: "Error", description: (error as Error).message });
+            toast({ variant: "destructive", title: "Error", description: (error as Error).message || "An unexpected error occurred" });
         }
     };
 

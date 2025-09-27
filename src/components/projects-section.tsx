@@ -1,5 +1,7 @@
 
 
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,8 +10,10 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowRight } from "lucide-react";
 import type { Project } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 
 export default function ProjectsSection({ projects: featuredProjects }: { projects: Project[] }) {
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   return (
     <section id="projects" className="section-padding">
@@ -25,13 +29,16 @@ export default function ProjectsSection({ projects: featuredProjects }: { projec
             return (
               <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                 <CardHeader className="p-0 relative">
-                   {project.imageUrl ? (
+                   {project.imageUrl && !failedImages.has(project.id) ? (
                     <div className="relative h-56 w-full">
                       <Image
                         src={project.imageUrl}
                         alt={project.title}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        onError={() => {
+                          setFailedImages(prev => new Set(prev).add(project.id));
+                        }}
                       />
                     </div>
                   ): (

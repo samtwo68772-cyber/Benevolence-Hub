@@ -4,7 +4,7 @@ const nextConfig = {
   experimental: {
     serverActions: {
       allowedOrigins: ['github.dev', 'app.github.dev', 'localhost:9002', 'didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
-      bodySizeLimit: '4mb'
+      bodySizeLimit: '50mb'
     }
   },
   // Optimize development and production

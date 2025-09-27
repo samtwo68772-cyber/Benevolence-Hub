@@ -14,17 +14,18 @@ async function fileToDataURI(file: File) {
 }
 
 export async function updateSiteSettings(formData: FormData) {
-    const appName = formData.get('appName') as string;
-    const logoFile = formData.get('logo') as File;
-    const volunteerIcon = formData.get('volunteerIcon') as string;
-    
-    const heroTitle = formData.get('heroTitle') as string;
-    const heroDescription = formData.get('heroDescription') as string;
+    try {
+        const appName = formData.get('appName') as string;
+        const logoFile = formData.get('logo') as File;
+        const volunteerIcon = formData.get('volunteerIcon') as string;
+        
+        const heroTitle = formData.get('heroTitle') as string;
+        const heroDescription = formData.get('heroDescription') as string;
 
-    const heroImage1File = formData.get('heroImage1') as File | null;
-    const heroImage2File = formData.get('heroImage2') as File | null;
-    const heroImage3File = formData.get('heroImage3') as File | null;
-    const heroImage4File = formData.get('heroImage4') as File | null;
+        const heroImage1File = formData.get('heroImage1') as File | null;
+        const heroImage2File = formData.get('heroImage2') as File | null;
+        const heroImage3File = formData.get('heroImage3') as File | null;
+        const heroImage4File = formData.get('heroImage4') as File | null;
     
     const missionIntroTitle = formData.get('missionIntroTitle') as string;
     const missionIntroDescription = formData.get('missionIntroDescription') as string;
@@ -60,8 +61,8 @@ export async function updateSiteSettings(formData: FormData) {
     let logoType: 'icon' | 'image' = 'icon';
 
     if (logoFile && logoFile.size > 0) {
-        if (logoFile.size > 1024 * 1024) { // 1MB limit
-            throw new Error("Logo image must be less than 1MB.");
+        if (logoFile.size > 5 * 1024 * 1024) { // 5MB limit
+            throw new Error("Logo image must be less than 5MB.");
         }
         logoData = await fileToDataURI(logoFile);
         logoType = 'image';
@@ -69,8 +70,8 @@ export async function updateSiteSettings(formData: FormData) {
 
     let missionImageData: string | undefined;
     if (missionImageFile && missionImageFile.size > 0) {
-        if (missionImageFile.size > 2 * 1024 * 1024) { // 2MB limit
-            throw new Error("Mission image must be less than 2MB.");
+        if (missionImageFile.size > 10 * 1024 * 1024) { // 10MB limit
+            throw new Error("Mission image must be less than 10MB.");
         }
         missionImageData = await fileToDataURI(missionImageFile);
     }
@@ -80,8 +81,8 @@ export async function updateSiteSettings(formData: FormData) {
 
     for (const file of heroImageFiles) {
         if (file && file.size > 0) {
-            if (file.size > 2 * 1024 * 1024) { // 2MB limit
-                throw new Error("Hero image must be less than 2MB.");
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                throw new Error("Hero image must be less than 10MB.");
             }
             heroImageUrls.push(await fileToDataURI(file));
         } else {
@@ -124,9 +125,14 @@ export async function updateSiteSettings(formData: FormData) {
         newSettings.volunteerIcon = volunteerIcon;
     }
 
-    await dbUpdateSettings(newSettings);
+        await dbUpdateSettings(newSettings);
 
-    revalidatePath('/admin/site-settings');
-    revalidatePath('/');
-    return { message: 'Site settings updated successfully.' };
+        revalidatePath('/admin/site-settings');
+        revalidatePath('/');
+        return { success: true, message: 'Site settings updated successfully.' };
+    } catch (error) {
+        console.error('Error updating site settings:', error);
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred while updating site settings.';
+        return { success: false, error: errorMessage };
+    }
 }

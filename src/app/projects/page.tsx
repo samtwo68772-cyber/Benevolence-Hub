@@ -1,5 +1,7 @@
 
 
+'use client';
+
 import AppHeader from '@/components/app-header';
 import AppFooter from '@/components/app-footer';
 import Image from 'next/image';
@@ -10,10 +12,29 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getProjects, getSettings } from '@/lib/db';
+import { useState, useEffect } from 'react';
+import type { Project, Settings } from '@/lib/types';
 
-export default async function AllProjectsPage() {
-  const projects = (await getProjects()).sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
-  const settings = await getSettings();
+export default function AllProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    async function fetchData() {
+      const [projectsData, settingsData] = await Promise.all([
+        getProjects(),
+        getSettings()
+      ]);
+      setProjects(projectsData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()));
+      setSettings(settingsData);
+    }
+    fetchData();
+  }, []);
+
+  if (!settings) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -38,18 +59,21 @@ export default async function AllProjectsPage() {
                     return (
                     <Card key={project.id} className="overflow-hidden flex flex-col group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-card">
                         <CardHeader className="p-0 relative">
-                        {project.imageUrl ? (
+                        {project.imageUrl && !failedImages.has(project.id) ? (
                             <div className="relative h-56 w-full">
                             <Image
                                 src={project.imageUrl}
                                 alt={project.title}
                                 fill
                                 className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                onError={() => {
+                                  setFailedImages(prev => new Set(prev).add(project.id));
+                                }}
                             />
                             </div>
                         ) : (
-                            <div className='relative h-56 w-full bg-muted flex items-center justify-center'>
-                                <span className='text-muted-foreground'>No Image</span>
+                            <div className="relative h-56 w-full bg-muted flex items-center justify-center">
+                                <span className="text-muted-foreground">No Image</span>
                             </div>
                         )}
                         <Badge className="absolute top-4 right-4" variant={project.status === 'Active' ? 'default' : project.status === 'Completed' ? 'secondary' : 'outline'}>
