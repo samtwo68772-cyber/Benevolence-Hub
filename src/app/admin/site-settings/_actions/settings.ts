@@ -4,7 +4,7 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { updateSettings as dbUpdateSettings } from '@/lib/db';
+import { updateSettings as dbUpdateSettings, getSettings } from '@/lib/db';
 import { Settings } from '@/lib/types';
 
 async function fileToDataURI(file: File) {
@@ -15,6 +15,8 @@ async function fileToDataURI(file: File) {
 
 export async function updateSiteSettings(formData: FormData) {
     try {
+        // Get current settings to preserve existing hero images
+        const currentSettings = await getSettings();
         const appName = formData.get('appName') as string;
         const logoFile = formData.get('logo') as File;
         const volunteerIcon = formData.get('volunteerIcon') as string;
@@ -77,16 +79,19 @@ export async function updateSiteSettings(formData: FormData) {
     }
     
     const heroImageFiles = [heroImage1File, heroImage2File, heroImage3File, heroImage4File];
+    const currentHeroImages = [currentSettings.heroImage1, currentSettings.heroImage2, currentSettings.heroImage3, currentSettings.heroImage4];
     const heroImageUrls: (string | null)[] = [];
 
-    for (const file of heroImageFiles) {
+    for (let i = 0; i < heroImageFiles.length; i++) {
+        const file = heroImageFiles[i];
         if (file && file.size > 0) {
             if (file.size > 10 * 1024 * 1024) { // 10MB limit
                 throw new Error("Hero image must be less than 10MB.");
             }
             heroImageUrls.push(await fileToDataURI(file));
         } else {
-            heroImageUrls.push(null);
+            // Preserve existing hero image if no new file is provided
+            heroImageUrls.push(currentHeroImages[i] || null);
         }
     }
     
@@ -115,10 +120,17 @@ export async function updateSiteSettings(formData: FormData) {
     if (logoData) {
         newSettings.logo = logoData;
         newSettings.logoType = logoType;
+    } else {
+        // Preserve existing logo if no new file is provided
+        newSettings.logo = currentSettings.logo;
+        newSettings.logoType = currentSettings.logoType;
     }
     
     if (missionImageData) {
         newSettings.missionImage = missionImageData;
+    } else {
+        // Preserve existing mission image if no new file is provided
+        newSettings.missionImage = currentSettings.missionImage;
     }
     
     if (volunteerIcon) {

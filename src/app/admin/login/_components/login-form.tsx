@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useFormStatus } from "react-dom";
+import { useFormStatus, useFormState } from "react-dom";
 import { authenticate } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import React from "react";
@@ -35,7 +35,7 @@ function Logo({ settings }: { settings: Settings }) {
 
 export function LoginForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
-    const [errorMessage, formAction] = React.useActionState(authenticate, undefined);
+    const [errorMessage, formAction] = useFormState(authenticate, undefined);
 
     React.useEffect(() => {
         if (errorMessage) {

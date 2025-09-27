@@ -21,8 +21,8 @@ export async function addProject(formData: FormData) {
     
     let imageUrl: string | undefined;
     if (imageFile && imageFile.size > 0) {
-        if (imageFile.size > 2 * 1024 * 1024) { // 2MB limit
-            throw new Error("Project image must be less than 2MB.");
+        if (imageFile.size > 10 * 1024 * 1024) { // 10MB limit
+            throw new Error("Project image must be less than 10MB.");
         }
         imageUrl = await fileToDataURI(imageFile);
     }
@@ -64,8 +64,8 @@ export async function updateProject(formData: FormData) {
     };
 
     if (imageFile && imageFile.size > 0) {
-         if (imageFile.size > 2 * 1024 * 1024) { // 2MB limit
-            throw new Error("Project image must be less than 2MB.");
+         if (imageFile.size > 10 * 1024 * 1024) { // 10MB limit
+            throw new Error("Project image must be less than 10MB.");
         }
         updateData.imageUrl = await fileToDataURI(imageFile);
     }

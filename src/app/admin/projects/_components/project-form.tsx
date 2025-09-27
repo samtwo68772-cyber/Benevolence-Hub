@@ -11,6 +11,16 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { Project, Category } from '@/lib/types';
 import Image from 'next/image';
+import { useFormStatus } from 'react-dom';
+
+function ProjectSubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" disabled={pending}>
+            {pending ? 'Saving...' : 'Save'}
+        </Button>
+    )
+}
 
 type ProjectFormProps = {
   project?: Project;
@@ -66,7 +76,7 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
                 )}
                 <Input id="image" name="image" type="file" accept="image/png, image/jpeg" onChange={handleImageChange} />
             </div>
-            <p className="text-sm text-muted-foreground">Upload an image for the project. Max 2MB.</p>
+            <p className="text-sm text-muted-foreground">Upload an image for the project. Max 10MB.</p>
         </div>
         
         <div className="space-y-2">
@@ -103,7 +113,7 @@ export const ProjectForm = React.forwardRef<HTMLFormElement, ProjectFormProps>((
         </div>
         <div className="md:col-span-2 flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-            <Button type="submit">Save</Button>
+            <ProjectSubmitButton />
         </div>
       </form>
   );
