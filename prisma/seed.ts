@@ -69,9 +69,9 @@ async function main() {
     })
   }
   
-  // Seed Volunteers - ensuring unique emails
+  // Seed Volunteers - ensuring unique emails and phone numbers
   const uniqueVolunteers = dbData.volunteers.reduce((acc: any[], current: any) => {
-    if (!acc.find((item) => item.email === current.email)) {
+    if (!acc.find((item) => item.email === current.email || item.phone === current.phone)) {
       acc.push(current);
     }
     return acc;

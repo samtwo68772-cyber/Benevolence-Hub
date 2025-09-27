@@ -28,7 +28,7 @@ const ITEMS_PER_PAGE = 7;
 
 export default async function AdminProjectsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
     // Ensure searchParams is properly typed and awaited
-    const params = searchParams;
+    const params = await searchParams;
     const page = Number(params?.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
     

@@ -26,7 +26,8 @@ export const dynamic = 'force-dynamic';
 const ITEMS_PER_PAGE = 7;
 
 export default async function AdminAdminsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
-    const page = Number(searchParams.page || '1');
+    const params = await searchParams;
+    const page = Number(params.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
 
     const allAdmins = (await getUsers()).filter(u => u.role === 'ADMIN');
