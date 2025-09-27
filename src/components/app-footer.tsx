@@ -56,7 +56,7 @@ function SocialLinks({ links }: { links: SocialLink[] }) {
     };
     
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
         {links.map((social) => {
             const Icon = socialIconMap[social.icon];
             if (!social.href || social.href === '#' || !Icon) return null;
