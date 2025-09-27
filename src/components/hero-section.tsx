@@ -42,7 +42,7 @@ export default function HeroSection({ settings }: { settings: Settings }) {
             const originalIndex = backgroundImages.indexOf(image);
             return (
               <Image
-                key={`hero-image-${originalIndex}`}
+                key={`hero-image-${originalIndex}-${index}`}
                 src={image}
                 alt={`Hero background ${index + 1}`}
                 fill

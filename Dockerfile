@@ -1,36 +1,23 @@
-# Use the official Node.js 20 image.
-# https://hub.docker.com/_/node
+# Use a specific slim image for Node.js
 FROM node:20-bookworm-slim
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Install dependencies for running browsers, etc.
-RUN apt-get update && apt-get install -y \
-    wget \
-    procps \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies for Prisma and other native modules
+RUN apt-get update && apt-get install -y procps openssl
 
-# Copy package.json and package-lock.json (or yarn.lock)
+# Copy package.json and package-lock.json
 COPY package*.json ./
-COPY prisma ./prisma/
 
-# Install dependencies
+# Install npm dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the rest of your application's code
 COPY . .
 
-# Expose the port the app runs on
+# Expose the port your app runs on
 EXPOSE 9002
 
-# The healthcheck relies on wget to check if the server is running.
-# The server is started with npm start, which is a wrapper around next start
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:9002/api/health || exit 1
-
-# Run the app
-CMD ["npm", "run", "start"]
-
-USER node
+# The command to run your app
+CMD ["npm", "run", "dev"]

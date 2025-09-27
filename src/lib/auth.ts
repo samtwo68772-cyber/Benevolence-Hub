@@ -6,6 +6,7 @@ import type { User } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { createSession, clearSession } from './session';
+import React from 'react';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -54,4 +55,3 @@ export async function logout() {
   await clearSession();
   redirect('/admin/login');
 }
-
