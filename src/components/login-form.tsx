@@ -25,10 +25,10 @@ function LoginButton() {
 
 function Logo({ settings }: { settings: Settings }) {
     if (settings.logoType === 'image' && settings.logo) {
-      return <Image src={settings.logo} alt={settings.appName} width={48} height={48} className="h-12 w-12" />;
+      return <Image src={settings.logo} alt={settings.appName || 'App Logo'} width={48} height={48} className="h-12 w-12" />;
     }
   
-    const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+    const LogoIcon = (LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart) as React.ElementType;
     return <LogoIcon className="h-12 w-12 text-primary" />;
 }
 

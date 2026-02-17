@@ -3,7 +3,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
-import { Project, Volunteer, Donation, User, Settings, Category, SocialLink, ProjectStatus } from './types';
+import { Project, Volunteer, Donation, User, Settings, Category, SocialLink, ProjectStatus, DonationType, Role, VolunteerStatus } from './types';
 import { defaultSettings } from './default-settings';
 
 // Categories
@@ -43,7 +43,7 @@ export async function getProjects(): Promise<Project[]> {
         ...p, 
         status: p.status as ProjectStatus,
         category: p.category?.name || 'Uncategorized',
-        details: Array.isArray(p.details) ? p.details : [],
+        details: Array.isArray(p.details) ? (p.details as unknown as string[]) : [],
     }));
 }
 
@@ -54,7 +54,7 @@ export async function getProjectById(id: string): Promise<Project | null> {
         ...project, 
         status: project.status as ProjectStatus,
         category: project.category?.name || 'Uncategorized',
-        details: Array.isArray(project.details) ? project.details : [],
+        details: Array.isArray(project.details) ? (project.details as unknown as string[]) : [],
     };
 }
 
@@ -79,20 +79,20 @@ export async function createProject(project: Omit<Project, 'id' | 'peopleHelped'
 }
 
 export async function updateProject(id: string, data: Partial<Omit<Project, 'id' | 'category'>> & { category?: string, imageUrl?: string }) {
-    const { category, ...projectData } = data;
+    const { category, categoryId, ...projectData } = data;
     
     return await prisma.project.update({
         where: { id },
         data: {
             ...projectData,
-            ...(category && {
+            ...(category ? {
                 category: {
                     connectOrCreate: {
                         where: { name: category },
                         create: { name: category }
                     }
                 }
-            })
+            } : (categoryId !== undefined ? { categoryId } : {})),
         },
     });
 }
@@ -110,17 +110,32 @@ export async function getVolunteers(): Promise<Volunteer[]> {
     const volunteers = await prisma.volunteer.findMany();
     return volunteers.map(v => ({
         ...v,
-        interests: Array.isArray(v.interests) ? v.interests : [],
-        availability: Array.isArray(v.availability) ? v.availability : [],
+        status: v.status as VolunteerStatus,
+        interests: Array.isArray(v.interests) ? (v.interests as unknown as string[]) : [],
+        availability: Array.isArray(v.availability) ? (v.availability as unknown as string[]) : [],
     }))
 }
 
 export async function getVolunteerByEmail(email: string): Promise<Volunteer | null> {
-    return await prisma.volunteer.findUnique({ where: { email } });
+    const v = await prisma.volunteer.findUnique({ where: { email } });
+    if (!v) return null;
+    return {
+        ...v,
+        status: v.status as VolunteerStatus,
+        interests: Array.isArray(v.interests) ? (v.interests as unknown as string[]) : [],
+        availability: Array.isArray(v.availability) ? (v.availability as unknown as string[]) : [],
+    };
 }
 
 export async function getVolunteerByPhone(phone: string): Promise<Volunteer | null> {
-    return await prisma.volunteer.findFirst({ where: { phone } });
+    const v = await prisma.volunteer.findFirst({ where: { phone } });
+    if (!v) return null;
+    return {
+        ...v,
+        status: v.status as VolunteerStatus,
+        interests: Array.isArray(v.interests) ? (v.interests as unknown as string[]) : [],
+        availability: Array.isArray(v.availability) ? (v.availability as unknown as string[]) : [],
+    };
 }
 
 
@@ -160,34 +175,42 @@ export async function deleteVolunteer(id: string): Promise<void> {
 
 // Users
 export async function getUsers(): Promise<User[]> {
-    return (await prisma.user.findMany()).map(u => ({ ...u, password: u.password || undefined }));
+    return (await prisma.user.findMany()).map(u => ({ ...u, role: u.role as Role, password: u.password || undefined }));
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return null;
-    return { ...user, password: user.password || undefined };
+    return { ...user, role: user.role as Role, password: user.password || undefined };
 }
 
 export async function getUserById(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) return null;
-    return { ...user, password: user.password || undefined };
+    return { ...user, role: user.role as Role, password: user.password || undefined };
 }
 
 export async function createUser(user: Omit<User, 'id' | 'joinDate' | 'role'>) {
+    if (!user.password) {
+        throw new Error("Password is required for new user");
+    }
     return await prisma.user.create({
         data: {
             ...user,
+            password: user.password,
             role: 'ADMIN',
         }
     });
 }
 
 export async function updateUser(id: string, data: Partial<Omit<User, 'id'>>) {
+    const { password, ...otherData } = data;
     return await prisma.user.update({
         where: { id },
-        data,
+        data: {
+            ...otherData,
+            ...(password ? { password } : {}),
+        },
     });
 }
 
@@ -197,9 +220,10 @@ export async function deleteUser(id: string): Promise<void> {
   
 // Donations
 export async function getDonations(): Promise<Donation[]> {
-  const donations = await prisma.donation.findMany({ include: { project: true, category: true } });
+  const donations = await prisma.donation.findMany({ include: { project: { include: { category: true } }, category: true } });
   return donations.map(d => ({
     ...d,
+    type: d.type as DonationType,
     amount: typeof d.amount === 'number' ? d.amount : parseFloat(d.amount as any),
     project: d.project ? { ...d.project, details: [], status: d.project.status as ProjectStatus, category: d.project.category?.name || 'Uncategorized' } : null,
   }));
@@ -295,10 +319,10 @@ export async function updateSettings(settings: Partial<Settings>) {
         socialLinksTwitter: settings.socialLinks?.find(s => s.icon === 'Twitter')?.href,
         socialLinksFacebook: settings.socialLinks?.find(s => s.icon === 'Facebook')?.href,
         socialLinksInstagram: settings.socialLinks?.find(s => s.icon === 'Instagram')?.href,
-        socialLinksYoutube: settings.socialLinks?.find(s => s.icon === 'Youtube')?.href,
+        socialLinksYoutube: settings.socialLinks?.find(s => s.icon === 'YouTube')?.href,
         socialLinksTelegram: settings.socialLinks?.find(s => s.icon === 'Telegram')?.href,
         socialLinksWhatsApp: settings.socialLinks?.find(s => s.icon === 'WhatsApp')?.href,
-        socialLinksEmail: settings.socialLinks?.find(s => s.icon === 'Email')?.href,
+        socialLinksEmail: settings.socialLinks?.find(s => s.icon === 'Mail')?.href,
         socialLinksLinkedin: settings.socialLinks?.find(s => s.icon === 'Linkedin')?.href,
         socialLinksTikTok: settings.socialLinks?.find(s => s.icon === 'TikTok')?.href,
     };
@@ -312,8 +336,8 @@ export async function updateSettings(settings: Partial<Settings>) {
     } else {
         return await prisma.settings.create({
             data: {
-                appName: settings.appName!,
-                ...dataToUpdate
+                ...dataToUpdate,
+                appName: settings.appName || defaultSettings.appName || 'Benevolence Hub',
             }
         });
     }

@@ -16,6 +16,9 @@ RUN npm install
 # Copy the rest of your application's code
 COPY . .
 
+# Make wait-for-it script executable
+RUN chmod +x wait-for-it.sh
+
 # Expose the port your app runs on
 EXPOSE 9002
 

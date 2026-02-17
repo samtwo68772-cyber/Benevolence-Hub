@@ -5,6 +5,11 @@ export type VolunteerStatus = 'Pending' | 'Approved' | 'Rejected';
 export type DonationType = 'ONE_TIME' | 'MONTHLY';
 export type Role = 'ADMIN';
 
+export type Category = {
+  id: string;
+  name: string;
+};
+
 export type Project = {
   id: string;
   title: string;
@@ -39,6 +44,8 @@ export type Donation = {
   type: DonationType;
   projectId: string | null;
   project?: Partial<Project> | null;
+  categoryId?: string | null;
+  category?: Category | null;
 };
 
 export type User = {

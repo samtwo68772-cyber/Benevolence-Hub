@@ -18,7 +18,7 @@ import { ProjectDialog } from './_components/project-dialog';
 import { addProject } from './_actions/projects';
 import { ProjectFilter } from './_components/project-filter';
 import { getProjects, getCategories } from '@/lib/db';
-import { ProjectCategory, ProjectStatus, Category } from '@/lib/types';
+import { ProjectStatus, Category } from '@/lib/types';
 import { ProjectActions } from './_components/project-actions';
 import { PaginationControls } from '@/components/ui/pagination';
 
@@ -32,16 +32,27 @@ export default async function AdminProjectsPage({ searchParams }: { searchParams
     const page = Number(params?.page || '1');
     const skip = (page - 1) * ITEMS_PER_PAGE;
     
-    const statusFilter = params?.status as ProjectStatus | undefined;
+    const statusFilter = params?.status as string | undefined;
     const categoryFilter = params?.category as string | undefined;
 
     const allProjects = await getProjects();
     const allCategories = await getCategories();
 
+    const query = params?.search as string | undefined;
+
     const filteredProjects = allProjects.filter(project => {
-        const statusMatch = !statusFilter || statusFilter === 'all' || project.status === statusFilter;
-        const categoryMatch = !categoryFilter || categoryFilter === 'all' || project.category === categoryFilter;
-        return statusMatch && categoryMatch;
+        let statusMatch = true;
+        if (statusFilter && statusFilter !== 'all') {
+            statusMatch = project.status === (statusFilter as string);
+        }
+        
+        let categoryMatch = true;
+        if (categoryFilter && categoryFilter !== 'all') {
+            categoryMatch = project.category === categoryFilter;
+        }
+
+        const searchMatch = !query || project.title.toLowerCase().includes(query.toLowerCase());
+        return statusMatch && categoryMatch && searchMatch;
     });
 
     const projects = filteredProjects

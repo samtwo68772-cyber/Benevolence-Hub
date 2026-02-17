@@ -21,7 +21,12 @@ export async function addDonation(data: z.infer<typeof donationSchema>) {
         throw new Error('Invalid donation data.');
     }
     
-    await createDonation(validatedFields.data);
+    const { projectId, ...rest } = validatedFields.data;
+    
+    await createDonation({
+        ...rest,
+        projectId: projectId ?? null
+    });
 
     revalidatePath('/admin/donations');
 }

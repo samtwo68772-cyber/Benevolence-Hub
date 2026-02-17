@@ -21,6 +21,7 @@ export async function authenticate(
       where: { email },
       select: {
         id: true,
+        name: true,
         email: true,
         password: true,
         role: true,
@@ -36,8 +37,9 @@ export async function authenticate(
     if (passwordsMatch) {
       return createSession({
         id: user.id,
+        name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.role as 'ADMIN',
       });
     }
 

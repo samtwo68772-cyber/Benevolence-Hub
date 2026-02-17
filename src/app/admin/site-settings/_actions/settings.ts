@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { updateSettings as dbUpdateSettings, getSettings } from '@/lib/db';
-import { Settings } from '@/lib/types';
+import { Settings, SocialLink } from '@/lib/types';
 
 async function fileToDataURI(file: File) {
     const buffer = await file.arrayBuffer();
@@ -46,13 +46,13 @@ export async function updateSiteSettings(formData: FormData) {
         { icon: 'Twitter', href: formData.get('socialTwitter') as string },
         { icon: 'Facebook', href: formData.get('socialFacebook') as string },
         { icon: 'Instagram', href: formData.get('socialInstagram') as string },
-        { icon: 'Youtube', href: formData.get('socialYoutube') as string },
+        { icon: 'YouTube', href: formData.get('socialYoutube') as string },
         { icon: 'Telegram', href: formData.get('socialTelegram') as string },
         { icon: 'WhatsApp', href: formData.get('socialWhatsApp') as string },
-        { icon: 'Email', href: formData.get('socialEmail') as string },
+        { icon: 'Mail', href: formData.get('socialEmail') as string },
         { icon: 'Linkedin', href: formData.get('socialLinkedin') as string },
         { icon: 'TikTok', href: formData.get('socialTikTok') as string },
-    ];
+    ] as SocialLink[];
     
     const validatedAppName = z.string().min(2).safeParse(appName);
     if(!validatedAppName.success) {

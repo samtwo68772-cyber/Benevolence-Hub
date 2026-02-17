@@ -21,7 +21,7 @@ function Logo({ settings }: { settings: Settings }) {
       return <Image src={settings.logo} alt={settings.appName || 'Logo'} width={28} height={28} className="h-7 w-7" />;
     }
   
-    const LogoIcon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+    const LogoIcon = (LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart) as React.ElementType;
     return <LogoIcon className="h-7 w-7 text-primary" />;
 }
 

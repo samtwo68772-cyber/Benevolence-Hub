@@ -76,7 +76,11 @@ export default function VolunteerSection({ settings, categories: initialCategori
 
     async function onSubmit(values: VolunteerFormValues) {
         try {
-            await addVolunteer(values);
+            await addVolunteer({
+                ...values,
+                interests: values.interests as [string, ...string[]],
+                availability: values.availability as [string, ...string[]]
+            });
 
             toast({
                 title: "Registration Received!",
@@ -105,8 +109,7 @@ export default function VolunteerSection({ settings, categories: initialCategori
         }
     }
 
-    const VolunteerIcon = LucideIcons[settings.volunteerIcon as keyof typeof LucideIcons] || LucideIcons.HeartHandshake;
-
+    const VolunteerIcon = (LucideIcons[settings.volunteerIcon as keyof typeof LucideIcons] || LucideIcons.HeartHandshake) as React.ElementType;
   return (
     <section id="volunteer" className="section-padding">
       <div className="container mx-auto">

@@ -27,7 +27,7 @@ function SettingsSubmitButton() {
 
 export function SiteSettingsForm({ settings }: { settings: Settings }) {
     const { toast } = useToast();
-    const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? settings.logo : null);
+    const [logoPreview, setLogoPreview] = React.useState<string | null>(settings.logoType === 'image' ? (settings.logo || null) : null);
     const defaultMissionImage = PlaceHolderImages.find(img => img.id === 'mission-image')?.imageUrl;
     const [missionImagePreview, setMissionImagePreview] = React.useState<string | null>(settings.missionImage || defaultMissionImage || null);
     
@@ -67,7 +67,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
           return <Image src={logoPreview} alt="Logo preview" width={40} height={40} className="rounded-md object-contain" />;
         }
         if (settings.logoType === 'icon') {
-            const Icon = LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart;
+            const Icon = (LucideIcons[settings.logo as keyof typeof LucideIcons] || LucideIcons.HandHeart) as React.ElementType;
             return <Icon className="w-10 h-10 text-primary" />;
         }
         return null;
@@ -224,7 +224,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="socialYoutube">YouTube URL</Label>
-                                    <Input id="socialYoutube" name="socialYoutube" defaultValue={settings.socialLinks?.find(s => s.icon === 'Youtube')?.href} />
+                                    <Input id="socialYoutube" name="socialYoutube" defaultValue={settings.socialLinks?.find(s => s.icon === 'YouTube')?.href} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="socialTelegram">Telegram Handle</Label>
@@ -236,7 +236,7 @@ export function SiteSettingsForm({ settings }: { settings: Settings }) {
                                 </div>
                                  <div className="space-y-2">
                                     <Label htmlFor="socialEmail">Email Address</Label>
-                                    <Input id="socialEmail" name="socialEmail" defaultValue={settings.socialLinks?.find(s => s.icon === 'Email')?.href} />
+                                    <Input id="socialEmail" name="socialEmail" defaultValue={settings.socialLinks?.find(s => s.icon === 'Mail')?.href} />
                                 </div>
                                  <div className="space-y-2">
                                     <Label htmlFor="socialLinkedin">LinkedIn URL</Label>

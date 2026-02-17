@@ -9,12 +9,12 @@ export const dynamic = 'force-dynamic';
 
 const ITEMS_PER_PAGE = 7;
 
-export default async function AdminVolunteersPage({ searchParams }: { searchParams: { page?: string, status?: VolunteerStatus, interest?: string }}) {
+export default async function AdminVolunteersPage({ searchParams }: { searchParams: { page?: string, status?: string, interest?: string }}) {
   const params = await searchParams;
   const page = Number(params.page || '1');
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
-  const statusFilter = params.status && params.status !== 'all' ? params.status : undefined;
+  const statusFilter = (params.status && params.status !== 'all' ? params.status : undefined) as VolunteerStatus | undefined;
   const interestFilter = params.interest && params.interest !== 'all' ? params.interest : undefined;
   
   const allVolunteers = await getVolunteers();

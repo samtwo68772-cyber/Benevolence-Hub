@@ -3,7 +3,7 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     serverActions: {
-      allowedOrigins: ['github.dev', 'app.github.dev', 'localhost:9002', 'didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev'],
+      allowedOrigins: ['github.dev', 'app.github.dev', 'localhost:9002', 'didactic-space-giggle-wrjx77x64xvrhggp6-9002.app.github.dev', 'possibledevelopment.com.et', 'www.possibledevelopment.com.et'],
       bodySizeLimit: '50mb'
     }
   },

@@ -8,13 +8,12 @@ services:
     ports:
       - "9002:9002"
     environment:
-      - DATABASE_URL=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence
-      - DATABASE_URL_POOLED=postgresql://benevolence_user:benevolence_password@postgres:5432/benevolence?pg-bouncer=true
+      - DATABASE_URL=mysql://benevolence_user:benevolence_password@mysql:3306/benevolence_hub
       - NODE_ENV=development
       - PORT=9002
       - SESSION_SECRET=${SESSION_SECRET:-your_session_secret_here}
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -25,7 +24,7 @@ services:
     command: >
       sh -c "
         echo 'Waiting for database...' &&
-        /app/wait-for-it.sh postgres:5432 -t 60 -- echo 'Database is up!' &&
+        /app/wait-for-it.sh mysql:3306 -t 60 -- echo 'Database is up!' &&
         npx prisma migrate deploy &&
         npx prisma generate &&
         npx prisma db seed &&
@@ -33,22 +32,23 @@ services:
         npm start
       "
 
-  postgres:
-    image: postgres:latest
+  mysql:
+    image: mysql:8.0
     container_name: benevolence_db
     environment:
-      POSTGRES_DB: benevolence
-      POSTGRES_USER: benevolence_user
-      POSTGRES_PASSWORD: benevolence_password
+      MYSQL_DATABASE: benevolence_hub
+      MYSQL_USER: benevolence_user
+      MYSQL_PASSWORD: benevolence_password
+      MYSQL_ROOT_PASSWORD: root_password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U benevolence_user -d benevolence"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "benevolence_user", "-pbenevolence_password"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  postgres_data:
+  mysql_data:

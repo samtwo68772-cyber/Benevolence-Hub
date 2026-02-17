@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider  = "mysql"
   url       = env("DATABASE_URL")
 }
 
@@ -17,7 +17,7 @@ model Project {
   title        String
   description  String    @db.Text
   imageUrl     String?   @db.Text
-  details      String[]
+  details      Json      @default("[]")
   status       String
   startDate    DateTime
   peopleHelped Int       @default(0)
@@ -40,8 +40,8 @@ model Volunteer {
   phone        String?  @unique
   signupDate   DateTime @default(now())
   skills       String   @db.Text
-  interests    String[]
-  availability String[]
+  interests    Json     @default("[]")
+  availability Json     @default("[]")
   status       String
 }
 
@@ -73,25 +73,25 @@ model Settings {
   logo                      String? @db.Text
   logoType                  String?
   volunteerIcon             String?
-  heroTitle                 String?
-  heroDescription           String?
-  heroImage                 String? @db.Text
-  heroImage1                String? @db.Text
-  heroImage2                String? @db.Text
-  heroImage3                String? @db.Text
-  heroImage4                String? @db.Text
-  missionIntroTitle         String?
-  missionIntroDescription   String?
-  missionImage              String? @db.Text
-  missionTitle              String?
-  missionDescription        String?
-  visionTitle               String?
-  visionDescription         String?
-  valuesTitle               String?
-  valuesDescription         String?
-  volunteerIntroTitle       String?
-  volunteerIntroDescription1 String?
-  volunteerIntroDescription2 String?
+  heroTitle                 String?   @db.Text
+  heroDescription           String?   @db.Text
+  heroImage                 String?   @db.LongText
+  heroImage1                String?   @db.LongText
+  heroImage2                String?   @db.LongText
+  heroImage3                String?   @db.LongText
+  heroImage4                String?   @db.LongText
+  missionIntroTitle         String?   @db.Text
+  missionIntroDescription   String?   @db.Text
+  missionImage              String?   @db.LongText
+  missionTitle              String?   @db.Text
+  missionDescription        String?   @db.Text
+  visionTitle               String?   @db.Text
+  visionDescription         String?   @db.Text
+  valuesTitle               String?   @db.Text
+  valuesDescription         String?   @db.Text
+  volunteerIntroTitle       String?   @db.Text
+  volunteerIntroDescription1 String?  @db.Text
+  volunteerIntroDescription2 String?  @db.Text
   socialLinksTwitter        String?
   socialLinksFacebook       String?
   socialLinksInstagram      String?
